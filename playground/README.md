@@ -12,7 +12,12 @@ Serve the `playground/` folder (port `4173` if already running):
 - Review annotations: `http://127.0.0.1:4173/?notes=1`
 - Explicit page: `http://127.0.0.1:4173/?page=homepage`
 
-This is a design mock hosted on Vercel. It is marked `noindex`. The Shopify store remains the production site.
+Live on Vercel:
+
+- Clean: https://playground-ten-dun.vercel.app/
+- Notes: https://playground-ten-dun.vercel.app/?notes=1
+
+This is a design mock. It is marked `noindex`. The Shopify store remains the production site.
 
 ## Structure
 
