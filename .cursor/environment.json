@@ -1,0 +1,10 @@
+{
+  "name": "Samantha Fab Playground",
+  "terminals": [
+    {
+      "name": "dev-server",
+      "command": "cd playground && python3 -m http.server 4173 --bind 0.0.0.0"
+    }
+  ],
+  "ports": [4173]
+}
