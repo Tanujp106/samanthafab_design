@@ -144,7 +144,8 @@ test("design page places a four-up new arrivals carousel after the collection be
   assert.match(app, /data-new-arrivals-dir/);
   assert.match(app, /scrollBy/);
   assert.match(designStyles, /design-new-arrivals/);
-  assert.match(designStyles, /grid-auto-columns:\s*calc\(\(100% - 48px\) \/ 4\)/);
+  assert.match(designStyles, /grid-template-columns:\s*repeat\(8,\s*calc\(\(100% - 48px\) \/ 4\)\)/);
+  assert.match(designStyles, /design-new-arrivals__track\s*\{[\s\S]*width:\s*100%/);
 });
 
 test("design page ends with the standard footer navigation", async () => {
