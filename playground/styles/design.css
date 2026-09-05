@@ -539,15 +539,17 @@ body[data-page="blank"] .design-new-arrivals {
   border-bottom: 1px solid var(--rule);
   background: var(--cream);
   color: var(--ink);
+  text-align: left;
 }
 
 body[data-page="blank"] .design-new-arrivals__inner {
-  width: 100%;
+  width: min(100%, var(--content-max));
+  margin-inline: auto;
 }
 
 body[data-page="blank"] .design-new-arrivals__header {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 28px;
   margin-bottom: 32px;
@@ -555,6 +557,8 @@ body[data-page="blank"] .design-new-arrivals__header {
 
 body[data-page="blank"] .design-new-arrivals__intro {
   min-width: 0;
+  max-width: 42ch;
+  text-align: left;
 }
 
 body[data-page="blank"] .design-new-arrivals__eyebrow {
@@ -577,6 +581,8 @@ body[data-page="blank"] .design-new-arrivals__heading {
   font-weight: var(--weight-display);
   letter-spacing: var(--tracking-display);
   line-height: var(--leading-tight);
+  text-align: left;
+  text-wrap: pretty;
 }
 
 body[data-page="blank"] .design-new-arrivals__copy {
@@ -586,6 +592,8 @@ body[data-page="blank"] .design-new-arrivals__copy {
   font-family: var(--font-body);
   font-size: 14px;
   line-height: var(--leading-copy);
+  text-align: left;
+  text-wrap: pretty;
 }
 
 body[data-page="blank"] .design-new-arrivals__actions {
@@ -668,15 +676,28 @@ body[data-page="blank"] .design-new-arrivals__track {
 body[data-page="blank"] .design-new-arrivals__card {
   min-width: 0;
   scroll-snap-align: start;
+  text-align: left;
+}
+
+body[data-page="blank"] .design-new-arrivals__card .product-card__link {
+  align-items: stretch;
+  text-align: left;
 }
 
 body[data-page="blank"] .design-new-arrivals__card .media {
+  display: block;
+  width: 100%;
   overflow: hidden;
   aspect-ratio: 3 / 4;
+  margin: 0;
   background: var(--paper);
 }
 
 body[data-page="blank"] .design-new-arrivals__card .media__frame {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
   transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -686,8 +707,11 @@ body[data-page="blank"] .design-new-arrivals__card:focus-within .media__frame {
 }
 
 body[data-page="blank"] .design-new-arrivals__card .product-card__body {
+  width: 100%;
+  align-items: flex-start;
   gap: 7px;
   padding-top: 16px;
+  text-align: left;
 }
 
 body[data-page="blank"] .design-new-arrivals__card .product-tag {
@@ -697,17 +721,28 @@ body[data-page="blank"] .design-new-arrivals__card .product-tag {
   font-weight: var(--weight-ui);
   letter-spacing: var(--tracking-label);
   line-height: var(--leading-label);
+  text-align: left;
+  text-transform: uppercase;
 }
 
 body[data-page="blank"] .design-new-arrivals__card .product-name {
+  width: 100%;
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--text-lg);
   font-weight: var(--weight-display);
   line-height: var(--leading-tight);
+  text-align: left;
+  text-wrap: pretty;
 }
 
 body[data-page="blank"] .design-new-arrivals__card .product-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 4px;
+  width: 100%;
   margin-top: 2px;
   color: var(--muted);
   font-family: var(--font-body);

@@ -150,7 +150,11 @@ test("design page places a four-up new arrivals carousel after the collection be
   assert.match(designStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*font-family:\s*var\(--font-display\)/);
   assert.match(designStyles, /design-new-arrivals__card \.product-meta\s*\{[\s\S]*font-family:\s*var\(--font-body\)/);
   assert.match(designStyles, /design-new-arrivals\s*\{[\s\S]*background:\s*var\(--cream\)/);
+  assert.match(designStyles, /design-new-arrivals__heading\s*\{[\s\S]*color:\s*var\(--ink\)/);
   assert.match(designStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*color:\s*var\(--ink\)/);
+  assert.match(designStyles, /design-new-arrivals__inner\s*\{[\s\S]*width:\s*min\(100%,\s*var\(--content-max\)\)[\s\S]*margin-inline:\s*auto/);
+  assert.match(designStyles, /design-new-arrivals__card \.media\s*\{[\s\S]*margin:\s*0/);
+  assert.match(designStyles, /design-new-arrivals__card \.product-card__body\s*\{[\s\S]*text-align:\s*left/);
 });
 
 test("design page ends with the standard footer navigation", async () => {
