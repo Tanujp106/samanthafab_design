@@ -226,7 +226,7 @@ button {
   border: 0;
 }
 
-.review-only {
+body:not([data-notes="true"]) .review-only {
   display: none;
 }
 

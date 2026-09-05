@@ -496,7 +496,8 @@ function renderFooter(section) {
     element("p", "footer-brand-copy", section.brandLine),
   );
 
-  const columns = element("div", "footer-columns");
+  const columns = element("nav", "footer-columns");
+  columns.setAttribute("aria-label", "Footer navigation");
   section.columns.forEach((column) => {
     const col = element("div", "footer-column");
     col.append(element("h3", "footer-heading", column.heading));
