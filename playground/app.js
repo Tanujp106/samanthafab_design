@@ -188,6 +188,36 @@ if (campaignHero) {
   startAutoplay();
 }
 
+const newArrivals = document.querySelector("[data-new-arrivals-carousel]");
+if (newArrivals) {
+  const viewport = newArrivals.querySelector("[data-new-arrivals-viewport]");
+  const previous = newArrivals.querySelector('[data-new-arrivals-dir="-1"]');
+  const next = newArrivals.querySelector('[data-new-arrivals-dir="1"]');
+  const firstCard = newArrivals.querySelector(".design-new-arrivals__card");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const syncControls = () => {
+    const maxScroll = viewport.scrollWidth - viewport.clientWidth - 1;
+    previous.disabled = viewport.scrollLeft <= 1;
+    next.disabled = viewport.scrollLeft >= maxScroll;
+  };
+
+  const moveRail = (direction) => {
+    const cardWidth = firstCard?.getBoundingClientRect().width || viewport.clientWidth;
+    const gap = Number.parseFloat(getComputedStyle(viewport.querySelector(".design-new-arrivals__track")).columnGap) || 0;
+    viewport.scrollBy({
+      left: direction * (cardWidth + gap),
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
+  };
+
+  previous.addEventListener("click", () => moveRail(-1));
+  next.addEventListener("click", () => moveRail(1));
+  viewport.addEventListener("scroll", syncControls, { passive: true });
+  window.addEventListener("resize", syncControls);
+  syncControls();
+}
+
 if (requestedPage && !pages[requestedPage]) {
   console.warn(`Unknown playground page: ${requestedPage}. Showing homepage.`);
 }

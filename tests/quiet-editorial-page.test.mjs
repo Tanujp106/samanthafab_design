@@ -127,6 +127,26 @@ test("collection bento uses editorial assets and softened card treatment", async
   assert.match(designStyles, /font-size:\s*clamp\(17px, 1\.55vw, 22px\)/);
 });
 
+test("design page places a four-up new arrivals carousel after the collection bento", async () => {
+  const { blank } = await pageModule("playground/pages/blank.js");
+  const renderer = await source("playground/components/render.js");
+  const app = await source("playground/app.js");
+  const designStyles = await source("playground/styles/design.css");
+  const collectionIndex = blank.sections.findIndex((section) => section.type === "collection-bento");
+  const arrivals = blank.sections[collectionIndex + 1];
+
+  assert.equal(arrivals.type, "product-carousel");
+  assert.equal(arrivals.id, "design-new-arrivals");
+  assert.equal(arrivals.products.length, 8);
+  assert.equal(arrivals.viewAll.href, "/?route=new-arrivals");
+  assert.match(renderer, /case "product-carousel"/);
+  assert.match(renderer, /renderProductCarousel/);
+  assert.match(app, /data-new-arrivals-dir/);
+  assert.match(app, /scrollBy/);
+  assert.match(designStyles, /design-new-arrivals/);
+  assert.match(designStyles, /grid-auto-columns:\s*calc\(\(100% - 48px\) \/ 4\)/);
+});
+
 test("design page ends with the standard footer navigation", async () => {
   const { blank } = await pageModule("playground/pages/blank.js");
   const footer = blank.sections.at(-1);

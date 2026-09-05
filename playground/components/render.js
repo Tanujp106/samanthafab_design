@@ -366,6 +366,71 @@ function renderProducts(section, ctx) {
   return sectionShell(section, content, { className: "section--products" });
 }
 
+function productCarouselArrow(direction) {
+  const isPrevious = direction === "previous";
+  const arrow = element("button", `design-new-arrivals__arrow design-new-arrivals__arrow--${direction}`);
+  arrow.type = "button";
+  arrow.dataset.newArrivalsDir = isPrevious ? "-1" : "1";
+  arrow.setAttribute("aria-label", isPrevious ? "Previous new arrivals" : "Next new arrivals");
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.6");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = isPrevious
+    ? '<path d="M15 6l-6 6 6 6"/>'
+    : '<path d="M9 6l6 6-6 6"/>';
+  arrow.append(icon);
+  return arrow;
+}
+
+function renderProductCarousel(section, ctx) {
+  const root = element("section", "section section--new-arrivals design-new-arrivals");
+  root.id = section.id;
+  root.dataset.section = section.number;
+  root.dataset.newArrivalsCarousel = "true";
+  root.setAttribute("aria-labelledby", "design-new-arrivals-title");
+
+  const inner = element("div", "design-new-arrivals__inner");
+  const header = element("header", "design-new-arrivals__header");
+  const intro = element("div", "design-new-arrivals__intro");
+  if (section.eyebrow) intro.append(element("span", "design-new-arrivals__eyebrow", section.eyebrow));
+  const heading = element("h2", "design-new-arrivals__heading", section.title || "New arrivals");
+  heading.id = "design-new-arrivals-title";
+  intro.append(heading);
+  if (section.copy) intro.append(element("p", "design-new-arrivals__copy", section.copy));
+
+  const actions = element("div", "design-new-arrivals__actions");
+  if (section.viewAll) {
+    const viewAll = textLink(section.viewAll.label, section.viewAll.href);
+    viewAll.classList.add("design-new-arrivals__view-all");
+    actions.append(viewAll);
+  }
+  const controls = element("div", "design-new-arrivals__controls");
+  controls.setAttribute("aria-label", "Browse new arrivals");
+  controls.append(productCarouselArrow("previous"), productCarouselArrow("next"));
+  actions.append(controls);
+  header.append(intro, actions);
+
+  const viewport = element("div", "design-new-arrivals__viewport");
+  viewport.dataset.newArrivalsViewport = "true";
+  viewport.tabIndex = 0;
+  viewport.setAttribute("aria-label", "New arrivals products");
+  const track = element("div", "design-new-arrivals__track");
+  section.products.forEach((product) => {
+    track.append(renderProductCard(product, ctx, { className: "design-new-arrivals__card" }));
+  });
+  viewport.append(track);
+  inner.append(header, viewport);
+  root.append(inner);
+  return root;
+}
+
 function renderSplit(section, ctx) {
   const content = element("div", "split-grid");
   const mediaWrap = element("div", "split-media");
@@ -582,6 +647,8 @@ function renderSection(section, ctx) {
       return renderOccasion(section, ctx);
     case "products":
       return renderProducts(section, ctx);
+    case "product-carousel":
+      return renderProductCarousel(section, ctx);
     case "split":
       return renderSplit(section, ctx);
     case "price":
