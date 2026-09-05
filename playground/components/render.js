@@ -491,8 +491,12 @@ function renderFooter(section) {
 
   const grid = element("div", "footer-grid");
   const brand = element("div", "footer-brand");
+  const brandLink = element("a", "wordmark footer-wordmark");
+  brandLink.href = "/";
+  brandLink.setAttribute("aria-label", "Samantha Fab home");
+  brandLink.append(renderBrandImage());
   brand.append(
-    element("div", "wordmark", section.brand),
+    brandLink,
     element("p", "footer-brand-copy", section.brandLine),
   );
 

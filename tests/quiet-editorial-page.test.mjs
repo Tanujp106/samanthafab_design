@@ -104,3 +104,22 @@ test("design page ends with the standard footer navigation", async () => {
     14,
   );
 });
+
+test("footer brand uses the supplied Samantha logo asset", async () => {
+  const renderer = await source("playground/components/render.js");
+  const footerRenderer = renderer.slice(
+    renderer.indexOf("function renderFooter"),
+    renderer.indexOf("function renderSection"),
+  );
+
+  assert.match(footerRenderer, /footer-wordmark/);
+  assert.match(footerRenderer, /renderBrandImage\(\)/);
+});
+
+test("footer surface uses the defined Samantha plum palette", async () => {
+  const styles = await source("playground/styles/homepage.css");
+  const footerStyles = styles.slice(styles.indexOf("/* Footer */"));
+
+  assert.match(footerStyles, /\.site-footer\s*\{[\s\S]*background:\s*var\(--color-primary\)/);
+  assert.match(footerStyles, /\.footer-wordmark \.wordmark__image\s*\{[\s\S]*filter:\s*brightness\(0\) invert\(1\)/);
+});
