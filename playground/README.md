@@ -23,7 +23,7 @@ This is a design mock. It is marked `noindex`. The Shopify store remains the pro
 
 ## Agentation annotations
 
-The playground remains vanilla HTML/CSS/JS. Agentation loads automatically on local previews and on the live design host. Look for the toolbar in the bottom-right corner of `/design`.
+The playground remains vanilla HTML/CSS/JS. Agentation loads automatically on local previews and on the live design host. Look for the round control in the **bottom-right** of `/design` — it starts collapsed; click it to annotate.
 
 - Campaign hero with toolbar: `/design`
 - Disable it for one session: `?agentation=0`

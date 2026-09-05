@@ -13,13 +13,15 @@ test("Agentation loads by default on /design and the rest of the playground, inc
   const designIndex = await source("playground/design/index.html");
   const loader = await source("playground/agentation.js");
 
-  assert.match(index, /agentation\.js/);
-  assert.match(designIndex, /\.\.\/agentation\.js/);
+  assert.match(index, /src="\/agentation\.js"/);
+  assert.match(designIndex, /src="\/agentation\.js"/);
   assert.match(loader, /query\.get\("agentation"\)\s*!==\s*"0"/);
   assert.doesNotMatch(loader, /isLocalPreview/);
   assert.doesNotMatch(loader, /localHosts/);
   assert.match(loader, /https:\/\/esm\.sh\/agentation@3/);
   assert.match(loader, /reactComponents:\s*false/);
+  assert.match(loader, /agentation-session-toolbar-hidden/);
+  assert.match(loader, /samantha-agentation-visibility/);
 });
 
 test("Agentation guidance preserves the vanilla playground and documents optional MCP sync", async () => {
