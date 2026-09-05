@@ -1,0 +1,99 @@
+/* Quiet Editorial Split — isolated page study */
+
+body[data-page="quiet-editorial"] {
+  background: var(--paper);
+}
+
+body[data-page="quiet-editorial"] .site {
+  background: var(--paper);
+}
+
+body[data-page="quiet-editorial"] .utility-strip {
+  min-height: 38px;
+  padding-block: 10px;
+  letter-spacing: var(--tracking-ui);
+}
+
+body[data-page="quiet-editorial"] .primary-nav {
+  min-height: 76px;
+  padding-block: 16px;
+}
+
+body[data-page="quiet-editorial"] .wordmark {
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: var(--weight-display);
+}
+
+body[data-page="quiet-editorial"] .nav-links {
+  gap: clamp(24px, 3vw, 48px);
+}
+
+body[data-page="quiet-editorial"] .hero-grid {
+  column-gap: clamp(40px, 6vw, 96px);
+  min-height: min(76vh, 720px);
+}
+
+body[data-page="quiet-editorial"] .section--hero {
+  padding-block: clamp(32px, 4.5vw, 72px);
+  background: var(--paper);
+}
+
+body[data-page="quiet-editorial"] .hero-media {
+  min-height: clamp(520px, 70vh, 720px);
+}
+
+body[data-page="quiet-editorial"] .hero-copy {
+  gap: clamp(28px, 3.5vw, 44px);
+  padding-block: clamp(32px, 5vw, 72px);
+}
+
+body[data-page="quiet-editorial"] .hero-title {
+  max-width: 8ch;
+  font-size: clamp(62px, 6.8vw, 108px);
+}
+
+body[data-page="quiet-editorial"] .hero-body {
+  max-width: 31ch;
+}
+
+body[data-page="quiet-editorial"] .hero-copy .action-row {
+  margin-top: 4px;
+}
+
+@media (max-width: 900px) {
+  body[data-page="quiet-editorial"] .primary-nav {
+    min-height: 68px;
+  }
+
+  body[data-page="quiet-editorial"] .hero-grid {
+    min-height: 0;
+    row-gap: 32px;
+  }
+
+  body[data-page="quiet-editorial"] .hero-media {
+    min-height: 0;
+  }
+
+  body[data-page="quiet-editorial"] .hero-copy {
+    gap: 24px;
+    padding-block: 0 clamp(24px, 6vw, 48px);
+  }
+
+  body[data-page="quiet-editorial"] .hero-title {
+    font-size: var(--text-hero-mobile);
+  }
+}
+
+@media (max-width: 640px) {
+  body[data-page="quiet-editorial"] .utility-strip {
+    min-height: 36px;
+  }
+
+  body[data-page="quiet-editorial"] .section--hero {
+    padding-block: 24px 48px;
+  }
+
+  body[data-page="quiet-editorial"] .hero-media .media {
+    min-height: 420px;
+  }
+}
