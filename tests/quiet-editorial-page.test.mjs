@@ -89,6 +89,44 @@ test("final design page does not expose wireframe review scaffolding", async () 
   assert.doesNotMatch(renderer, /inner\.append\(sectionMeta\(section\), viewport, annotation\(section\)\)/);
 });
 
+test("design page contains an edge-to-edge collection bento", async () => {
+  const blankPage = await source("playground/pages/blank.js");
+  const renderer = await source("playground/components/render.js");
+  const designStyles = await source("playground/styles/design.css");
+
+  assert.match(blankPage, /type: "collection-bento"/);
+  assert.match(blankPage, /Everyday/);
+  assert.match(blankPage, /Work/);
+  assert.match(blankPage, /Festive/);
+  assert.match(blankPage, /Wedding/);
+  assert.match(blankPage, /Ready-to-wear/);
+  assert.match(renderer, /case "collection-bento"/);
+  assert.match(renderer, /renderCollectionBento/);
+  assert.match(designStyles, /\.design-collection-bento/);
+  assert.match(designStyles, /design-collection-bento__scrim/);
+});
+
+test("collection bento uses editorial assets and softened card treatment", async () => {
+  const { blank } = await pageModule("playground/pages/blank.js");
+  const designStyles = await source("playground/styles/design.css");
+  const collection = blank.sections.find((section) => section.type === "collection-bento");
+
+  assert.deepEqual(
+    collection.items.map((item) => item.media.src),
+    [
+      "/assets/collection-everyday-editorial.png",
+      "/assets/collection-work-editorial.png",
+      "/assets/collection-festive-editorial.png",
+      "/assets/collection-wedding-editorial.png",
+      "/assets/collection-ready-to-wear-editorial.png",
+    ],
+  );
+  assert.match(designStyles, /-webkit-backdrop-filter:\s*blur\(4px\)/);
+  assert.match(designStyles, /backdrop-filter:\s*blur\(4px\)/);
+  assert.match(designStyles, /border:\s*1px solid color-mix\(in srgb, var\(--color-cream\) 32%, transparent\)/);
+  assert.match(designStyles, /font-size:\s*clamp\(17px, 1\.55vw, 22px\)/);
+});
+
 test("design page ends with the standard footer navigation", async () => {
   const { blank } = await pageModule("playground/pages/blank.js");
   const footer = blank.sections.at(-1);

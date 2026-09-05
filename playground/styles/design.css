@@ -394,6 +394,144 @@ body[data-page="blank"] .campaign-hero__stage :focus-visible {
   outline-color: var(--cream);
 }
 
+/* —— Shop by collection: 2+3 bento aligned to campaign gutters —— */
+
+body[data-page="blank"] .design-collection-bento {
+  padding: 80px 24px;
+  border-bottom: 0;
+  background: var(--white);
+}
+
+body[data-page="blank"] .design-collection-bento__heading {
+  margin: 0 0 28px;
+  color: var(--ink);
+  font-family: "Sprat Campaign", var(--font-display);
+  font-size: clamp(28px, 3.2vw, 42px);
+  font-weight: 400;
+  font-variation-settings: "wdth" 122, "wght" 100;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  text-align: center;
+  text-wrap: balance;
+}
+
+body[data-page="blank"] .design-collection-bento__grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+body[data-page="blank"] .design-collection-bento__tile {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  min-height: clamp(260px, 38vw, 420px);
+  border: 1px solid color-mix(in srgb, var(--color-cream) 32%, transparent);
+  border-radius: 16px;
+  text-decoration: none;
+  color: var(--cream);
+  background: #160d10;
+}
+
+body[data-page="blank"] .design-collection-bento__tile:nth-child(1),
+body[data-page="blank"] .design-collection-bento__tile:nth-child(2) {
+  grid-column: span 3;
+}
+
+body[data-page="blank"] .design-collection-bento__tile:nth-child(n + 3) {
+  grid-column: span 2;
+  min-height: clamp(220px, 32vw, 360px);
+}
+
+body[data-page="blank"] .design-collection-bento__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  margin: 0;
+  overflow: hidden;
+}
+
+body[data-page="blank"] .design-collection-bento__media .media__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center center;
+  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body[data-page="blank"] .design-collection-bento__tile:hover .media__frame,
+body[data-page="blank"] .design-collection-bento__tile:focus-visible .media__frame {
+  transform: scale(1.03);
+}
+
+body[data-page="blank"] .design-collection-bento__scrim {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 52%;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(18, 10, 12, 0.78) 0%,
+    rgba(18, 10, 12, 0.34) 42%,
+    transparent 100%
+  );
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 38%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 0%, #000 38%, transparent 100%);
+}
+
+body[data-page="blank"] .design-collection-bento__label {
+  position: absolute;
+  z-index: 2;
+  right: auto;
+  bottom: clamp(18px, 2.4vw, 26px);
+  left: clamp(18px, 2.4vw, 26px);
+  margin: 0;
+  color: var(--cream);
+  font-family: "Sprat Campaign", var(--font-display);
+  font-size: clamp(17px, 1.55vw, 22px);
+  font-weight: 400;
+  font-variation-settings: "wdth" 122, "wght" 100;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  text-shadow: 0 1px 14px rgba(18, 10, 12, 0.35);
+}
+
+body[data-page="blank"] .design-collection-bento__arrow {
+  position: absolute;
+  z-index: 2;
+  right: clamp(18px, 2.4vw, 26px);
+  bottom: clamp(20px, 2.6vw, 28px);
+  width: 22px;
+  height: 22px;
+  color: var(--cream);
+  opacity: 0.92;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
+}
+
+body[data-page="blank"] .design-collection-bento__tile:hover .design-collection-bento__arrow,
+body[data-page="blank"] .design-collection-bento__tile:focus-visible .design-collection-bento__arrow {
+  transform: translateX(3px);
+  opacity: 1;
+}
+
+body[data-page="blank"] .design-collection-bento__tile:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 3px;
+  outline-color: var(--color-primary);
+}
+
 @media (prefers-reduced-motion: reduce) {
   body[data-page="blank"] .campaign-slide,
   body[data-page="blank"] .campaign-hero__dot {
@@ -415,6 +553,24 @@ body[data-page="blank"] .campaign-hero__stage :focus-visible {
   body[data-page="blank"] .design-usp-strip__label::after {
     animation: none;
     content: none;
+  }
+
+  body[data-page="blank"] .design-collection-bento__media .media__frame {
+    transition: none;
+  }
+
+  body[data-page="blank"] .design-collection-bento__tile:hover .media__frame,
+  body[data-page="blank"] .design-collection-bento__tile:focus-visible .media__frame {
+    transform: none;
+  }
+
+  body[data-page="blank"] .design-collection-bento__arrow {
+    transition: none;
+  }
+
+  body[data-page="blank"] .design-collection-bento__tile:hover .design-collection-bento__arrow,
+  body[data-page="blank"] .design-collection-bento__tile:focus-visible .design-collection-bento__arrow {
+    transform: none;
   }
 }
 
@@ -455,6 +611,25 @@ body[data-page="blank"] .campaign-hero__stage :focus-visible {
 
   body[data-page="blank"] .primary-nav {
     padding-inline: 16px;
+  }
+
+  body[data-page="blank"] .design-collection-bento {
+    padding: 48px 16px;
+  }
+
+  body[data-page="blank"] .design-collection-bento__grid {
+    grid-template-columns: 1fr;
+  }
+
+  body[data-page="blank"] .design-collection-bento__tile {
+    border-radius: 12px;
+  }
+
+  body[data-page="blank"] .design-collection-bento__tile:nth-child(1),
+  body[data-page="blank"] .design-collection-bento__tile:nth-child(2),
+  body[data-page="blank"] .design-collection-bento__tile:nth-child(n + 3) {
+    grid-column: 1;
+    min-height: min(62vw, 320px);
   }
 
   body[data-page="blank"] .wordmark__image {

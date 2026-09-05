@@ -90,8 +90,69 @@ export const blank = {
       ],
     },
     {
-      id: "footer",
+      id: "design-shop-by-collection",
       number: "02",
+      name: "Shop by Collection",
+      type: "collection-bento",
+      title: "Shop by collection",
+      hideReviewNotes: true,
+      annotation: "Edge-to-edge 2+3 occasion bento. Image fill, bottom scrim, bottom-left labels.",
+      items: [
+        {
+          title: "Everyday",
+          href: "/?route=occasion-everyday",
+          media: {
+            src: "/assets/collection-everyday-editorial.png",
+            alt: "Woman in a printed saree moving through a sunlit heritage courtyard",
+            tone: "ochre",
+            position: "center center",
+          },
+        },
+        {
+          title: "Work",
+          href: "/?route=occasion-work",
+          media: {
+            src: "/assets/collection-work-editorial.png",
+            alt: "Woman in an indigo and olive handloom saree in a textile studio",
+            tone: "indigo",
+            position: "center center",
+          },
+        },
+        {
+          title: "Festive",
+          href: "/?route=occasion-festive",
+          media: {
+            src: "/assets/collection-festive-editorial.png",
+            alt: "Woman arranging a marigold garland in a rust silk saree",
+            tone: "rust",
+            position: "center center",
+          },
+        },
+        {
+          title: "Wedding",
+          href: "/?route=occasion-wedding",
+          media: {
+            src: "/assets/collection-wedding-editorial.png",
+            alt: "Woman adjusting a plum silk saree in a heritage interior",
+            tone: "moss",
+            position: "center center",
+          },
+        },
+        {
+          title: "Ready-to-wear",
+          href: "/?route=occasion-rtw",
+          media: {
+            src: "/assets/collection-ready-to-wear-editorial.png",
+            alt: "Woman walking through a gallery in a modern ready-to-wear saree",
+            tone: "paper",
+            position: "center center",
+          },
+        },
+      ],
+    },
+    {
+      id: "footer",
+      number: "03",
       name: "Footer",
       type: "footer",
       annotation:

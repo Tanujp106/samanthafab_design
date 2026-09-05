@@ -178,6 +178,49 @@ function renderUspStrip(section) {
   return root;
 }
 
+function renderCollectionBento(section, ctx) {
+  const root = element("section", "section section--collection-bento design-collection-bento");
+  root.id = section.id;
+  root.dataset.section = section.number;
+  root.setAttribute("aria-labelledby", "design-shop-by-collection-title");
+
+  const heading = element("h2", "design-collection-bento__heading", section.title || "Shop by collection");
+  heading.id = "design-shop-by-collection-title";
+
+  const grid = element("div", "design-collection-bento__grid");
+  section.items.forEach((item) => {
+    const tile = element("a", "design-collection-bento__tile");
+    tile.href = item.href;
+
+    const arrow = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    arrow.classList.add("design-collection-bento__arrow");
+    arrow.setAttribute("viewBox", "0 0 24 24");
+    arrow.setAttribute("aria-hidden", "true");
+    arrow.setAttribute("focusable", "false");
+    arrow.setAttribute("fill", "none");
+    arrow.setAttribute("stroke", "currentColor");
+    arrow.setAttribute("stroke-width", "1.5");
+    arrow.setAttribute("stroke-linecap", "round");
+    arrow.setAttribute("stroke-linejoin", "round");
+    arrow.innerHTML = '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>';
+
+    tile.append(
+      renderMedia(item.media, {
+        fill: true,
+        notesEnabled: ctx.notesEnabled,
+        className: "design-collection-bento__media",
+      }),
+      element("span", "design-collection-bento__scrim"),
+      element("span", "design-collection-bento__label", item.title),
+      arrow,
+    );
+    grid.append(tile);
+  });
+
+  root.append(heading, grid);
+  return root;
+}
+
 function renderCampaignHero(section, ctx) {
   const stage = element("div", "campaign-hero__stage");
   stage.setAttribute("aria-roledescription", "carousel");
@@ -529,6 +572,8 @@ function renderSection(section, ctx) {
       return renderHeader(section);
     case "usp-strip":
       return renderUspStrip(section);
+    case "collection-bento":
+      return renderCollectionBento(section, ctx);
     case "campaign-hero":
       return renderCampaignHero(section, ctx);
     case "hero":
