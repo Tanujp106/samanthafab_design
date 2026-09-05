@@ -8,6 +8,12 @@ async function source(path) {
   return readFile(new URL(path, root), "utf8");
 }
 
+async function pageModule(path) {
+  const contents = await source(path);
+  const encoded = Buffer.from(contents).toString("base64");
+  return import(`data:text/javascript;base64,${encoded}`);
+}
+
 test("quiet editorial page is registered without changing the homepage", async () => {
   const pageIndex = await source("playground/pages/index.js");
   const homepage = await source("playground/pages/homepage.js");
@@ -81,4 +87,20 @@ test("final design page does not expose wireframe review scaffolding", async () 
   assert.match(app, /page\.key !== "blank"/);
   assert.match(renderer, /inner\.append\(viewport\)/);
   assert.doesNotMatch(renderer, /inner\.append\(sectionMeta\(section\), viewport, annotation\(section\)\)/);
+});
+
+test("design page ends with the standard footer navigation", async () => {
+  const { blank } = await pageModule("playground/pages/blank.js");
+  const footer = blank.sections.at(-1);
+
+  assert.equal(footer.id, "footer");
+  assert.equal(footer.type, "footer");
+  assert.deepEqual(
+    footer.columns.map((column) => column.heading),
+    ["Shop", "Help", "About", "Stay in touch"],
+  );
+  assert.equal(
+    footer.columns.reduce((count, column) => count + column.links.length, 0),
+    14,
+  );
 });

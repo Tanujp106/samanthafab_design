@@ -89,5 +89,52 @@ export const blank = {
         },
       ],
     },
+    {
+      id: "footer",
+      number: "02",
+      name: "Footer",
+      type: "footer",
+      annotation:
+        "Close the trust loop with shipping, returns, COD, WhatsApp, care and contact details.",
+      brand: "SAMANTHA FAB",
+      brandLine: "Modern drapes, expressive prints and everyday ease.",
+      columns: [
+        {
+          heading: "Shop",
+          links: [
+            { label: "New arrivals", href: "/?route=new-arrivals" },
+            { label: "Sarees", href: "/?route=sarees" },
+            { label: "Ready-to-wear", href: "/?route=ready-to-wear" },
+            { label: "Sale", href: "/?route=sale" },
+          ],
+        },
+        {
+          heading: "Help",
+          links: [
+            { label: "Shipping", href: "/?route=shipping" },
+            { label: "Returns", href: "/?route=returns" },
+            { label: "COD", href: "/?route=cod" },
+            { label: "Care guide", href: "/?route=care" },
+          ],
+        },
+        {
+          heading: "About",
+          links: [
+            { label: "Our story", href: "/?route=story" },
+            { label: "Journal", href: "/?route=journal" },
+            { label: "Contact", href: "/?route=contact" },
+          ],
+        },
+        {
+          heading: "Stay in touch",
+          links: [
+            { label: "Instagram", href: "/?route=instagram" },
+            { label: "WhatsApp", href: "https://wa.me/" },
+            { label: "Email", href: "mailto:hello@samanthafab.example" },
+          ],
+        },
+      ],
+      copyright: "© Samantha Fab. Playground concept.",
+    },
   ],
 };
