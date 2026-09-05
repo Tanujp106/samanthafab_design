@@ -8,7 +8,7 @@ async function source(path) {
   return readFile(new URL(path, root), "utf8");
 }
 
-test("Agentation loads by default on local previews and stays off elsewhere", async () => {
+test("Agentation loads by default on /design and the rest of the playground, including the live host", async () => {
   const index = await source("playground/index.html");
   const designIndex = await source("playground/design/index.html");
   const loader = await source("playground/agentation.js");
@@ -16,7 +16,8 @@ test("Agentation loads by default on local previews and stays off elsewhere", as
   assert.match(index, /agentation\.js/);
   assert.match(designIndex, /\.\.\/agentation\.js/);
   assert.match(loader, /query\.get\("agentation"\)\s*!==\s*"0"/);
-  assert.match(loader, /localhost|127\.0\.0\.1/);
+  assert.doesNotMatch(loader, /isLocalPreview/);
+  assert.doesNotMatch(loader, /localHosts/);
   assert.match(loader, /https:\/\/esm\.sh\/agentation@3/);
   assert.match(loader, /reactComponents:\s*false/);
 });
@@ -29,4 +30,7 @@ test("Agentation guidance preserves the vanilla playground and documents optiona
   assert.match(readme, /agentation=0/);
   assert.match(readme, /agentation-mcp server/);
   assert.match(readme, /vanilla/i);
+  assert.match(readme, /\/design/);
+  assert.doesNotMatch(readme, /never runs on the deployed/i);
+  assert.doesNotMatch(readme, /stays disabled on the deployed/i);
 });

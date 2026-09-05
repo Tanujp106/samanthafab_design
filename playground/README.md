@@ -16,20 +16,20 @@ Serve the `playground/` folder (port `4173` if already running):
 Live on Vercel:
 
 - Clean: https://playground-ten-dun.vercel.app/
+- Campaign hero: https://playground-ten-dun.vercel.app/design
 - Notes: https://playground-ten-dun.vercel.app/?notes=1
 
 This is a design mock. It is marked `noindex`. The Shopify store remains the production site.
 
 ## Agentation annotations
 
-The playground remains vanilla HTML/CSS/JS. Agentation loads automatically in a local browser preview and stays disabled on the deployed client-facing surface:
+The playground remains vanilla HTML/CSS/JS. Agentation loads automatically on local previews and on the live design host. Look for the toolbar in the bottom-right corner of `/design`.
 
-- Basic toolbar: `http://127.0.0.1:4173/`
-- Campaign hero with toolbar: `http://127.0.0.1:4173/design`
-- Disable it for one local session: `http://127.0.0.1:4173/?agentation=0`
-- Real-time MCP sync: start `npx agentation-mcp server`, then open `http://127.0.0.1:4173/?agentationSync=1`
+- Campaign hero with toolbar: `/design`
+- Disable it for one session: `?agentation=0`
+- Real-time MCP sync (local only): start `npx agentation-mcp server`, then open `?agentationSync=1`
 
-Without MCP sync, use the toolbar's copy action and paste the structured annotations into your coding agent. The loader reports DOM selectors and computed styles, and never runs on the deployed client-facing surface.
+Without MCP sync, use the toolbar's copy action and paste the structured annotations into your coding agent. The loader reports DOM selectors and computed styles. The Shopify store is unchanged.
 
 ## Structure
 

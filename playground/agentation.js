@@ -1,7 +1,5 @@
 const query = new URLSearchParams(window.location.search);
-const localHosts = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
-const isLocalPreview = localHosts.has(window.location.hostname);
-const isEnabled = isLocalPreview && query.get("agentation") !== "0";
+const isEnabled = query.get("agentation") !== "0";
 
 if (isEnabled && !globalThis.__samanthaAgentationLoaded) {
   globalThis.__samanthaAgentationLoaded = true;
@@ -36,6 +34,6 @@ if (isEnabled && !globalThis.__samanthaAgentationLoaded) {
 
   mountAgentation().catch((error) => {
     globalThis.__samanthaAgentationLoaded = false;
-    console.warn("Agentation could not load in this local preview.", error);
+    console.warn("Agentation could not load on this page.", error);
   });
 }
