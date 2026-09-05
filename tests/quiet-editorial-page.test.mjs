@@ -121,10 +121,14 @@ test("collection bento uses editorial assets and softened card treatment", async
       "/assets/collection-ready-to-wear-editorial.png",
     ],
   );
-  assert.match(designStyles, /-webkit-backdrop-filter:\s*blur\(4px\)/);
-  assert.match(designStyles, /backdrop-filter:\s*blur\(4px\)/);
+  assert.match(designStyles, /-webkit-backdrop-filter:\s*blur\(2px\)/);
+  assert.match(designStyles, /backdrop-filter:\s*blur\(2px\)/);
   assert.match(designStyles, /border:\s*1px solid color-mix\(in srgb, var\(--color-cream\) 32%, transparent\)/);
   assert.match(designStyles, /font-size:\s*clamp\(17px, 1\.55vw, 22px\)/);
+  assert.equal(collection.copy, "Start with the moment. The saree follows.");
+  assert.equal(collection.items[0].copy, "Starting with ₹1,299");
+  assert.equal(collection.items[0].media.position, "center top");
+  assert.equal(collection.items[1].media.position, "center top");
 });
 
 test("design page places a four-up new arrivals carousel after the collection bento", async () => {
@@ -146,15 +150,50 @@ test("design page places a four-up new arrivals carousel after the collection be
   assert.match(designStyles, /design-new-arrivals/);
   assert.match(designStyles, /grid-template-columns:\s*repeat\(8,\s*calc\(\(100% - 48px\) \/ 4\)\)/);
   assert.match(designStyles, /design-new-arrivals__track\s*\{[\s\S]*width:\s*100%/);
-  assert.match(designStyles, /design-new-arrivals__heading\s*\{[\s\S]*font-family:\s*var\(--font-display\)/);
-  assert.match(designStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*font-family:\s*var\(--font-display\)/);
+  assert.match(designStyles, /design-new-arrivals__heading\s*\{[\s\S]*font-family:\s*"Sprat Campaign",\s*var\(--font-display\)/);
+  assert.match(designStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*font-family:\s*"Sprat Campaign",\s*var\(--font-display\)/);
   assert.match(designStyles, /design-new-arrivals__card \.product-meta\s*\{[\s\S]*font-family:\s*var\(--font-body\)/);
-  assert.match(designStyles, /design-new-arrivals\s*\{[\s\S]*background:\s*var\(--cream\)/);
-  assert.match(designStyles, /design-new-arrivals__heading\s*\{[\s\S]*color:\s*var\(--ink\)/);
-  assert.match(designStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*color:\s*var\(--ink\)/);
+  assert.match(designStyles, /design-new-arrivals\s*\{[\s\S]*background:\s*var\(--white\)/);
+  assert.match(designStyles, /design-new-arrivals__heading\s*\{[\s\S]*color:\s*var\(--color-primary-800\)/);
+  assert.match(designStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*color:\s*var\(--color-primary-800\)/);
   assert.match(designStyles, /design-new-arrivals__inner\s*\{[\s\S]*width:\s*min\(100%,\s*var\(--content-max\)\)[\s\S]*margin-inline:\s*auto/);
   assert.match(designStyles, /design-new-arrivals__card \.media\s*\{[\s\S]*margin:\s*0/);
   assert.match(designStyles, /design-new-arrivals__card \.product-card__body\s*\{[\s\S]*text-align:\s*left/);
+});
+
+test("new arrivals use the defined Samantha font tokens", async () => {
+  const designStyles = await source("playground/styles/design.css");
+  const start = designStyles.indexOf("/* —— New arrivals");
+  const end = designStyles.indexOf("/* —— Ready-to-wear");
+  const newArrivalsStyles = designStyles.slice(start, end);
+
+  assert.match(newArrivalsStyles, /design-new-arrivals__heading\s*\{[\s\S]*font-family:\s*"Sprat Campaign",\s*var\(--font-display\)[\s\S]*font-weight:\s*400[\s\S]*font-variation-settings:\s*"wdth" 122,\s*"wght" 100/);
+  assert.match(newArrivalsStyles, /design-new-arrivals__copy\s*\{[\s\S]*font-family:\s*var\(--font-body\)[\s\S]*font-weight:\s*var\(--weight-body\)/);
+  assert.match(newArrivalsStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*font-family:\s*"Sprat Campaign",\s*var\(--font-display\)[\s\S]*font-weight:\s*400/);
+  assert.match(newArrivalsStyles, /design-new-arrivals__card \.product-meta\s*\{[\s\S]*font-family:\s*var\(--font-body\)[\s\S]*font-weight:\s*var\(--weight-body\)/);
+  assert.match(newArrivalsStyles, /design-new-arrivals__card \.product-price\s*\{[\s\S]*font-family:\s*var\(--font-body\)[\s\S]*font-weight:\s*var\(--weight-ui\)/);
+  assert.doesNotMatch(newArrivalsStyles, /font-weight:\s*300/);
+});
+
+test("design page places a ready-to-wear promo banner after new arrivals", async () => {
+  const { blank } = await pageModule("playground/pages/blank.js");
+  const renderer = await source("playground/components/render.js");
+  const designStyles = await source("playground/styles/design.css");
+  const arrivalsIndex = blank.sections.findIndex((section) => section.id === "design-new-arrivals");
+  const banner = blank.sections[arrivalsIndex + 1];
+
+  assert.equal(banner.type, "feature-banner");
+  assert.equal(banner.id, "design-ready-to-wear-banner");
+  assert.equal(banner.eyebrow, "The drape, made easy");
+  assert.equal(banner.title, "Ready to wear");
+  assert.equal(banner.copy, "Pre-stitched sarees with pockets — easy on, easy all day.");
+  assert.equal(banner.action.label, "Shop ready-to-wear");
+  assert.equal(banner.action.href, "/?route=ready-to-wear");
+  assert.equal(banner.media.length, 4);
+  assert.match(renderer, /case "feature-banner"/);
+  assert.match(renderer, /renderFeatureBanner/);
+  assert.match(designStyles, /\.design-feature-banner/);
+  assert.match(designStyles, /design-feature-banner__collage/);
 });
 
 test("design page ends with the standard footer navigation", async () => {

@@ -95,31 +95,35 @@ export const blank = {
       name: "Shop by Collection",
       type: "collection-bento",
       title: "Shop by collection",
+      copy: "Start with the moment. The saree follows.",
       hideReviewNotes: true,
       annotation: "Edge-to-edge 2+3 occasion bento. Image fill, bottom scrim, bottom-left labels.",
       items: [
         {
           title: "Everyday",
+          copy: "Starting with ₹1,299",
           href: "/?route=occasion-everyday",
           media: {
             src: "/assets/collection-everyday-editorial.png",
             alt: "Woman in a printed saree moving through a sunlit heritage courtyard",
             tone: "ochre",
-            position: "center center",
+            position: "center top",
           },
         },
         {
           title: "Work",
+          copy: "Starting with ₹1,899",
           href: "/?route=occasion-work",
           media: {
             src: "/assets/collection-work-editorial.png",
             alt: "Woman in an indigo and olive handloom saree in a textile studio",
             tone: "indigo",
-            position: "center center",
+            position: "center top",
           },
         },
         {
           title: "Festive",
+          copy: "Starting with ₹1,999",
           href: "/?route=occasion-festive",
           media: {
             src: "/assets/collection-festive-editorial.png",
@@ -130,6 +134,7 @@ export const blank = {
         },
         {
           title: "Wedding",
+          copy: "Starting with ₹2,499",
           href: "/?route=occasion-wedding",
           media: {
             src: "/assets/collection-wedding-editorial.png",
@@ -140,6 +145,7 @@ export const blank = {
         },
         {
           title: "Ready-to-wear",
+          copy: "Starting with ₹1,699",
           href: "/?route=occasion-rtw",
           media: {
             src: "/assets/collection-ready-to-wear-editorial.png",
@@ -159,7 +165,7 @@ export const blank = {
       eyebrow: "Just in",
       title: "New arrivals",
       copy: "Fresh drapes and easy pieces, newly in the studio.",
-      viewAll: { label: "View all new arrivals", href: "/?route=new-arrivals" },
+      viewAll: { label: "View all", href: "/?route=new-arrivals" },
       products: [
         {
           name: "Sage green handblock saree",
@@ -264,8 +270,45 @@ export const blank = {
       ],
     },
     {
-      id: "footer",
+      id: "design-ready-to-wear-banner",
       number: "04",
+      name: "Ready to Wear Banner",
+      type: "feature-banner",
+      hideReviewNotes: true,
+      eyebrow: "The drape, made easy",
+      title: "Ready to wear",
+      copy: "Pre-stitched sarees with pockets — easy on, easy all day.",
+      action: { label: "Shop ready-to-wear", href: "/?route=ready-to-wear" },
+      media: [
+        {
+          src: "/assets/collection-ready-to-wear-editorial.png",
+          alt: "Woman walking through a gallery in a modern ready-to-wear saree",
+          tone: "paper",
+          position: "center top",
+        },
+        {
+          src: "/assets/design-hero-terracotta.png",
+          alt: "Detail of a draped saree in a warm studio setting",
+          tone: "ochre",
+          position: "center center",
+        },
+        {
+          src: "/assets/collection-everyday-editorial.png",
+          alt: "Woman in a printed saree moving through a sunlit courtyard",
+          tone: "ochre",
+          position: "center top",
+        },
+        {
+          src: "/assets/collection-festive-editorial.png",
+          alt: "Woman arranging a marigold garland in a rust silk saree",
+          tone: "rust",
+          position: "center center",
+        },
+      ],
+    },
+    {
+      id: "footer",
+      number: "05",
       name: "Footer",
       type: "footer",
       annotation:

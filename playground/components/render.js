@@ -29,6 +29,29 @@ function button(label, href, className = "button button--fill") {
   return link;
 }
 
+function campaignArrow(direction) {
+  const isPrev = direction === "prev";
+  const buttonNode = element("button", `campaign-hero__arrow campaign-hero__arrow--${direction}`);
+  buttonNode.type = "button";
+  buttonNode.dataset.campaignDir = isPrev ? "-1" : "1";
+  buttonNode.setAttribute("aria-label", isPrev ? "Previous campaign" : "Next campaign");
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.6");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = isPrev
+    ? '<path d="M15 6l-6 6 6 6"/>'
+    : '<path d="M9 6l6 6-6 6"/>';
+  buttonNode.append(icon);
+  return buttonNode;
+}
+
 function sectionMeta(section) {
   const meta = element("div", "section-meta review-only");
   meta.append(
@@ -184,13 +207,24 @@ function renderCollectionBento(section, ctx) {
   root.dataset.section = section.number;
   root.setAttribute("aria-labelledby", "design-shop-by-collection-title");
 
+  const header = element("header", "design-collection-bento__header");
   const heading = element("h2", "design-collection-bento__heading", section.title || "Shop by collection");
   heading.id = "design-shop-by-collection-title";
+  header.append(heading);
+  if (section.copy) {
+    header.append(element("p", "design-collection-bento__lede", section.copy));
+  }
 
   const grid = element("div", "design-collection-bento__grid");
   section.items.forEach((item) => {
     const tile = element("a", "design-collection-bento__tile");
     tile.href = item.href;
+
+    const caption = element("span", "design-collection-bento__caption");
+    caption.append(element("span", "design-collection-bento__label", item.title));
+    if (item.copy) {
+      caption.append(element("span", "design-collection-bento__subcopy", item.copy));
+    }
 
     const arrow = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     arrow.classList.add("design-collection-bento__arrow");
@@ -204,6 +238,9 @@ function renderCollectionBento(section, ctx) {
     arrow.setAttribute("stroke-linejoin", "round");
     arrow.innerHTML = '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>';
 
+    const meta = element("span", "design-collection-bento__meta");
+    meta.append(caption, arrow);
+
     tile.append(
       renderMedia(item.media, {
         fill: true,
@@ -211,13 +248,12 @@ function renderCollectionBento(section, ctx) {
         className: "design-collection-bento__media",
       }),
       element("span", "design-collection-bento__scrim"),
-      element("span", "design-collection-bento__label", item.title),
-      arrow,
+      meta,
     );
     grid.append(tile);
   });
 
-  root.append(heading, grid);
+  root.append(header, grid);
   return root;
 }
 
@@ -276,7 +312,7 @@ function renderCampaignHero(section, ctx) {
   announcer.setAttribute("aria-live", "polite");
   announcer.textContent = section.slides[0].title;
 
-  stage.append(slides, footer, announcer);
+  stage.append(slides, campaignArrow("prev"), campaignArrow("next"), footer, announcer);
   stage.dataset.interval = String(section.interval || 7000);
 
   const root = element("section", "section section--campaign-hero");
@@ -427,6 +463,47 @@ function renderProductCarousel(section, ctx) {
   });
   viewport.append(track);
   inner.append(header, viewport);
+  root.append(inner);
+  return root;
+}
+
+function renderFeatureBanner(section, ctx) {
+  const root = element("section", "section section--feature-banner design-feature-banner");
+  root.id = section.id;
+  root.dataset.section = section.number;
+  root.setAttribute("aria-labelledby", "design-ready-to-wear-banner-title");
+
+  const inner = element("div", "design-feature-banner__inner");
+  const copy = element("div", "design-feature-banner__copy");
+  if (section.eyebrow) {
+    copy.append(element("p", "design-feature-banner__eyebrow", section.eyebrow));
+  }
+  const heading = element("h2", "design-feature-banner__title", section.title || "Ready to wear");
+  heading.id = "design-ready-to-wear-banner-title";
+  copy.append(heading);
+  if (section.action) {
+    copy.append(
+      button(section.action.label, section.action.href, "button button--fill design-feature-banner__cta"),
+    );
+  }
+  if (section.copy) {
+    copy.append(element("p", "design-feature-banner__lede", section.copy));
+  }
+
+  const collage = element("div", "design-feature-banner__collage");
+  (section.media || []).forEach((item, index) => {
+    const cell = element("div", `design-feature-banner__cell design-feature-banner__cell--${index + 1}`);
+    cell.append(
+      renderMedia(item, {
+        fill: true,
+        notesEnabled: ctx.notesEnabled,
+        className: "design-feature-banner__media",
+      }),
+    );
+    collage.append(cell);
+  });
+
+  inner.append(copy, collage);
   root.append(inner);
   return root;
 }
@@ -649,6 +726,8 @@ function renderSection(section, ctx) {
       return renderProducts(section, ctx);
     case "product-carousel":
       return renderProductCarousel(section, ctx);
+    case "feature-banner":
+      return renderFeatureBanner(section, ctx);
     case "split":
       return renderSplit(section, ctx);
     case "price":

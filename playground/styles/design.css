@@ -394,6 +394,57 @@ body[data-page="blank"] .campaign-hero__stage :focus-visible {
   outline-color: var(--cream);
 }
 
+body[data-page="blank"] .campaign-hero__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--color-primary-800);
+  box-shadow: 0 10px 28px rgba(18, 10, 12, 0.2);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color 180ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body[data-page="blank"] .campaign-hero__arrow svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+body[data-page="blank"] .campaign-hero__arrow--prev {
+  left: 20px;
+}
+
+body[data-page="blank"] .campaign-hero__arrow--next {
+  right: 20px;
+}
+
+body[data-page="blank"] .campaign-hero__arrow:hover {
+  background: var(--cream);
+}
+
+body[data-page="blank"] .campaign-hero__arrow--prev:hover {
+  transform: translate(-2px, -50%);
+}
+
+body[data-page="blank"] .campaign-hero__arrow--next:hover {
+  transform: translate(2px, -50%);
+}
+
+body[data-page="blank"] .campaign-hero__arrow:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 3px;
+  outline-color: var(--cream);
+}
+
 /* —— Shop by collection: 2+3 bento aligned to campaign gutters —— */
 
 body[data-page="blank"] .design-collection-bento {
@@ -402,17 +453,37 @@ body[data-page="blank"] .design-collection-bento {
   background: var(--white);
 }
 
+body[data-page="blank"] .design-collection-bento__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 48px;
+  text-align: center;
+}
+
 body[data-page="blank"] .design-collection-bento__heading {
-  margin: 0 0 28px;
-  color: var(--ink);
+  margin: 0;
+  color: var(--color-primary-800);
   font-family: "Sprat Campaign", var(--font-display);
   font-size: clamp(28px, 3.2vw, 42px);
   font-weight: 400;
   font-variation-settings: "wdth" 122, "wght" 100;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  text-align: center;
   text-wrap: balance;
+}
+
+body[data-page="blank"] .design-collection-bento__lede {
+  max-width: 36ch;
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  line-height: var(--leading-copy);
+  text-wrap: pretty;
 }
 
 body[data-page="blank"] .design-collection-bento__grid {
@@ -426,7 +497,7 @@ body[data-page="blank"] .design-collection-bento__tile {
   position: relative;
   display: block;
   overflow: hidden;
-  min-height: clamp(260px, 38vw, 420px);
+  min-height: clamp(200px, 24vw, 300px);
   border: 1px solid color-mix(in srgb, var(--color-cream) 32%, transparent);
   border-radius: 16px;
   text-decoration: none;
@@ -441,7 +512,7 @@ body[data-page="blank"] .design-collection-bento__tile:nth-child(2) {
 
 body[data-page="blank"] .design-collection-bento__tile:nth-child(n + 3) {
   grid-column: span 2;
-  min-height: clamp(220px, 32vw, 360px);
+  min-height: clamp(168px, 20vw, 240px);
 }
 
 body[data-page="blank"] .design-collection-bento__media {
@@ -466,6 +537,11 @@ body[data-page="blank"] .design-collection-bento__media .media__frame {
   transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+body[data-page="blank"] .design-collection-bento__tile:nth-child(1) .media__frame,
+body[data-page="blank"] .design-collection-bento__tile:nth-child(2) .media__frame {
+  object-position: center top;
+}
+
 body[data-page="blank"] .design-collection-bento__tile:hover .media__frame,
 body[data-page="blank"] .design-collection-bento__tile:focus-visible .media__frame {
   transform: scale(1.03);
@@ -477,26 +553,39 @@ body[data-page="blank"] .design-collection-bento__scrim {
   right: 0;
   bottom: 0;
   left: 0;
-  height: 52%;
+  height: 46%;
   pointer-events: none;
   background: linear-gradient(
     to top,
-    rgba(18, 10, 12, 0.78) 0%,
-    rgba(18, 10, 12, 0.34) 42%,
+    rgba(18, 10, 12, 0.42) 0%,
+    rgba(18, 10, 12, 0.16) 38%,
     transparent 100%
   );
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 38%, transparent 100%);
-  mask-image: linear-gradient(to top, #000 0%, #000 38%, transparent 100%);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+body[data-page="blank"] .design-collection-bento__meta {
+  position: absolute;
+  z-index: 2;
+  right: clamp(18px, 2.4vw, 26px);
+  bottom: clamp(16px, 2.2vw, 24px);
+  left: clamp(18px, 2.4vw, 26px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body[data-page="blank"] .design-collection-bento__caption {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
 }
 
 body[data-page="blank"] .design-collection-bento__label {
-  position: absolute;
-  z-index: 2;
-  right: auto;
-  bottom: clamp(18px, 2.4vw, 26px);
-  left: clamp(18px, 2.4vw, 26px);
   margin: 0;
   color: var(--cream);
   font-family: "Sprat Campaign", var(--font-display);
@@ -508,13 +597,22 @@ body[data-page="blank"] .design-collection-bento__label {
   text-shadow: 0 1px 14px rgba(18, 10, 12, 0.35);
 }
 
+body[data-page="blank"] .design-collection-bento__subcopy {
+  margin: 0;
+  color: rgba(255, 253, 249, 0.82);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: var(--weight-ui);
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  text-shadow: 0 1px 12px rgba(18, 10, 12, 0.3);
+}
+
 body[data-page="blank"] .design-collection-bento__arrow {
-  position: absolute;
-  z-index: 2;
-  right: clamp(18px, 2.4vw, 26px);
-  bottom: clamp(20px, 2.6vw, 28px);
+  flex-shrink: 0;
   width: 22px;
   height: 22px;
+  margin-bottom: 2px;
   color: var(--cream);
   opacity: 0.92;
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
@@ -535,9 +633,9 @@ body[data-page="blank"] .design-collection-bento__tile:focus-visible {
 /* —— New arrivals: four-up product rail with touch-friendly overflow —— */
 
 body[data-page="blank"] .design-new-arrivals {
-  padding: 88px 24px 96px;
-  border-bottom: 1px solid var(--rule);
-  background: var(--cream);
+  padding: 80px 24px;
+  border-bottom: 0;
+  background: var(--white);
   color: var(--ink);
   text-align: left;
 }
@@ -552,7 +650,7 @@ body[data-page="blank"] .design-new-arrivals__header {
   align-items: flex-start;
   justify-content: space-between;
   gap: 28px;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 body[data-page="blank"] .design-new-arrivals__intro {
@@ -563,34 +661,37 @@ body[data-page="blank"] .design-new-arrivals__intro {
 
 body[data-page="blank"] .design-new-arrivals__eyebrow {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: var(--text-xs);
+  font-size: 10px;
   font-weight: var(--weight-ui);
-  letter-spacing: var(--tracking-label);
+  letter-spacing: 0.18em;
   line-height: var(--leading-label);
   text-transform: uppercase;
 }
 
 body[data-page="blank"] .design-new-arrivals__heading {
   margin: 0;
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: clamp(30px, 3.4vw, 44px);
-  font-weight: var(--weight-display);
-  letter-spacing: var(--tracking-display);
-  line-height: var(--leading-tight);
+  color: var(--color-primary-800);
+  font-family: "Sprat Campaign", var(--font-display);
+  font-size: clamp(28px, 3.2vw, 42px);
+  font-weight: 400;
+  font-variation-settings: "wdth" 122, "wght" 100;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
   text-align: left;
   text-wrap: pretty;
 }
 
 body[data-page="blank"] .design-new-arrivals__copy {
-  max-width: 42ch;
-  margin: 10px 0 0;
+  max-width: 36ch;
+  margin: 12px 0 0;
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: var(--weight-body);
+  letter-spacing: 0.02em;
   line-height: var(--leading-copy);
   text-align: left;
   text-wrap: pretty;
@@ -599,16 +700,28 @@ body[data-page="blank"] .design-new-arrivals__copy {
 body[data-page="blank"] .design-new-arrivals__actions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
   flex-shrink: 0;
+  margin-top: 28px;
 }
 
 body[data-page="blank"] .design-new-arrivals__view-all {
-  color: var(--ink);
+  color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+body[data-page="blank"] .design-new-arrivals__view-all:hover {
+  color: var(--color-primary-800);
+}
+
+body[data-page="blank"] .design-new-arrivals__view-all .text-link__arrow {
+  letter-spacing: 0;
 }
 
 body[data-page="blank"] .design-new-arrivals__controls {
@@ -619,26 +732,30 @@ body[data-page="blank"] .design-new-arrivals__controls {
 body[data-page="blank"] .design-new-arrivals__arrow {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   border: 1px solid var(--rule);
   border-radius: 50%;
-  background: transparent;
-  color: var(--ink);
+  background: var(--white);
+  color: var(--color-primary-800);
   font-family: var(--font-body);
   cursor: pointer;
-  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, opacity 180ms ease;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    opacity 180ms ease;
 }
 
 body[data-page="blank"] .design-new-arrivals__arrow svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 body[data-page="blank"] .design-new-arrivals__arrow:hover:not(:disabled) {
-  border-color: var(--ink);
-  background: var(--ink);
+  border-color: var(--color-primary-800);
+  background: var(--color-primary-800);
   color: var(--cream);
 }
 
@@ -650,7 +767,7 @@ body[data-page="blank"] .design-new-arrivals__arrow:disabled {
 body[data-page="blank"] .design-new-arrivals__arrow:focus-visible {
   outline: var(--focus-ring);
   outline-offset: 3px;
-  outline-color: var(--ink);
+  outline-color: var(--color-primary);
 }
 
 body[data-page="blank"] .design-new-arrivals__viewport {
@@ -709,17 +826,17 @@ body[data-page="blank"] .design-new-arrivals__card:focus-within .media__frame {
 body[data-page="blank"] .design-new-arrivals__card .product-card__body {
   width: 100%;
   align-items: flex-start;
-  gap: 7px;
-  padding-top: 16px;
+  gap: 6px;
+  padding-top: 14px;
   text-align: left;
 }
 
 body[data-page="blank"] .design-new-arrivals__card .product-tag {
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: var(--text-xs);
+  font-size: 10px;
   font-weight: var(--weight-ui);
-  letter-spacing: var(--tracking-label);
+  letter-spacing: 0.16em;
   line-height: var(--leading-label);
   text-align: left;
   text-transform: uppercase;
@@ -727,11 +844,13 @@ body[data-page="blank"] .design-new-arrivals__card .product-tag {
 
 body[data-page="blank"] .design-new-arrivals__card .product-name {
   width: 100%;
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: var(--weight-display);
-  line-height: var(--leading-tight);
+  color: var(--color-primary-800);
+  font-family: "Sprat Campaign", var(--font-display);
+  font-size: clamp(16px, 1.25vw, 18px);
+  font-weight: 400;
+  font-variation-settings: "wdth" 122, "wght" 100;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
   text-align: left;
   text-wrap: pretty;
 }
@@ -746,20 +865,190 @@ body[data-page="blank"] .design-new-arrivals__card .product-meta {
   margin-top: 2px;
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: var(--text-sm);
-  line-height: var(--leading-label);
+  font-size: 12px;
+  font-weight: var(--weight-body);
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  text-align: left;
+}
+
+body[data-page="blank"] .design-new-arrivals__card .product-material {
+  text-align: left;
 }
 
 body[data-page="blank"] .design-new-arrivals__card .product-price {
+  margin-top: 0;
   color: var(--ink);
   font-family: var(--font-body);
-  font-weight: var(--weight-strong);
+  font-size: 14px;
+  font-weight: var(--weight-ui);
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+
+body[data-page="blank"] .design-new-arrivals__card .product-price-wrap {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-top: 0;
+}
+
+/* —— Ready-to-wear feature banner: copy left, collage right —— */
+
+body[data-page="blank"] .design-feature-banner {
+  padding: 80px 24px;
+  border: 0;
+  border-bottom: 0;
+  background: var(--color-primary-100);
+  color: var(--color-primary-800);
+}
+
+body[data-page="blank"] .design-feature-banner__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr);
+  align-items: stretch;
+  gap: clamp(28px, 4vw, 56px);
+  width: 100%;
+  border: 0;
+}
+
+body[data-page="blank"] .design-feature-banner__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: clamp(24px, 3vw, 48px) 12px;
+  text-align: center;
+}
+
+body[data-page="blank"] .design-feature-banner__eyebrow {
+  margin: 0;
+  color: var(--color-primary-600);
+  font-family: "Sprat Campaign", var(--font-display);
+  font-size: clamp(14px, 1.2vw, 18px);
+  font-weight: 400;
+  font-variation-settings: "wdth" 122, "wght" 100;
+  letter-spacing: 0.12em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+body[data-page="blank"] .design-feature-banner__title {
+  margin: 0;
+  color: var(--color-primary-800);
+  font-family: "Sprat Campaign", var(--font-display);
+  font-size: clamp(36px, 4.4vw, 64px);
+  font-weight: 400;
+  font-variation-settings: "wdth" 122, "wght" 100;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+body[data-page="blank"] .design-feature-banner__cta {
+  margin-top: 8px;
+  min-width: 168px;
+  min-height: 48px;
+  border-radius: var(--radius-control);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body[data-page="blank"] .design-feature-banner__cta:hover {
+  border-color: var(--color-primary-800);
+  background: var(--color-primary-800);
+  color: var(--cream);
+}
+
+body[data-page="blank"] .design-feature-banner__lede {
+  max-width: 28ch;
+  margin: 4px 0 0;
+  color: var(--color-primary-600);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  line-height: var(--leading-copy);
+  text-wrap: pretty;
+}
+
+body[data-page="blank"] .design-feature-banner__collage {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr 1fr;
+  grid-template-rows: 1.05fr 1fr;
+  gap: 0;
+  min-height: clamp(360px, 42vw, 520px);
+  border: 0;
+}
+
+body[data-page="blank"] .design-feature-banner__cell {
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  background: #160d10;
+}
+
+body[data-page="blank"] .design-feature-banner__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+}
+
+body[data-page="blank"] .design-feature-banner__media .media__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  border: 0;
+  object-fit: cover;
+  object-position: center center;
+}
+
+body[data-page="blank"] .design-feature-banner__cell--1 {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+body[data-page="blank"] .design-feature-banner__cell--2 {
+  grid-column: 2 / span 2;
+  grid-row: 1;
+}
+
+body[data-page="blank"] .design-feature-banner__cell--3 {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+body[data-page="blank"] .design-feature-banner__cell--4 {
+  grid-column: 3;
+  grid-row: 2;
 }
 
 @media (prefers-reduced-motion: reduce) {
   body[data-page="blank"] .campaign-slide,
-  body[data-page="blank"] .campaign-hero__dot {
+  body[data-page="blank"] .campaign-hero__dot,
+  body[data-page="blank"] .campaign-hero__arrow {
     transition: none;
+  }
+
+  body[data-page="blank"] .campaign-hero__arrow--prev:hover,
+  body[data-page="blank"] .campaign-hero__arrow--next:hover {
+    transform: translateY(-50%);
   }
 
   body[data-page="blank"] .design-usp-strip__item {
@@ -853,12 +1142,34 @@ body[data-page="blank"] .design-new-arrivals__card .product-price {
     left: 24px;
   }
 
+  body[data-page="blank"] .campaign-hero__arrow {
+    width: 40px;
+    height: 40px;
+  }
+
+  body[data-page="blank"] .campaign-hero__arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  body[data-page="blank"] .campaign-hero__arrow--prev {
+    left: 12px;
+  }
+
+  body[data-page="blank"] .campaign-hero__arrow--next {
+    right: 12px;
+  }
+
   body[data-page="blank"] .primary-nav {
     padding-inline: 16px;
   }
 
   body[data-page="blank"] .design-collection-bento {
     padding: 48px 16px;
+  }
+
+  body[data-page="blank"] .design-collection-bento__header {
+    margin-bottom: 32px;
   }
 
   body[data-page="blank"] .design-collection-bento__grid {
@@ -873,7 +1184,7 @@ body[data-page="blank"] .design-new-arrivals__card .product-price {
   body[data-page="blank"] .design-collection-bento__tile:nth-child(2),
   body[data-page="blank"] .design-collection-bento__tile:nth-child(n + 3) {
     grid-column: 1;
-    min-height: min(62vw, 320px);
+    min-height: min(48vw, 240px);
   }
 
   body[data-page="blank"] .design-new-arrivals {
@@ -894,6 +1205,25 @@ body[data-page="blank"] .design-new-arrivals__card .product-price {
 
   body[data-page="blank"] .design-new-arrivals__track {
     grid-template-columns: repeat(8, calc((100% - 16px) / 2));
+  }
+
+  body[data-page="blank"] .design-feature-banner {
+    padding: 56px 16px 64px;
+  }
+
+  body[data-page="blank"] .design-feature-banner__inner {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  body[data-page="blank"] .design-feature-banner__copy {
+    order: 1;
+    padding: 8px 4px 0;
+  }
+
+  body[data-page="blank"] .design-feature-banner__collage {
+    order: 2;
+    min-height: 360px;
   }
 
   body[data-page="blank"] .wordmark__image {

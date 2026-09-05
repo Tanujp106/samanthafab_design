@@ -178,6 +178,23 @@ if (campaignHero) {
     dot.addEventListener("click", () => showSlide(Number(dot.dataset.campaignIndex)));
   });
 
+  campaignHero.querySelectorAll("[data-campaign-dir]").forEach((arrow) => {
+    arrow.addEventListener("click", () => {
+      showSlide(activeIndex + Number(arrow.dataset.campaignDir));
+    });
+  });
+
+  campaignHero.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      showSlide(activeIndex - 1);
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      showSlide(activeIndex + 1);
+    }
+  });
+
   campaignHero.addEventListener("mouseenter", stopAutoplay);
   campaignHero.addEventListener("mouseleave", startAutoplay);
   campaignHero.addEventListener("focusin", stopAutoplay);
