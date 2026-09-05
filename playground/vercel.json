@@ -4,5 +4,9 @@
       "source": "/(.*)",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     }
+  ],
+  "rewrites": [
+    { "source": "/design", "destination": "/index.html" },
+    { "source": "/design/", "destination": "/index.html" }
   ]
 }

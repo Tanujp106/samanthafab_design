@@ -1,14 +1,17 @@
 import { pages } from "./pages/index.js";
 import { renderPage } from "./components/render.js";
 
-const notesEnabled = new URLSearchParams(window.location.search).get("notes") === "1";
-document.body.dataset.notes = String(notesEnabled);
-
 const app = document.querySelector("#app");
+const reviewRequested = new URLSearchParams(window.location.search).get("notes") === "1";
 const requestedPage = new URLSearchParams(window.location.search).get("page");
-const pageKey = requestedPage || app.dataset.page || "homepage";
+const cleanPath = window.location.pathname.replace(/\/+$/, "") || "/";
+const pathPage = cleanPath === "/design" ? "blank" : null;
+const pageKey = requestedPage || pathPage || app.dataset.page || "homepage";
 const page = pages[pageKey] || pages.homepage;
+const notesEnabled = reviewRequested && page.key !== "blank";
 
+document.body.dataset.notes = String(notesEnabled);
+document.body.dataset.page = page.key;
 document.title = page.title;
 app.replaceChildren(renderPage(page, { notesEnabled }));
 
@@ -20,6 +23,169 @@ if (menuToggle && navLinks) {
     menuToggle.setAttribute("aria-expanded", String(open));
     menuToggle.textContent = open ? "Close" : "Menu";
   });
+}
+
+const campaignHero = document.querySelector(".section--campaign-hero");
+if (campaignHero) {
+  const slides = [...campaignHero.querySelectorAll(".campaign-slide")];
+  const dots = [...campaignHero.querySelectorAll("[data-campaign-index]")];
+  const announcer = campaignHero.querySelector(".campaign-hero__announcer");
+  const interval = Number(campaignHero.querySelector(".campaign-hero__stage")?.dataset.interval) || 7000;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const motionMs = 780;
+  let activeIndex = 0;
+  let timer = null;
+  let paused = reducedMotion;
+  let transitionLock = false;
+  let pendingIndex = null;
+  let finishTimer = null;
+
+  const motionClasses = [
+    "is-moving",
+    "is-enter-from-right",
+    "is-enter-from-left",
+    "is-exit-to-left",
+    "is-exit-to-right",
+  ];
+
+  const stopAutoplay = () => {
+    if (timer) window.clearInterval(timer);
+    timer = null;
+  };
+
+  const startAutoplay = () => {
+    stopAutoplay();
+    if (!paused) timer = window.setInterval(() => showSlide(activeIndex + 1), interval);
+  };
+
+  const clearMotionClasses = (slide) => {
+    slide.classList.remove(...motionClasses);
+  };
+
+  const syncChrome = () => {
+    dots.forEach((dot, index) => {
+      const isActive = index === activeIndex;
+      dot.classList.toggle("is-active", isActive);
+      dot.setAttribute("aria-selected", String(isActive));
+    });
+    const activeTitle = slides[activeIndex].getAttribute("aria-label") || "";
+    if (announcer) announcer.textContent = activeTitle;
+  };
+
+  const applyInstant = (nextIndex) => {
+    slides.forEach((slide, index) => {
+      clearMotionClasses(slide);
+      const isActive = index === nextIndex;
+      slide.classList.toggle("is-active", isActive);
+      slide.inert = !isActive;
+      slide.setAttribute("aria-hidden", String(!isActive));
+    });
+    activeIndex = nextIndex;
+    syncChrome();
+  };
+
+  const finishTransition = (outgoing, incoming, onDone) => {
+    if (finishTimer) {
+      window.clearTimeout(finishTimer);
+      finishTimer = null;
+    }
+    clearMotionClasses(outgoing);
+    clearMotionClasses(incoming);
+    incoming.classList.add("is-active");
+    transitionLock = false;
+    onDone?.();
+  };
+
+  const showSlide = (requestedIndex) => {
+    const nextIndex = ((requestedIndex % slides.length) + slides.length) % slides.length;
+    if (nextIndex === activeIndex) {
+      startAutoplay();
+      return;
+    }
+
+    if (transitionLock) {
+      pendingIndex = nextIndex;
+      return;
+    }
+
+    if (reducedMotion) {
+      applyInstant(nextIndex);
+      startAutoplay();
+      return;
+    }
+
+    const outgoing = slides[activeIndex];
+    const incoming = slides[nextIndex];
+    const forwardDelta = (nextIndex - activeIndex + slides.length) % slides.length;
+    const isForward = forwardDelta <= slides.length / 2;
+    const enterClass = isForward ? "is-enter-from-right" : "is-enter-from-left";
+    const exitClass = isForward ? "is-exit-to-left" : "is-exit-to-right";
+
+    transitionLock = true;
+    pendingIndex = null;
+    activeIndex = nextIndex;
+    syncChrome();
+
+    clearMotionClasses(incoming);
+    incoming.classList.add(enterClass);
+    incoming.inert = false;
+    incoming.setAttribute("aria-hidden", "false");
+
+    outgoing.inert = true;
+    outgoing.setAttribute("aria-hidden", "true");
+
+    const runMotion = () => {
+      outgoing.classList.add("is-moving", exitClass);
+      outgoing.classList.remove("is-active");
+
+      incoming.classList.add("is-moving", "is-active");
+      incoming.classList.remove(enterClass);
+
+      let settled = false;
+      const settle = () => {
+        if (settled) return;
+        settled = true;
+        outgoing.removeEventListener("transitionend", onEnd);
+        finishTransition(outgoing, incoming, () => {
+          if (pendingIndex !== null) {
+            const queued = pendingIndex;
+            pendingIndex = null;
+            showSlide(queued);
+            return;
+          }
+          startAutoplay();
+        });
+      };
+
+      const onEnd = (event) => {
+        if (event.target !== outgoing || event.propertyName !== "transform") return;
+        settle();
+      };
+
+      outgoing.addEventListener("transitionend", onEnd);
+      finishTimer = window.setTimeout(settle, motionMs + 80);
+    };
+
+    // Double rAF so the enter park paint commits before transitions enable.
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(runMotion);
+    });
+
+    startAutoplay();
+  };
+
+  dots.forEach((dot) => {
+    dot.addEventListener("click", () => showSlide(Number(dot.dataset.campaignIndex)));
+  });
+
+  campaignHero.addEventListener("mouseenter", stopAutoplay);
+  campaignHero.addEventListener("mouseleave", startAutoplay);
+  campaignHero.addEventListener("focusin", stopAutoplay);
+  campaignHero.addEventListener("focusout", (event) => {
+    if (!campaignHero.contains(event.relatedTarget)) startAutoplay();
+  });
+
+  startAutoplay();
 }
 
 if (requestedPage && !pages[requestedPage]) {

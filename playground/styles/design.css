@@ -1,0 +1,465 @@
+/* /design page experiments — isolated from the homepage and editorial study. */
+
+/* Sprat’s wght axis is ~10–200; Regular is wght 100. A 100–900 face + CSS 400 reads heavy. */
+@font-face {
+  font-family: "Sprat Campaign";
+  src: url("../assets/fonts/sprat-variable.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  font-variation-settings: "wght" 100, "wdth" 122;
+}
+
+body[data-page="blank"] {
+  background: var(--white);
+}
+
+body[data-page="blank"] .site {
+  background: var(--white);
+}
+
+/* —— Rotating USP strip (replaces static utility bar) —— */
+
+body[data-page="blank"] .design-usp-strip {
+  --usp-count: 3;
+  --usp-hold: 3s;
+  --usp-cycle: calc(var(--usp-count) * var(--usp-hold));
+  padding-block: 0;
+  border-bottom: 0;
+  background: var(--rust);
+  color: var(--cream);
+}
+
+body[data-page="blank"] .design-usp-strip__inner {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+body[data-page="blank"] .design-usp-strip__viewport {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 10px var(--page-pad);
+  overflow: hidden;
+}
+
+body[data-page="blank"] .design-usp-strip__list {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-height: 1.2em;
+}
+
+body[data-page="blank"] .design-usp-strip__item {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  opacity: 0;
+  filter: blur(2px);
+  pointer-events: none;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--tracking-ui);
+  line-height: var(--leading-label);
+  white-space: nowrap;
+  animation: design-usp-cycle var(--usp-cycle) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: calc(var(--usp-index, 0) * var(--usp-hold));
+}
+
+body[data-page="blank"] .design-usp-strip__icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+body[data-page="blank"] .design-usp-strip__label {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+body[data-page="blank"] .design-usp-strip__label::after {
+  content: "";
+  position: absolute;
+  inset: -20% -40%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 42%,
+    rgba(255, 253, 249, 0.55) 50%,
+    transparent 58%,
+    transparent 100%
+  );
+  transform: translateX(-130%);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  animation: design-usp-shimmer var(--usp-cycle) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: calc(var(--usp-index, 0) * var(--usp-hold));
+}
+
+@keyframes design-usp-cycle {
+  /* ~0.5s blur-in, hold, ~0.5s blur-out within each 1/3 slot (9s full cycle). */
+  0% {
+    opacity: 0;
+    filter: blur(2px);
+  }
+  6% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  27% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  33.333% {
+    opacity: 0;
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+
+@keyframes design-usp-shimmer {
+  /* After settle (~6%), sweep once across the label, then rest until exit. */
+  0%,
+  7% {
+    transform: translateX(-130%);
+    opacity: 0;
+  }
+  8% {
+    transform: translateX(-120%);
+    opacity: 1;
+  }
+  18% {
+    transform: translateX(120%);
+    opacity: 1;
+  }
+  19%,
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+/* —— Sticky nav: soft primary wash + blur —— */
+
+body[data-page="blank"] .site-header {
+  background: transparent;
+}
+
+body[data-page="blank"] .primary-nav {
+  padding-inline: 24px;
+  background: color-mix(in srgb, var(--color-primary-50) 90%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--color-primary-200) 55%, transparent);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+}
+
+body[data-page="blank"] .wordmark__image {
+  width: clamp(148px, 15vw, 200px);
+  height: auto;
+  max-height: 32px;
+  object-fit: contain;
+  object-position: left center;
+  mix-blend-mode: normal;
+}
+
+body[data-page="blank"] .section--campaign-hero {
+  padding: 24px;
+  border-bottom: 0;
+  background: var(--white);
+}
+
+body[data-page="blank"] .campaign-hero__stage {
+  position: relative;
+  width: 100%;
+  min-height: clamp(592px, calc(100svh - 156px), 872px);
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 16px;
+  background: #160d10;
+  color: var(--cream);
+}
+
+body[data-page="blank"] .campaign-hero__slides,
+body[data-page="blank"] .campaign-slide,
+body[data-page="blank"] .campaign-slide__media,
+body[data-page="blank"] .campaign-slide__media .media__frame,
+body[data-page="blank"] .campaign-slide__veil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body[data-page="blank"] .campaign-slide {
+  z-index: 0;
+  visibility: hidden;
+  pointer-events: none;
+  /* Park off-stage to the right so RTL enters are ready without a snap. */
+  transform: translateX(100%);
+  transition: none;
+}
+
+body[data-page="blank"] .campaign-slide.is-active {
+  z-index: 2;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+/* Transitions only while moving — avoids cleanup snapping slides back into view. */
+body[data-page="blank"] .campaign-slide.is-moving {
+  visibility: visible;
+  transition: transform 780ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body[data-page="blank"] .campaign-slide.is-enter-from-right {
+  z-index: 2;
+  visibility: visible;
+  transform: translateX(100%);
+}
+
+body[data-page="blank"] .campaign-slide.is-enter-from-left {
+  z-index: 2;
+  visibility: visible;
+  transform: translateX(-100%);
+}
+
+body[data-page="blank"] .campaign-slide.is-exit-to-left {
+  z-index: 1;
+  pointer-events: none;
+  transform: translateX(-100%);
+}
+
+body[data-page="blank"] .campaign-slide.is-exit-to-right {
+  z-index: 1;
+  pointer-events: none;
+  transform: translateX(100%);
+}
+
+body[data-page="blank"] .campaign-slide__media {
+  border-radius: 0;
+  background: #160d10;
+  overflow: hidden;
+}
+
+body[data-page="blank"] .campaign-slide__media.media--fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  aspect-ratio: auto;
+}
+
+body[data-page="blank"] .campaign-slide__media .media__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center center;
+}
+
+body[data-page="blank"] .campaign-slide__veil {
+  z-index: 1;
+  background: rgba(18, 10, 12, 0.34);
+}
+
+body[data-page="blank"] .campaign-slide__content {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: min(100%, 760px);
+  margin-inline: auto;
+  padding: clamp(120px, 14vw, 180px) var(--page-pad) clamp(96px, 11vw, 132px);
+  text-align: center;
+  text-shadow: 0 2px 26px rgba(18, 10, 12, 0.28);
+}
+
+body[data-page="blank"] .campaign-slide__eyebrow {
+  margin-bottom: 16px;
+  color: rgba(255, 253, 249, 0.9);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: var(--weight-ui);
+  letter-spacing: 0.18em;
+  line-height: var(--leading-label);
+  text-transform: uppercase;
+}
+
+body[data-page="blank"] .campaign-slide__title {
+  max-width: 11ch;
+  margin: 0;
+  color: var(--cream);
+  font-family: "Sprat Campaign", var(--font-display);
+  font-size: clamp(44px, 5.2vw, 80px);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+body[data-page="blank"] .campaign-slide__copy {
+  max-width: 35ch;
+  margin: 22px 0 0;
+  color: rgba(255, 253, 249, 0.9);
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.05vw, 17px);
+  line-height: var(--leading-copy);
+}
+
+body[data-page="blank"] .campaign-slide__cta {
+  margin-top: 28px;
+  min-width: 124px;
+  min-height: 44px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  background: var(--white);
+  border-color: var(--white);
+  color: var(--color-primary);
+  text-shadow: none;
+}
+
+body[data-page="blank"] .campaign-slide__cta:hover {
+  background: var(--color-cream);
+  border-color: var(--color-cream);
+  color: var(--color-primary-800);
+}
+
+body[data-page="blank"] .campaign-hero__dot:active {
+  transform: scale(0.97);
+}
+
+body[data-page="blank"] .campaign-hero__footer {
+  position: absolute;
+  z-index: 3;
+  right: var(--page-pad);
+  bottom: clamp(22px, 3vw, 42px);
+  left: var(--page-pad);
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 24px;
+}
+
+body[data-page="blank"] .campaign-hero__pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body[data-page="blank"] .campaign-hero__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 1px solid rgba(255, 253, 249, 0.76);
+  border-radius: 50%;
+  background: transparent;
+  color: transparent;
+  font-family: var(--font-body);
+  font-size: 0;
+  line-height: 1;
+  transition: background-color 220ms ease-out, border-color 220ms ease-out, transform 220ms ease-out;
+}
+
+body[data-page="blank"] .campaign-hero__dot.is-active {
+  border-color: var(--cream);
+  background: var(--cream);
+  transform: scale(1.18);
+}
+
+body[data-page="blank"] .campaign-hero__stage :focus-visible {
+  outline-color: var(--cream);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-page="blank"] .campaign-slide,
+  body[data-page="blank"] .campaign-hero__dot {
+    transition: none;
+  }
+
+  body[data-page="blank"] .design-usp-strip__item {
+    animation: none;
+    opacity: 0;
+    filter: none;
+    pointer-events: none;
+  }
+
+  body[data-page="blank"] .design-usp-strip__item:first-child {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body[data-page="blank"] .design-usp-strip__label::after {
+    animation: none;
+    content: none;
+  }
+}
+
+@media (max-width: 640px) {
+  body[data-page="blank"] .section--campaign-hero {
+    padding: 16px;
+  }
+
+  body[data-page="blank"] .campaign-hero__stage {
+    min-height: calc(100svh - 156px);
+    border-radius: 12px;
+  }
+
+  body[data-page="blank"] .campaign-slide__content {
+    padding: 100px 24px 112px;
+  }
+
+  body[data-page="blank"] .campaign-slide__title {
+    max-width: 10ch;
+    font-size: clamp(38px, 10.5vw, 56px);
+  }
+
+  body[data-page="blank"] .campaign-slide__copy {
+    max-width: 27ch;
+    margin-top: 18px;
+    font-size: 15px;
+  }
+
+  body[data-page="blank"] .campaign-slide__cta {
+    margin-top: 24px;
+  }
+
+  body[data-page="blank"] .campaign-hero__footer {
+    right: 24px;
+    bottom: 22px;
+    left: 24px;
+  }
+
+  body[data-page="blank"] .primary-nav {
+    padding-inline: 16px;
+  }
+
+  body[data-page="blank"] .wordmark__image {
+    width: 136px;
+    height: auto;
+    max-height: 28px;
+  }
+}

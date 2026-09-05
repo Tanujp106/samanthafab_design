@@ -8,3 +8,8 @@ Sources (free licenses for non-production concept use):
 - [Pexels](https://www.pexels.com/license/)
 
 These are stand-in images only. Replace with Samantha Fab brand photography before any production use. Do not present proof-section photos as verified customers.
+
+## Typefaces
+
+- [Sprat](https://www.collletttivo.it/typefaces/sprat) by Ethan Nakache, licensed under the SIL Open Font License.
+- [Karrik](https://velvetyne.fr/fonts/karrik/) by Jean-Baptiste Morizot and Lucas Le Bihan, distributed by Velvetyne.

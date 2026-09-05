@@ -17,8 +17,9 @@
   background: var(--rust);
   color: var(--cream);
   font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.02em;
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--tracking-ui);
+  line-height: var(--leading-label);
 }
 
 .utility-strip__item {
@@ -42,14 +43,27 @@
 }
 
 .wordmark {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
   margin: 0;
   color: var(--ink);
   font-family: var(--font-display);
   font-size: clamp(22px, 2.2vw, 28px);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1;
+  font-weight: var(--weight-display);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-tight);
   text-decoration: none;
+}
+
+.wordmark__image {
+  display: block;
+  width: clamp(150px, 15vw, 190px);
+  height: 42px;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  mix-blend-mode: multiply;
 }
 
 .nav-links {
@@ -61,7 +75,8 @@
 
 .nav-links a {
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--tracking-ui);
   text-decoration: none;
   border-bottom: 1px solid transparent;
   padding-bottom: 2px;
@@ -82,7 +97,8 @@
 
 .nav-action {
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--tracking-ui);
   text-decoration: none;
   transition: color 160ms ease;
 }
@@ -98,7 +114,8 @@
   border: 1px solid var(--rule);
   border-radius: var(--radius-control);
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--tracking-ui);
 }
 
 /* Media */
@@ -188,9 +205,9 @@
   max-width: 9ch;
   font-family: var(--font-display);
   font-size: var(--text-hero);
-  font-weight: 500;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+  font-weight: var(--weight-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tight);
   text-wrap: balance;
 }
 
@@ -199,7 +216,7 @@
   max-width: 34ch;
   color: var(--ink-soft);
   font-size: var(--text-lg);
-  line-height: 1.55;
+  line-height: var(--leading-copy);
 }
 
 .hero-copy .action-row {
@@ -239,8 +256,8 @@
   margin: 18px 0 0;
   font-family: var(--font-display);
   font-size: var(--text-xl);
-  font-weight: 500;
-  line-height: 1.1;
+  font-weight: var(--weight-display);
+  line-height: var(--leading-tight);
 }
 
 .occasion-tile__link {
@@ -249,7 +266,8 @@
   border-bottom: 1px solid var(--rule);
   color: var(--ink-soft);
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--tracking-ui);
 }
 
 .occasion-tile:hover .occasion-tile__link {
@@ -315,8 +333,9 @@
   margin: 0;
   color: var(--muted);
   font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -324,8 +343,8 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-lg);
-  font-weight: 500;
-  line-height: 1.2;
+  font-weight: var(--weight-display);
+  line-height: var(--leading-tight);
 }
 
 .product-meta {
@@ -335,11 +354,12 @@
   margin-top: 6px;
   color: var(--muted);
   font-size: var(--text-sm);
+  line-height: var(--leading-label);
 }
 
 .product-price {
   color: var(--ink);
-  font-weight: 600;
+  font-weight: var(--weight-strong);
 }
 
 /* Ready-to-wear split */
@@ -385,7 +405,8 @@
   gap: 16px;
   padding: 18px 0;
   border-top: 1px solid var(--rule);
-  font-size: var(--text-md);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .point-item:last-child {
@@ -395,7 +416,9 @@
 .point-item__index {
   color: var(--muted);
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-ui);
 }
 
 .split-copy .button,
@@ -437,22 +460,24 @@
 
 .price-panel__label {
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--tracking-ui);
 }
 
 .price-panel__value {
   margin: 28px 0 auto;
   font-family: var(--font-display);
-  font-size: clamp(40px, 5vw, 64px);
-  font-weight: 500;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tight);
 }
 
 .price-panel__cta {
   margin-top: 28px;
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: var(--weight-strong);
+  letter-spacing: var(--tracking-ui);
   text-decoration: underline;
   text-underline-offset: 4px;
 }
@@ -535,22 +560,24 @@
   margin-bottom: 32px;
   color: var(--muted);
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-label);
 }
 
 .benefit-title {
   margin: 0 0 14px;
   font-family: var(--font-display);
   font-size: var(--text-xl);
-  font-weight: 500;
-  line-height: 1.1;
+  font-weight: var(--weight-display);
+  line-height: var(--leading-tight);
 }
 
 .benefit-copy {
   margin: 0;
   color: var(--ink-soft);
   font-size: var(--text-sm);
-  line-height: 1.6;
+  line-height: var(--leading-copy);
   max-width: 28ch;
 }
 
@@ -585,10 +612,10 @@
 .proof-quote {
   margin: 22px 0 0;
   font-family: var(--font-display);
-  font-size: clamp(22px, 2.4vw, 30px);
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
 }
 
 .proof-caption {
@@ -610,7 +637,7 @@
 }
 
 .section--service .eyebrow {
-  color: rgba(252, 249, 243, 0.72);
+  color: rgba(var(--color-cream-rgb), 0.72);
   margin-bottom: 12px;
 }
 
@@ -658,7 +685,7 @@
 
 .section--service .text-link {
   color: var(--cream);
-  border-color: rgba(252, 249, 243, 0.55);
+  border-color: rgba(var(--color-cream-rgb), 0.55);
 }
 
 .section--service .text-link:hover {
@@ -707,8 +734,8 @@
   color: var(--ink-soft);
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  font-weight: 500;
-  line-height: 1.4;
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-copy);
   max-width: none;
 }
 
@@ -722,7 +749,8 @@
 .library-quiet__link {
   color: var(--ink);
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--tracking-ui);
   text-decoration: none;
   border-bottom: 1px solid transparent;
   padding-bottom: 1px;
@@ -743,7 +771,7 @@
 }
 
 .section--sale .eyebrow {
-  color: rgba(252, 249, 243, 0.78);
+  color: rgba(var(--color-cream-rgb), 0.78);
   margin-bottom: 10px;
 }
 
@@ -772,7 +800,7 @@
 
 .section--sale .text-link {
   color: var(--cream);
-  border-color: rgba(252, 249, 243, 0.65);
+  border-color: rgba(var(--color-cream-rgb), 0.65);
 }
 
 .section--sale .text-link:hover {
@@ -788,7 +816,7 @@
 }
 
 .product-card--on-sale .product-tag {
-  color: rgba(252, 249, 243, 0.7);
+  color: rgba(var(--color-cream-rgb), 0.7);
 }
 
 .product-card--on-sale .product-name {
@@ -796,7 +824,7 @@
 }
 
 .product-card--on-sale .product-meta {
-  color: rgba(252, 249, 243, 0.7);
+  color: rgba(var(--color-cream-rgb), 0.7);
 }
 
 .product-card--on-sale .product-price {
@@ -811,13 +839,13 @@
 
 .product-compare {
   font-size: var(--text-sm);
-  font-weight: 400;
+  font-weight: var(--weight-body);
   text-decoration: line-through;
   opacity: 0.7;
 }
 
 .product-card--on-sale .product-compare {
-  color: rgba(252, 249, 243, 0.65);
+  color: rgba(var(--color-cream-rgb), 0.65);
 }
 
 /* Footer */
@@ -825,13 +853,13 @@
 .site-footer {
   background: var(--ink);
   color: var(--cream);
-  padding-block: clamp(56px, 8vw, 96px) 40px;
+  padding-block: clamp(48px, 5vw, 64px) 28px;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr);
-  gap: clamp(48px, 6vw, 88px);
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(40px, 4vw, 64px);
 }
 
 .site-footer .wordmark {
@@ -839,37 +867,43 @@
 }
 
 .footer-brand-copy {
-  margin: 20px 0 0;
-  max-width: 28ch;
-  color: rgba(252, 249, 243, 0.72);
-  font-size: var(--text-md);
-  line-height: 1.55;
+  margin: 14px 0 0;
+  max-width: 24ch;
+  color: rgba(var(--color-cream-rgb), 0.72);
+  font-size: var(--text-sm);
+  line-height: var(--leading-copy);
 }
 
 .footer-columns {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 28px 32px;
+  gap: 24px 28px;
 }
 
 .footer-heading {
-  margin: 0 0 18px;
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: 500;
+  margin: 0 0 12px;
+  color: rgba(var(--color-cream-rgb), 0.58);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
 }
 
 .footer-links {
   display: grid;
-  gap: 12px;
+  gap: 9px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .footer-links a {
-  color: rgba(252, 249, 243, 0.72);
+  color: rgba(var(--color-cream-rgb), 0.72);
   font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-copy);
   text-decoration: none;
   transition: color 160ms ease;
 }
@@ -878,12 +912,20 @@
   color: var(--cream);
 }
 
+.footer-links a:focus-visible {
+  color: var(--cream);
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
+}
+
 .footer-bottom {
-  margin-top: 56px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(212, 203, 193, 0.22);
-  color: rgba(252, 249, 243, 0.55);
+  margin: 40px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid color-mix(in srgb, var(--rule) 22%, transparent);
+  color: rgba(var(--color-cream-rgb), 0.55);
   font-size: var(--text-xs);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-ui);
 }
 
 /* Responsive */
@@ -1016,10 +1058,20 @@
 
   .footer-grid {
     grid-template-columns: 1fr;
+    gap: 36px;
   }
 
   .footer-columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 24px;
+  }
+
+  .site-footer {
+    padding-block: 44px 24px;
+  }
+
+  .footer-bottom {
+    margin-top: 36px;
   }
 
   .nav-links.nav-links--open {

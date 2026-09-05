@@ -14,6 +14,15 @@ function textLink(label, href = "/?route=explore") {
   return link;
 }
 
+function renderBrandImage() {
+  const image = element("img", "wordmark__image");
+  image.src = "/assets/samantha-logo.png";
+  image.alt = "Samantha Fab";
+  image.loading = "eager";
+  image.decoding = "async";
+  return image;
+}
+
 function button(label, href, className = "button button--fill") {
   const link = element("a", className, label);
   link.href = href;
@@ -68,18 +77,23 @@ function renderHeader(section) {
   // clipped by a short header containing block.
   const frag = document.createDocumentFragment();
 
-  const utility = element("div", "utility-strip");
-  utility.setAttribute("role", "note");
-  section.utility.forEach((item) => utility.append(element("span", "utility-strip__item", item)));
+  const utilityItems = Array.isArray(section.utility) ? section.utility : [];
+  if (utilityItems.length) {
+    const utility = element("div", "utility-strip");
+    utility.setAttribute("role", "note");
+    utilityItems.forEach((item) => utility.append(element("span", "utility-strip__item", item)));
+    frag.append(utility);
+  }
 
   const header = element("header", "site-header");
   header.id = section.id;
   header.dataset.section = section.number;
 
   const nav = element("div", "primary-nav");
-  const brand = element("a", "wordmark", section.brand);
+  const brand = element("a", "wordmark");
   brand.href = "/";
   brand.setAttribute("aria-label", "Samantha Fab home");
+  brand.append(renderBrandImage());
 
   const menuToggle = element("button", "nav-menu-toggle", "Menu");
   menuToggle.type = "button";
@@ -106,12 +120,127 @@ function renderHeader(section) {
 
   nav.append(brand, menuToggle, navLinks, actions);
   header.append(nav);
+  frag.append(header);
 
-  const notes = element("div", "section__inner header-notes review-only");
-  notes.append(sectionMeta(section), annotation(section));
-
-  frag.append(utility, header, notes);
+  if (!section.hideReviewNotes) {
+    const notes = element("div", "section__inner header-notes review-only");
+    notes.append(sectionMeta(section), annotation(section));
+    frag.append(notes);
+  }
   return frag;
+}
+
+const uspIconPaths = {
+  truck:
+    '<path d="M3 6.5h10v9H3z"/><path d="M13 9h4l3 3v3.5h-7z"/><circle cx="6.5" cy="16.5" r="1.5"/><circle cx="17.5" cy="16.5" r="1.5"/>',
+  refresh:
+    '<path d="M20 11a8 8 0 0 0-14.7-4L3 9"/><path d="M3 4v5h5"/><path d="M4 13a8 8 0 0 0 14.7 4L21 15"/><path d="M21 20v-5h-5"/>',
+  chat: '<path d="M4 5.5h16v10H9l-5 3v-13z"/>',
+};
+
+function renderIcon(name) {
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.classList.add("design-usp-strip__icon");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.5");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = uspIconPaths[name] || uspIconPaths.chat;
+  return icon;
+}
+
+function renderUspStrip(section) {
+  const root = element("section", "section section--usp-strip design-usp-strip");
+  root.id = section.id;
+  root.dataset.section = section.number;
+  root.setAttribute("role", "note");
+  root.setAttribute("aria-label", "Samantha Fab customer promises");
+  root.style.setProperty("--usp-count", String(section.items.length));
+  root.style.setProperty("--usp-hold", "3s");
+
+  const inner = element("div", "section__inner design-usp-strip__inner");
+  const list = element("ul", "design-usp-strip__list");
+  section.items.forEach((item, index) => {
+    const usp = element("li", "design-usp-strip__item");
+    usp.style.setProperty("--usp-index", String(index));
+    usp.append(renderIcon(item.icon), element("span", "design-usp-strip__label", item.label));
+    list.append(usp);
+  });
+
+  const viewport = element("div", "design-usp-strip__viewport");
+  viewport.append(list);
+  inner.append(viewport);
+  root.append(inner);
+  return root;
+}
+
+function renderCampaignHero(section, ctx) {
+  const stage = element("div", "campaign-hero__stage");
+  stage.setAttribute("aria-roledescription", "carousel");
+  stage.setAttribute("aria-label", "Samantha Fab campaigns");
+
+  const slides = element("div", "campaign-hero__slides");
+  section.slides.forEach((slide, index) => {
+    const slideNode = element("article", ["campaign-slide", index === 0 ? "is-active" : ""].filter(Boolean).join(" "));
+    slideNode.dataset.index = String(index);
+    slideNode.inert = index !== 0;
+    slideNode.setAttribute("role", "group");
+    slideNode.setAttribute("aria-roledescription", "slide");
+    slideNode.setAttribute("aria-label", `${index + 1} of ${section.slides.length}: ${slide.title}`);
+    slideNode.setAttribute("aria-hidden", String(index !== 0));
+
+    const media = renderMedia(slide.media, {
+      fill: true,
+      eager: index === 0,
+      notesEnabled: ctx.notesEnabled,
+      className: "campaign-slide__media",
+    });
+    const veil = element("div", "campaign-slide__veil");
+    const copy = element("div", "campaign-slide__content");
+    const title = element(index === 0 ? "h1" : "h2", "campaign-slide__title", slide.title);
+    copy.append(
+      element("span", "campaign-slide__eyebrow", slide.eyebrow),
+      title,
+      element("p", "campaign-slide__copy", slide.copy),
+      button(slide.primaryAction.label, slide.primaryAction.href, "button button--fill campaign-slide__cta"),
+    );
+
+    slideNode.append(media, veil, copy);
+    slides.append(slideNode);
+  });
+
+  const footer = element("div", "campaign-hero__footer");
+  const pagination = element("div", "campaign-hero__pagination");
+  pagination.setAttribute("role", "tablist");
+  pagination.setAttribute("aria-label", "Choose a campaign");
+  section.slides.forEach((slide, index) => {
+    const dot = element("button", ["campaign-hero__dot", index === 0 ? "is-active" : ""].filter(Boolean).join(" "));
+    dot.type = "button";
+    dot.dataset.campaignIndex = String(index);
+    dot.setAttribute("role", "tab");
+    dot.setAttribute("aria-label", `Show ${slide.title}`);
+    dot.setAttribute("aria-selected", String(index === 0));
+    pagination.append(dot);
+  });
+
+  footer.append(pagination);
+
+  const announcer = element("p", "sr-only campaign-hero__announcer");
+  announcer.setAttribute("aria-live", "polite");
+  announcer.textContent = section.slides[0].title;
+
+  stage.append(slides, footer, announcer);
+  stage.dataset.interval = String(section.interval || 7000);
+
+  const root = element("section", "section section--campaign-hero");
+  root.id = section.id;
+  root.dataset.section = section.number;
+  root.append(stage);
+  return root;
 }
 
 function renderHero(section, ctx) {
@@ -367,7 +496,8 @@ function renderFooter(section) {
     element("p", "footer-brand-copy", section.brandLine),
   );
 
-  const columns = element("div", "footer-columns");
+  const columns = element("nav", "footer-columns");
+  columns.setAttribute("aria-label", "Footer navigation");
   section.columns.forEach((column) => {
     const col = element("div", "footer-column");
     col.append(element("h3", "footer-heading", column.heading));
@@ -393,6 +523,10 @@ function renderSection(section, ctx) {
   switch (section.type) {
     case "header":
       return renderHeader(section);
+    case "usp-strip":
+      return renderUspStrip(section);
+    case "campaign-hero":
+      return renderCampaignHero(section, ctx);
     case "hero":
       return renderHero(section, ctx);
     case "occasion":
@@ -435,25 +569,31 @@ export function renderPage(page, options = {}) {
     root.append(banner);
   }
 
-  const intro = element("header", "playground-intro review-only");
-  intro.append(
-    element("span", "playground-intro__eyebrow", page.eyebrow),
-    element("p", "playground-intro__title", "Samantha Fab homepage"),
-    element("p", "playground-intro__copy", page.description),
-  );
-  root.append(intro);
+  if (page.key !== "blank") {
+    const intro = element("header", "playground-intro review-only");
+    intro.append(
+      element("span", "playground-intro__eyebrow", page.eyebrow),
+      element("p", "playground-intro__title", "Samantha Fab homepage"),
+      element("p", "playground-intro__copy", page.description),
+    );
+    root.append(intro);
+  }
 
   let headerNode = null;
+  let uspNode = null;
   let footerNode = null;
   const main = element("main", "site-main");
 
   page.sections.forEach((section) => {
     const node = renderSection(section, ctx);
     if (section.type === "header") headerNode = node;
+    else if (section.type === "usp-strip") uspNode = node;
     else if (section.type === "footer") footerNode = node;
     else main.append(node);
   });
 
+  // USP strip sits above sticky nav (same role as the old utility strip).
+  if (uspNode) root.append(uspNode);
   if (headerNode) root.append(headerNode);
   root.append(main);
   if (footerNode) root.append(footerNode);
