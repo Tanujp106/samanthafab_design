@@ -428,6 +428,10 @@ body[data-page="blank"] .campaign-hero__arrow--prev {
 
 body[data-page="blank"] .campaign-hero__arrow--next {
   right: 20px;
+  box-shadow: none;
+  opacity: 0.85;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 body[data-page="blank"] .campaign-hero__arrow:hover {
@@ -500,7 +504,7 @@ body[data-page="blank"] .design-collection-bento__tile {
   position: relative;
   display: block;
   overflow: hidden;
-  min-height: clamp(200px, 24vw, 300px);
+  min-height: clamp(240px, 28vw, 340px);
   border-radius: 16px;
   text-decoration: none;
   color: var(--cream);
@@ -514,7 +518,7 @@ body[data-page="blank"] .design-collection-bento__tile:nth-child(2) {
 
 body[data-page="blank"] .design-collection-bento__tile:nth-child(n + 3) {
   grid-column: span 2;
-  min-height: clamp(168px, 20vw, 240px);
+  min-height: clamp(200px, 23vw, 280px);
 }
 
 body[data-page="blank"] .design-collection-bento__media {
@@ -555,13 +559,14 @@ body[data-page="blank"] .design-collection-bento__scrim {
   right: 0;
   bottom: 0;
   left: 0;
-  height: 58%;
+  height: 68%;
   pointer-events: none;
   background: linear-gradient(
     to top,
-    rgba(18, 10, 12, 0.86) 0%,
-    rgba(18, 10, 12, 0.56) 36%,
-    rgba(18, 10, 12, 0.2) 68%,
+    rgba(18, 10, 12, 0.76) 0%,
+    rgba(18, 10, 12, 0.54) 24%,
+    rgba(18, 10, 12, 0.3) 48%,
+    rgba(18, 10, 12, 0.1) 74%,
     transparent 100%
   );
   -webkit-backdrop-filter: blur(2px);
@@ -638,7 +643,7 @@ body[data-page="blank"] .design-collection-bento__tile:focus-visible {
 /* —— Shop by material: shaped textile cards —— */
 
 body[data-page="blank"] .design-materials {
-  padding: 72px 24px 108px;
+  padding: 48px 24px 72px;
   border-bottom: 0;
   background: var(--white);
   color: var(--ink);
@@ -653,7 +658,8 @@ body[data-page="blank"] .design-materials__defs {
   position: absolute;
   width: 0;
   height: 0;
-  overflow: hidden;
+  overflow: visible;
+  pointer-events: none;
 }
 
 body[data-page="blank"] .design-materials__header {
@@ -661,7 +667,7 @@ body[data-page="blank"] .design-materials__header {
   flex-direction: column;
   align-items: flex-start;
   gap: 12px;
-  margin: 0 0 48px;
+  margin: 0 0 24px;
   text-align: left;
 }
 
@@ -739,13 +745,17 @@ body[data-page="blank"] .design-materials__media .media__frame {
   transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+body[data-page="blank"] .design-materials__tile[data-material="organza"] .media__frame {
+  filter: saturate(1.12) brightness(1.1) contrast(0.98);
+}
+
 body[data-page="blank"] .design-materials__scrim {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: rgba(18, 10, 12, 0.32);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: rgba(18, 10, 12, 0.38);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
   pointer-events: none;
 }
 
@@ -810,11 +820,11 @@ body[data-page="blank"] .design-materials__tile:focus-visible {
 
 @media (max-width: 640px) {
   body[data-page="blank"] .design-materials {
-    padding: 40px 16px 96px;
+    padding: 40px 16px 64px;
   }
 
   body[data-page="blank"] .design-materials__header {
-    margin-bottom: 28px;
+    margin-bottom: 20px;
   }
 
   body[data-page="blank"] .design-materials__grid {
@@ -857,6 +867,10 @@ body[data-page="blank"] .design-new-arrivals {
   background: var(--white);
   color: var(--ink);
   text-align: left;
+}
+
+body[data-page="blank"] #design-clearance-sale.design-new-arrivals {
+  padding-bottom: 72px;
 }
 
 body[data-page="blank"] .design-new-arrivals__inner {
@@ -1201,7 +1215,8 @@ body[data-page="blank"] .design-new-arrivals__card .product-card__swatches {
   justify-content: flex-start;
   flex: 0 0 auto;
   gap: 8px;
-  margin-left: auto;
+  align-self: flex-start;
+  margin-left: 0;
 }
 
 body[data-page="blank"] .design-new-arrivals__card .product-card__swatch {
@@ -1338,14 +1353,24 @@ body[data-page="blank"] .design-new-arrivals__card .product-compare {
   text-decoration: line-through;
 }
 
-body[data-page="blank"] .design-new-arrivals__card .product-price-wrap {
+body[data-page="blank"] .design-new-arrivals__card .product-price-line {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: flex-start;
   flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+body[data-page="blank"] .design-new-arrivals__card .product-price-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
   width: 100%;
   padding-right: 2px;
-  gap: 8px;
+  gap: 6px;
   margin-top: 0;
 }
 
@@ -1403,8 +1428,12 @@ body[data-page="blank"] .design-feature-banner__title {
   font-variation-settings: "wdth" 122, "wght" 100;
   letter-spacing: -0.03em;
   line-height: 0.95;
-  text-transform: uppercase;
+  text-transform: none;
   text-wrap: balance;
+}
+
+body[data-page="blank"] #design-ready-to-wear-banner .design-feature-banner__title {
+  font-size: clamp(30px, 3.6vw, 52px);
 }
 
 body[data-page="blank"] .design-feature-banner__cta {
@@ -1498,6 +1527,97 @@ body[data-page="blank"] .design-feature-banner__cell--4 {
   grid-row: 2;
 }
 
+/* —— Clearance overlay feature banner: single image + cream type —— */
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__inner {
+  position: relative;
+  display: grid;
+  grid-template: 1fr / 1fr;
+  min-height: clamp(340px, 42vw, 480px);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--color-primary-900);
+  gap: 0;
+}
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  grid-area: 1 / 1;
+  z-index: 0;
+}
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__media .media__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  border: 0;
+  object-fit: cover;
+  object-position: center top;
+}
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__scrim {
+  display: block;
+  grid-area: 1 / 1;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(18, 10, 12, 0.55) 0%,
+    rgba(18, 10, 12, 0.28) 55%,
+    rgba(18, 10, 12, 0.12) 100%
+  );
+}
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__copy {
+  position: relative;
+  z-index: 2;
+  grid-area: 1 / 1;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 12px;
+  max-width: 36ch;
+  padding: clamp(28px, 4vw, 48px);
+  color: var(--cream);
+  text-align: left;
+}
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__eyebrow {
+  color: color-mix(in srgb, var(--cream) 78%, transparent);
+}
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__title {
+  color: var(--cream);
+  text-transform: none;
+}
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__lede {
+  max-width: none;
+  margin: 0;
+  color: color-mix(in srgb, var(--cream) 84%, transparent);
+}
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__cta {
+  margin-top: 4px;
+  border-color: var(--cream);
+  background: var(--cream);
+  color: var(--color-primary);
+}
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__cta:hover {
+  border-color: var(--cream);
+  background: color-mix(in srgb, var(--cream) 92%, white);
+  color: var(--color-primary-800);
+}
+
 /* —— Shop under: three image-backed price-band cards —— */
 
 body[data-page="blank"] .design-shop-under {
@@ -1534,7 +1654,7 @@ body[data-page="blank"] .design-shop-under__grid {
 body[data-page="blank"] .design-shop-under__tile {
   position: relative;
   display: block;
-  min-height: clamp(260px, 32vw, 380px);
+  min-height: clamp(280px, 34vw, 420px);
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--color-cream) 32%, transparent);
   border-radius: 16px;
@@ -1688,7 +1808,7 @@ body[data-page="blank"] .design-testimonials__track {
 }
 body[data-page="blank"] .design-testimonials__card {
   display: grid;
-  grid-template-columns: 220px minmax(220px, 320px);
+  grid-template-columns: 260px minmax(280px, 400px);
   gap: 20px;
   align-items: stretch;
   flex: 0 0 auto;
@@ -1699,9 +1819,9 @@ body[data-page="blank"] .design-testimonials__card {
 }
 body[data-page="blank"] .design-testimonials__media {
   position: relative;
-  width: 220px;
-  height: 220px;
-  max-width: 220px;
+  width: 260px;
+  height: 260px;
+  max-width: 260px;
   margin: 0;
   overflow: hidden;
   border-radius: 12px;
@@ -1767,7 +1887,7 @@ body[data-page="blank"] .design-testimonials__body {
   color: var(--ink);
   font-family: var(--font-body);
   font-size: clamp(16px, 1.35vw, 19px);
-  font-weight: var(--weight-body);
+  font-weight: 300;
   line-height: 1.45;
   text-wrap: pretty;
 }
@@ -1783,14 +1903,14 @@ body[data-page="blank"] .design-testimonials__body {
     gap: 16px;
   }
   body[data-page="blank"] .design-testimonials__card {
-    grid-template-columns: 160px minmax(160px, 240px);
+    grid-template-columns: 180px minmax(180px, 280px);
     gap: 12px;
     padding: 12px;
   }
   body[data-page="blank"] .design-testimonials__media {
-    width: 160px;
-    height: 160px;
-    max-width: 160px;
+    width: 180px;
+    height: 180px;
+    max-width: 180px;
   }
 }
 
@@ -1952,11 +2072,15 @@ body[data-page="blank"] .design-testimonials__body {
   body[data-page="blank"] .design-collection-bento__tile:nth-child(2),
   body[data-page="blank"] .design-collection-bento__tile:nth-child(n + 3) {
     grid-column: 1;
-    min-height: min(48vw, 240px);
+    min-height: min(58vw, 280px);
   }
 
   body[data-page="blank"] .design-new-arrivals {
     padding: 48px 16px 88px;
+  }
+
+  body[data-page="blank"] #design-clearance-sale.design-new-arrivals {
+    padding-bottom: 64px;
   }
 
   body[data-page="blank"] .design-new-arrivals__header {
@@ -1981,7 +2105,7 @@ body[data-page="blank"] .design-testimonials__body {
   }
 
   body[data-page="blank"] .design-feature-banner {
-    padding: 56px 16px 64px;
+    padding: 16px;
   }
 
   body[data-page="blank"] .design-feature-banner__inner {
@@ -2000,6 +2124,17 @@ body[data-page="blank"] .design-testimonials__body {
     gap: 8px;
   }
 
+  body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__inner {
+    min-height: clamp(280px, 58vw, 320px);
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__copy {
+    order: unset;
+    padding: clamp(24px, 5vw, 36px);
+  }
+
   body[data-page="blank"] .design-shop-under {
     padding: 16px 16px 72px;
   }
@@ -2013,7 +2148,7 @@ body[data-page="blank"] .design-testimonials__body {
   }
 
   body[data-page="blank"] .design-shop-under__tile {
-    min-height: min(58vw, 300px);
+    min-height: min(64vw, 340px);
     border-radius: 12px;
   }
 

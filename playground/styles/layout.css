@@ -190,6 +190,19 @@ button {
   color: var(--ink);
 }
 
+.button--secondary {
+  background: transparent;
+  color: var(--color-primary-800);
+  border-color: var(--color-primary);
+  border-radius: 999px;
+}
+
+.button--secondary:hover {
+  background: var(--color-primary-100);
+  border-color: var(--color-primary-800);
+  color: var(--color-primary-800);
+}
+
 .button--on-dark {
   background: var(--cream);
   color: var(--ink);

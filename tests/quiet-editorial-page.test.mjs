@@ -133,7 +133,7 @@ test("collection bento uses editorial assets and softened card treatment", async
   );
   assert.match(
     designStyles,
-    /background:\s*linear-gradient\(\s*to top,\s*rgba\(18, 10, 12, 0\.86\) 0%,\s*rgba\(18, 10, 12, 0\.56\) 36%,\s*rgba\(18, 10, 12, 0\.2\) 68%,\s*transparent 100%\s*\)/,
+    /background:\s*linear-gradient\(\s*to top,\s*rgba\(18, 10, 12, 0\.76\) 0%,\s*rgba\(18, 10, 12, 0\.54\) 24%,\s*rgba\(18, 10, 12, 0\.3\) 48%,\s*rgba\(18, 10, 12, 0\.1\) 74%,\s*transparent 100%\s*\)/,
   );
   assert.match(designStyles, /design-collection-bento__caption\s*\{[\s\S]*gap:\s*10px/);
   assert.match(designStyles, /border:\s*1px solid color-mix\(in srgb, var\(--color-cream\) 32%, transparent\)/);
@@ -184,11 +184,11 @@ test("design page includes a shaped shop-by-material rail", async () => {
   );
   assert.match(
     designStyles,
-    /design-materials__scrim\s*\{[\s\S]*backdrop-filter:\s*blur\(2px\)/,
+    /design-materials__scrim\s*\{[\s\S]*backdrop-filter:\s*blur\(1\.5px\)/,
   );
   assert.match(
     designStyles,
-    /design-materials__scrim\s*\{[\s\S]*background:\s*rgba\(18,\s*10,\s*12,\s*0\.32\)/,
+    /design-materials__scrim\s*\{[\s\S]*background:\s*rgba\(18,\s*10,\s*12,\s*0\.38\)/,
   );
   assert.doesNotMatch(designStyles, /design-materials__tile::after/);
   assert.doesNotMatch(designStyles, /design-materials__cta\s*\{/);
@@ -203,13 +203,50 @@ test("design page includes a shaped shop-by-material rail", async () => {
   );
   assert.match(
     designStyles,
-    /design-materials\s*\{[\s\S]*padding:\s*72px 24px 108px/,
+    /design-materials\s*\{[\s\S]*padding:\s*48px 24px 72px/,
   );
   const shopUnderIndex = blank.sections.findIndex((section) => section.id === "design-shop-under");
   const materialIndex = blank.sections.findIndex((section) => section.id === "design-shop-by-material");
+  const clearanceBannerIndex = blank.sections.findIndex((section) => section.id === "design-clearance-banner");
+  const clearanceIndex = blank.sections.findIndex((section) => section.id === "design-clearance-sale");
   const testimonialsIndex = blank.sections.findIndex((section) => section.id === "design-testimonials");
   assert.equal(materialIndex, shopUnderIndex + 1);
-  assert.equal(testimonialsIndex, materialIndex + 1);
+  assert.equal(clearanceBannerIndex, materialIndex + 1);
+  assert.equal(clearanceIndex, materialIndex + 2);
+  assert.equal(testimonialsIndex, materialIndex + 3);
+});
+
+test("design page places a clearance banner then sale carousel after shop by material", async () => {
+  const { blank } = await pageModule("playground/pages/blank.js");
+  const renderer = await source("playground/components/render.js");
+  const designStyles = await source("playground/styles/design.css");
+  const materialIndex = blank.sections.findIndex((section) => section.id === "design-shop-by-material");
+  const banner = blank.sections[materialIndex + 1];
+  const clearance = blank.sections[materialIndex + 2];
+
+  assert.equal(banner.id, "design-clearance-banner");
+  assert.equal(banner.type, "feature-banner");
+  assert.equal(banner.layout, "overlay");
+  assert.equal(banner.title, "Clearance sale");
+  assert.equal(typeof banner.media, "object");
+  assert.equal(Array.isArray(banner.media), false);
+  assert.ok(banner.media?.src);
+  assert.equal(clearance.id, "design-clearance-sale");
+  assert.equal(clearance.type, "product-carousel");
+  assert.equal(clearance.title, undefined);
+  assert.equal(clearance.copy, undefined);
+  assert.equal(clearance.eyebrow, undefined);
+  assert.equal(clearance.viewAll, undefined);
+  assert.ok(clearance.products.length >= 6);
+  assert.ok(clearance.products.every((product) => Boolean(product.compareAt)));
+  assert.match(renderer, /layout === "overlay"/);
+  assert.match(renderer, /design-feature-banner--overlay/);
+  assert.match(renderer, /design-feature-banner__scrim/);
+  assert.match(designStyles, /design-feature-banner--overlay/);
+  assert.match(
+    designStyles,
+    /design-feature-banner--overlay \.design-feature-banner__inner\s*\{[\s\S]*background:\s*var\(--color-primary-900\)/,
+  );
 });
 
 test("design page places a four-up new arrivals carousel after shop by collection", async () => {
@@ -252,7 +289,7 @@ test("design page places a four-up new arrivals carousel after shop by collectio
   assert.match(renderer, /product-card__wishlist/);
   assert.match(renderer, /Add to cart/);
   assert.match(renderer, /product-card__swatches/);
-  assert.match(renderer, /priceWrap\.append\(element\("span", "product-price"/);
+  assert.match(renderer, /priceLine\.append\(element\("span", "product-price"/);
   assert.match(renderer, /!options\.commerce/);
   assert.equal(arrivals.products[0].tag, "Everyday");
   assert.equal(arrivals.products[0].compareAt, "₹2,299");
@@ -292,10 +329,19 @@ test("design page places a ready-to-wear promo banner after new arrivals", async
   assert.equal(banner.action.label, "Shop ready-to-wear");
   assert.equal(banner.action.href, "/?route=ready-to-wear");
   assert.equal(banner.media.length, 4);
+  assert.notEqual(banner.layout, "overlay");
   assert.match(renderer, /case "feature-banner"/);
   assert.match(renderer, /renderFeatureBanner/);
   assert.match(designStyles, /\.design-feature-banner/);
   assert.match(designStyles, /design-feature-banner__collage/);
+  assert.match(
+    designStyles,
+    /design-feature-banner\s*\{[\s\S]*padding:\s*24px[\s\S]*background:\s*var\(--white\)/,
+  );
+  assert.match(
+    designStyles,
+    /design-feature-banner__inner\s*\{[\s\S]*border-radius:\s*16px[\s\S]*background:\s*var\(--color-primary-100\)/,
+  );
 });
 
 test("design page places a headerless ready-to-wear product rail after the banner", async () => {
@@ -331,7 +377,7 @@ test("design page places a shop-under price band after ready-to-wear products", 
 
   assert.equal(shopUnder.type, "shop-under");
   assert.equal(shopUnder.id, "design-shop-under");
-  assert.equal(shopUnder.title, "BEST ON BUDGET");
+  assert.equal(shopUnder.title, "Best on budget");
   assert.equal(shopUnder.items.length, 3);
   assert.deepEqual(
     shopUnder.items.map((item) => item.title),
@@ -347,8 +393,10 @@ test("design page places a shop-under price band after ready-to-wear products", 
   );
   assert.ok(shopUnder.items.every((item) => Boolean(item.media?.src)));
   assert.equal(blank.sections[railIndex + 2].id, "design-shop-by-material");
-  assert.equal(blank.sections[railIndex + 3].id, "design-testimonials");
-  assert.equal(blank.sections[railIndex + 4].id, "footer");
+  assert.equal(blank.sections[railIndex + 3].id, "design-clearance-banner");
+  assert.equal(blank.sections[railIndex + 4].id, "design-clearance-sale");
+  assert.equal(blank.sections[railIndex + 5].id, "design-testimonials");
+  assert.equal(blank.sections[railIndex + 6].id, "footer");
   assert.equal(blank.sections.at(-1).id, "footer");
   assert.match(renderer, /case "shop-under"/);
   assert.match(renderer, /renderShopUnder/);
@@ -356,7 +404,7 @@ test("design page places a shop-under price band after ready-to-wear products", 
   assert.match(designStyles, /\.design-shop-under/);
   assert.match(designStyles, /design-shop-under__grid/);
   assert.match(designStyles, /design-shop-under__tile/);
-  assert.match(designStyles, /design-shop-under__tile\s*\{[\s\S]*min-height:\s*clamp\(260px, 32vw, 380px\)/);
+  assert.match(designStyles, /design-shop-under__tile\s*\{[\s\S]*min-height:\s*clamp\(280px, 34vw, 420px\)/);
   assert.match(designStyles, /design-shop-under__heading\s*\{[\s\S]*font-family:\s*"Sprat Campaign"/);
   assert.match(designStyles, /design-shop-under__label-price\s*\{[\s\S]*font-size:\s*clamp\(28px/);
   assert.match(designStyles, /design-shop-under\s*\{[\s\S]*padding:\s*16px 24px 80px/);
@@ -371,9 +419,13 @@ test("design page places a testimonials feature after shop under", async () => {
   const designStyles = await source("playground/styles/design.css");
   const shopUnderIndex = blank.sections.findIndex((section) => section.id === "design-shop-under");
   const material = blank.sections[shopUnderIndex + 1];
-  const testimonials = blank.sections[shopUnderIndex + 2];
+  const clearanceBanner = blank.sections[shopUnderIndex + 2];
+  const clearance = blank.sections[shopUnderIndex + 3];
+  const testimonials = blank.sections[shopUnderIndex + 4];
 
   assert.equal(material.id, "design-shop-by-material");
+  assert.equal(clearanceBanner.id, "design-clearance-banner");
+  assert.equal(clearance.id, "design-clearance-sale");
   assert.equal(testimonials.type, "testimonials");
   assert.equal(testimonials.id, "design-testimonials");
   assert.equal(testimonials.title, "Loved by her");
@@ -421,7 +473,7 @@ test("design page places a testimonials feature after shop under", async () => {
   assert.match(designStyles, /aspect-ratio:\s*1\s*\/\s*1/);
   assert.match(designStyles, /design-testimonials__attribution/);
   assert.match(designStyles, /clamp\(16px,\s*1\.35vw,\s*19px\)/);
-  assert.match(designStyles, /grid-template-columns:\s*220px\s+minmax\(220px,\s*320px\)/);
+  assert.match(designStyles, /grid-template-columns:\s*260px\s+minmax\(280px,\s*400px\)/);
   assert.doesNotMatch(designStyles, /calc\(\(100% - 32px\) \/ 2\.5\)/);
   assert.doesNotMatch(designStyles, /design-testimonials__arrow/);
   assert.doesNotMatch(designStyles, /design-testimonials__controls/);
@@ -446,19 +498,30 @@ test("design page ends with the standard footer navigation", async () => {
   );
   assert.equal(
     footer.columns.reduce((count, column) => count + column.links.length, 0),
-    14,
+    23,
+  );
+  assert.equal(footer.trust.length, 4);
+  assert.deepEqual(
+    footer.trust.map((item) => item.label),
+    [
+      "Cash on delivery",
+      "Easy returns",
+      "Pan-India shipping",
+      "WhatsApp support",
+    ],
   );
 });
 
 test("footer brand uses the supplied Samantha logo asset", async () => {
   const renderer = await source("playground/components/render.js");
   const footerRenderer = renderer.slice(
-    renderer.indexOf("function renderFooter"),
+    renderer.indexOf("function footerTrustIcon"),
     renderer.indexOf("function renderSection"),
   );
 
   assert.match(footerRenderer, /footer-wordmark/);
   assert.match(footerRenderer, /renderBrandImage\(\)/);
+  assert.match(footerRenderer, /footer-trust/);
 });
 
 test("footer surface uses the defined Samantha plum palette", async () => {
@@ -467,4 +530,6 @@ test("footer surface uses the defined Samantha plum palette", async () => {
 
   assert.match(footerStyles, /\.site-footer\s*\{[\s\S]*background:\s*var\(--color-primary\)/);
   assert.match(footerStyles, /\.footer-wordmark \.wordmark__image\s*\{[\s\S]*filter:\s*brightness\(0\) invert\(1\)/);
+  assert.match(footerStyles, /\.footer-heading\s*\{[\s\S]*color:\s*var\(--cream\)/);
+  assert.match(footerStyles, /\.footer-bottom\s*\{[\s\S]*color-mix\(in srgb, var\(--color-cream\) 32%, transparent\)/);
 });

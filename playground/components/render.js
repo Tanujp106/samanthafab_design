@@ -271,7 +271,7 @@ function renderMaterialShapeDefs() {
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   path.setAttribute(
     "d",
-    "M .5 0 C .515 .025 .55 .065 .6 .09 C .64 .105 .68 .1 .71 .14 C .74 .09 .81 .1 .84 .16 C .92 .14 .98 .21 .97 .29 C 1 .35 .97 .42 .93 .46 C .99 .5 1 .58 .95 .64 C .99 .72 .97 .82 .9 .87 C .87 .92 .82 .92 .77 .91 C .75 .97 .69 .98 .64 .96 C .6 .995 .55 .98 .5 1.03 C .45 .98 .4 .995 .36 .96 C .31 .98 .25 .97 .23 .91 C .18 .92 .13 .91 .1 .87 C .03 .82 .01 .72 .05 .64 C 0 .58 .01 .5 .07 .46 C .03 .42 0 .35 .03 .29 C .02 .21 .08 .14 .16 .16 C .19 .1 .26 .09 .29 .14 C .32 .1 .36 .105 .4 .09 C .45 .065 .485 .025 .5 0 Z",
+    "M .5 0 C .515 .025 .55 .065 .6 .09 C .64 .105 .68 .1 .71 .14 C .74 .09 .81 .1 .84 .16 C .92 .14 .98 .21 .97 .29 C 1 .35 .97 .42 .93 .46 C .99 .5 1 .58 .95 .64 C .99 .72 .97 .82 .9 .87 C .87 .92 .82 .92 .77 .91 C .75 .94 .69 .96 .64 .94 C .6 .97 .55 .96 .5 1 C .45 .96 .4 .97 .36 .94 C .31 .96 .25 .94 .23 .91 C .18 .92 .13 .91 .1 .87 C .03 .82 .01 .72 .05 .64 C 0 .58 .01 .5 .07 .46 C .03 .42 0 .35 .03 .29 C .02 .21 .08 .14 .16 .16 C .19 .1 .26 .09 .29 .14 C .32 .1 .36 .105 .4 .09 C .45 .065 .485 .025 .5 0 Z",
   );
   clipPath.append(path);
   defs.append(clipPath);
@@ -494,10 +494,12 @@ function renderProductCard(product, ctx, options = {}) {
     meta.append(element("span", "product-material", product.material));
   }
   const priceWrap = element("div", "product-price-wrap");
-  priceWrap.append(element("span", "product-price", product.price));
+  const priceLine = element("span", "product-price-line");
+  priceLine.append(element("span", "product-price", product.price));
   if (product.compareAt) {
-    priceWrap.append(element("span", "product-compare", product.compareAt));
+    priceLine.append(element("span", "product-compare", product.compareAt));
   }
+  priceWrap.append(priceLine);
   if (options.commerce) {
     const swatches = productColorSwatches(product);
     if (swatches) priceWrap.append(swatches);
@@ -650,7 +652,7 @@ function renderShopUnder(section, ctx) {
   root.setAttribute("aria-labelledby", "design-shop-under-title");
 
   const inner = element("div", "design-shop-under__inner");
-  const heading = element("h2", "design-shop-under__heading", section.title || "BEST ON BUDGET");
+  const heading = element("h2", "design-shop-under__heading", section.title || "Best on budget");
   heading.id = "design-shop-under-title";
 
   const grid = element("div", "design-shop-under__grid");
@@ -745,10 +747,15 @@ function renderTestimonials(section, ctx) {
   return root;
 }
 function renderFeatureBanner(section, ctx) {
-  const root = element("section", "section section--feature-banner design-feature-banner");
+  const isOverlay = section.layout === "overlay";
+  const root = element(
+    "section",
+    `section section--feature-banner design-feature-banner${isOverlay ? " design-feature-banner--overlay" : ""}`,
+  );
+  const titleId = `${section.id}-title`;
   root.id = section.id;
   root.dataset.section = section.number;
-  root.setAttribute("aria-labelledby", "design-ready-to-wear-banner-title");
+  root.setAttribute("aria-labelledby", titleId);
 
   const inner = element("div", "design-feature-banner__inner");
   const copy = element("div", "design-feature-banner__copy");
@@ -756,7 +763,7 @@ function renderFeatureBanner(section, ctx) {
     copy.append(element("p", "design-feature-banner__eyebrow", section.eyebrow));
   }
   const heading = element("h2", "design-feature-banner__title", section.title || "Ready to wear");
-  heading.id = "design-ready-to-wear-banner-title";
+  heading.id = titleId;
   copy.append(heading);
   if (section.copy) {
     copy.append(element("p", "design-feature-banner__lede", section.copy));
@@ -767,8 +774,26 @@ function renderFeatureBanner(section, ctx) {
     );
   }
 
+  if (isOverlay) {
+    const mediaItem = Array.isArray(section.media) ? section.media[0] : section.media;
+    if (mediaItem) {
+      inner.append(
+        renderMedia(mediaItem, {
+          fill: true,
+          notesEnabled: ctx.notesEnabled,
+          className: "design-feature-banner__media",
+        }),
+      );
+    }
+    inner.append(element("span", "design-feature-banner__scrim"));
+    inner.append(copy);
+    root.append(inner);
+    return root;
+  }
+
   const collage = element("div", "design-feature-banner__collage");
-  (section.media || []).forEach((item, index) => {
+  const collageMedia = Array.isArray(section.media) ? section.media : section.media ? [section.media] : [];
+  collageMedia.forEach((item, index) => {
     const cell = element("div", `design-feature-banner__cell design-feature-banner__cell--${index + 1}`);
     cell.append(
       renderMedia(item, {
@@ -943,6 +968,16 @@ function renderSale(section, ctx) {
   return sectionShell(section, content, { className: "section--sale" });
 }
 
+function footerTrustIcon(name) {
+  const icons = {
+    cod: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><path d="M2.5 8.5h15"/><text x="10" y="14.2" text-anchor="middle" fill="currentColor" stroke="none" font-size="6.5" font-family="system-ui,sans-serif">₹</text></svg>`,
+    returns: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 7.5A6 6 0 1 0 16 12"/><path d="M15.5 4v3.5H12"/></svg>`,
+    shipping: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5h9.5v9H3z"/><path d="M12.5 9h3.2l1.8 2.4v4.1h-5V9z"/><circle cx="6.2" cy="15.5" r="1.2"/><circle cx="14.8" cy="15.5" r="1.2"/></svg>`,
+    whatsapp: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 14.5 3.5 17l2.7-1.1A6.8 6.8 0 1 0 4.5 14.5Z"/><path d="M7.2 8.8c.2-.4.5-.4.7-.4h.5c.2 0 .4.1.5.4l.4 1c.1.2 0 .4-.1.5l-.4.4c.2.4.6.8 1 1.1.3.2.6.3.9.4l.5-.4c.2-.1.4-.1.5 0l1 .5c.3.1.4.3.4.5v.5c0 .2 0 .5-.4.7-.4.3-1 .4-1.6.3-1.5-.3-3-1.3-4.1-2.5-1-1.1-1.8-2.5-2-4-.1-.6 0-1.2.3-1.6.2-.3.5-.4.7-.4Z"/></svg>`,
+  };
+  return icons[name] || "";
+}
+
 function renderFooter(section) {
   const footer = element("footer", "site-footer section section--footer section--flush");
   footer.id = section.id;
@@ -980,6 +1015,21 @@ function renderFooter(section) {
   });
 
   grid.append(brand, columns);
+
+  if (section.trust?.length) {
+    const trust = element("ul", "footer-trust");
+    trust.setAttribute("aria-label", "Shopping assurances");
+    section.trust.forEach((item) => {
+      const li = element("li", "footer-trust__item");
+      const icon = element("span", "footer-trust__icon");
+      icon.setAttribute("aria-hidden", "true");
+      icon.innerHTML = footerTrustIcon(item.icon);
+      li.append(icon, element("span", "footer-trust__label", item.label));
+      trust.append(li);
+    });
+    grid.append(trust);
+  }
+
   inner.append(grid, element("p", "footer-bottom", section.copyright), annotation(section));
   footer.append(inner);
   return footer;
