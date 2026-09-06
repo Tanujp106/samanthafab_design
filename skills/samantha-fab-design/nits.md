@@ -85,8 +85,8 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Carousel arrows | Mid-image via `cqw` (not mid-section); ~44px; primary chrome |
 | View all | Filled primary; align with title (offset past eyebrow line) |
 | Price row | Full width; sale + compare-at on the first line; swatches below, left-aligned |
-| Product-card price alignment | Details fill the shared row height; price meta sits on the common bottom edge |
-| Swatches | 16px circles below the price line — never on image hover stack |
+| Product-card price spacing | Tight under title via body `gap: 6px`; `product-meta` `margin-top: 0`; body/link `flex: 0 0 auto` — never `margin-top: auto` (that left a hole when colors were absent) |
+| Swatches | 16px circles below the price line — never on image hover stack; omit entirely when product has no colors |
 | Material line | Hidden |
 | Image aspect | 3 / 4; left-aligned card + text |
 | RTW banner title | `clamp(30px, 3.6vw, 52px)` |

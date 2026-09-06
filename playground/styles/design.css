@@ -1092,7 +1092,7 @@ body[data-page="blank"] .design-new-arrivals__card .product-card__media-link {
 
 body[data-page="blank"] .design-new-arrivals__card .product-card__link {
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   flex-direction: column;
   min-height: 0;
   align-items: stretch;
@@ -1279,7 +1279,7 @@ body[data-page="blank"] .design-new-arrivals__card .product-card__add-to-cart:fo
 
 body[data-page="blank"] .design-new-arrivals__card .product-card__body {
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   flex-direction: column;
   min-height: 0;
   width: 100%;
@@ -1320,7 +1320,7 @@ body[data-page="blank"] .design-new-arrivals__card .product-meta {
   justify-content: flex-start;
   gap: 4px;
   width: 100%;
-  margin-top: auto;
+  margin-top: 0;
   color: var(--muted);
   font-family: var(--font-body);
   font-size: 12px;

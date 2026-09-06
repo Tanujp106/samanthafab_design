@@ -78,24 +78,29 @@ test("design nits: color swatches sit below a vertically aligned price line", as
   assert.match(render, /product-card__swatches/);
   assert.match(render, /product-price-line/);
   assert.match(render, /product-price-wrap/);
+  assert.doesNotMatch(render, /product-card__swatches--empty/);
   assert.doesNotMatch(
     render,
     /product-card__media-actions[\s\S]{0,400}product-card__swatches/,
   );
 });
 
-test("design nits: product prices share a bottom-aligned row", async () => {
+test("design nits: product prices stay tight under the title", async () => {
   const css = await source("playground/styles/design.css");
 
   assert.match(
     css,
-    /body\[data-page="blank"\] \.design-new-arrivals__card\s*\{[^}]*align-self:\s*stretch/s,
+    /body\[data-page="blank"\] \.design-new-arrivals__card \.product-card__body\s*\{[^}]*gap:\s*6px/s,
   );
   assert.match(
     css,
-    /body\[data-page="blank"\] \.design-new-arrivals__card \.product-card__link\s*\{[^}]*display:\s*flex[\s\S]*flex:\s*1 1 auto[\s\S]*flex-direction:\s*column/s,
+    /body\[data-page="blank"\] \.design-new-arrivals__card \.product-meta\s*\{[^}]*margin-top:\s*0/s,
   );
   assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-new-arrivals__card \.product-card__body\s*\{[^}]*flex:\s*0 0 auto/s,
+  );
+  assert.doesNotMatch(
     css,
     /body\[data-page="blank"\] \.design-new-arrivals__card \.product-meta\s*\{[^}]*margin-top:\s*auto/s,
   );

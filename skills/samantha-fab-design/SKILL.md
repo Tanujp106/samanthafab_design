@@ -37,7 +37,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 - Product/occasion tags: `Everyday` / `Work` / `Festive` / `Wedding` / `Ready-to-wear` — never “New”.
 - Primary CTAs (`View all`, `Shop ready-to-wear`): filled primary button.
 - Color swatches in the **price row** (right-aligned), not on image hover with Add to cart.
-- Product-card details stretch to the shared rail row height so price rows align on the bottom edge; when colors exist, keep swatches beneath the price line in a vertical stack.
+- Product-card details stack tightly (tag → name → price ~6px); do not push price to the bottom with `margin-top: auto` — that opens a large title→price gap on cards without colors. When colors exist, keep swatches beneath the price line.
 - Image scrims: long, low-opacity **linear bottom fade** (+ light blur if needed) for collection/bento tiles. Never a solid blur veil or a compressed dark band there. **Shop by Material** cards use a full-tile, lightly blurred dark scrim (no linear gradient).
 - Annotations / review chrome: only with `?notes=1`. Keep default `/design` clean.
 - Editorial geometry: hairline gaps, restrained radius, varied section rhythm, real or replaceable photos.
@@ -87,6 +87,8 @@ One-off experiments (“try X once”) do not get written until the user confirm
 
 ## Changelog
 
+- 2026-09-06 — Product price sits tight under the title (~6px body gap); removed meta `margin-top: auto` / flex-grow stretch that left a hole when colors were absent.
+- 2026-09-06 — Product cards without colors reserve an empty 16px swatch slot so title→price no longer opens a larger gap than cards with swatches.
 - 2026-09-06 — Footer trust icons 32×32 (stacked above 16px labels; strip width still locked to link columns).
 - 2026-09-06 — Footer trust: 48×48 icons stacked above 16px labels; strip width matches link columns (grid-column under columns).
 - 2026-09-06 — Footer denser 4 columns (23 links) + trust strip (COD/returns/shipping/WhatsApp) above copyright; still no payment logos/app badges/SEO clouds.
