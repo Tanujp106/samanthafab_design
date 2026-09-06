@@ -37,7 +37,7 @@
   --color-primary-900: #350817;
 
   /* Warm neutrals keep the light theme tactile rather than stark white. */
-  --color-paper: #fbf8f4;
+  --color-paper: #fcfaf7;
   --color-paper-deep: #f0e9e3;
   --color-cream: #fffdf9;
   --color-ink: #24171c;
@@ -45,7 +45,7 @@
   --color-muted: #745e66;
   --color-rule: #dcced3;
   --color-rule-dark: #bbaab1;
-  --color-white: #ffffff;
+  --color-white: #fcfaf7;
   --color-cream-rgb: 255, 253, 249;
 
   /* Existing semantic names retained for the page data and media tones. */

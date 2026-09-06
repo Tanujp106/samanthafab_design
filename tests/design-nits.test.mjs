@@ -30,16 +30,20 @@ test("design nits: New Arrivals eyebrow→title is 6px", async () => {
   );
 });
 
-test("design nits: collection scrim uses a soft, extended linear fade", async () => {
+test("design nits: collection scrim uses a soft left linear fade", async () => {
   const css = await source("playground/styles/design.css");
 
   assert.match(
     css,
-    /body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*height:\s*68%/s,
+    /body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*width:\s*72%/s,
   );
   assert.match(
     css,
-    /body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*rgba\(18,\s*10,\s*12,\s*0\.76\)\s*0%/s,
+    /body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*to right/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*rgba\(18,\s*10,\s*12,\s*0\.84\)\s*0%/s,
   );
   assert.doesNotMatch(
     css,
@@ -51,11 +55,57 @@ test("design nits: collection scrim uses a soft, extended linear fade", async ()
   );
   assert.match(
     css,
-    /body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*-webkit-mask-image:\s*linear-gradient/s,
+    /body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*-webkit-mask-image:\s*linear-gradient\(to right/s,
   );
   assert.match(
     css,
-    /body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*mask-image:\s*linear-gradient/s,
+    /body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*mask-image:\s*linear-gradient\(to right/s,
+  );
+});
+
+test("design nits: collection tiles use occasion-specific Lucide icons", async () => {
+  const blank = await source("playground/pages/blank.js");
+  const renderer = await source("playground/components/render.js");
+  const css = await source("playground/styles/design.css");
+
+  for (const [title, icon] of [
+    ["Everyday", "sunrise"],
+    ["Work", "briefcase-business"],
+    ["Festive", "party-popper"],
+    ["Wedding", "gem"],
+    ["Ready-to-wear", "shirt"],
+  ]) {
+    assert.match(
+      blank,
+      new RegExp(`title:\\s*"${title}"[\\s\\S]*?icon:\\s*"${icon}"`),
+    );
+  }
+
+  assert.match(renderer, /const collectionIconPaths\s*=\s*\{/);
+  assert.match(renderer, /function renderCollectionIcon\(name\)/);
+  assert.match(renderer, /renderCollectionIcon\(item\.icon\)/);
+  assert.match(renderer, /design-collection-bento__icon/);
+  assert.match(renderer, /a2 2 0 0 1-3\.247 0l-7\.99-10\.986A2 2 0 0 1 2\.4 7\.8/);
+  assert.match(css, /body\[data-page="blank"\] \.design-collection-bento__icon\s*\{/);
+  assert.match(css, /width:\s*20px/);
+  assert.match(css, /height:\s*20px/);
+});
+
+test("design nits: collection captions use a stacked Explore action", async () => {
+  const renderer = await source("playground/components/render.js");
+  const css = await source("playground/styles/design.css");
+
+  assert.match(renderer, /design-collection-bento__action/);
+  assert.match(renderer, /element\("span", "design-collection-bento__action-label", "Explore"\)/);
+  assert.match(renderer, /meta\.append\(caption\)/);
+  assert.doesNotMatch(renderer, /meta\.append\(caption, arrow\)/);
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-collection-bento__caption-title\s*\{[^}]*flex-direction:\s*column/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-collection-bento__action\s*\{[^}]*text-transform:\s*uppercase/s,
   );
 });
 
@@ -106,6 +156,33 @@ test("design nits: product prices stay tight under the title", async () => {
   );
 });
 
+test("design nits: product carousels use a fixed-height horizontal rail", async () => {
+  const css = await source("playground/styles/design.css");
+  const app = await source("playground/app.js");
+
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-new-arrivals__viewport\s*\{[^}]*--product-rail-details:\s*7\.75rem/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-new-arrivals__viewport\s*\{[^}]*height:\s*calc\(\(\(100cqi - 48px\) \/ 4\) \* 4 \/ 3 \+ var\(--product-rail-details\)\)/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-new-arrivals__track\s*\{[^}]*align-items:\s*start/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-new-arrivals__card\s*\{[^}]*height:\s*auto/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-new-arrivals__viewport\s*\{[^}]*overflow-x:\s*auto[^}]*overflow-y:\s*hidden/s,
+  );
+  assert.doesNotMatch(app, /window\.scrollBy\(0,\s*event\.deltaY\)/);
+});
+
 test("design nits: campaign slide media fills the stage without inherited margins", async () => {
   const css = await source("playground/styles/design.css");
 
@@ -136,6 +213,7 @@ test("design nits: material cards use fabric imagery without decorative icons", 
 
 test("design nits: material cards use blur+dark scrim without Explore CTA", async () => {
   const renderer = await source("playground/components/render.js");
+  const app = await source("playground/app.js");
   const css = await source("playground/styles/design.css");
 
   assert.match(
@@ -180,25 +258,42 @@ test("design nits: material cards use blur+dark scrim without Explore CTA", asyn
     renderer.match(/function renderMaterialRail[\s\S]*?(?=\nfunction )/)?.[0] ?? "",
     /Explore/,
   );
+  assert.match(renderer, /data-material-carousel/);
+  assert.match(renderer, /data-material-viewport/);
+  assert.match(renderer, /data-material-track/);
+  assert.match(renderer, /aria-roledescription", "carousel"/);
+  assert.match(renderer, /design-materials__controls/);
+  assert.match(app, /data-material-carousel/);
+  assert.match(app, /material-offset/);
+  assert.match(app, /material-distance/);
+  assert.match(app, /inert = distance > 1/);
+  assert.match(css, /design-materials__viewport/);
+  assert.match(css, /--material-card-width/);
+  assert.match(css, /data-distance="0"/);
+  assert.match(css, /data-distance="1"/);
+  assert.match(css, /data-distance="2"/);
 });
 
-test("design nits: Shop under uses sentence case and tightened section bottoms", async () => {
+test("design nits: Shop under uses uppercase titles and tightened section bottoms", async () => {
   const blank = await source("playground/pages/blank.js");
   const css = await source("playground/styles/design.css");
 
   assert.match(blank, /title:\s*"Best on budget"/);
-  assert.doesNotMatch(blank, /title:\s*"BEST ON BUDGET"/);
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-shop-under__heading\s*\{[^}]*text-transform:\s*uppercase/s,
+  );
   assert.match(
     css,
     /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-materials\s*\{[^}]*padding:\s*40px 16px 64px/s,
   );
   assert.match(
     css,
-    /body\[data-page="blank"\] #design-clearance-sale\.design-new-arrivals\s*\{[^}]*padding-bottom:\s*72px/s,
+    /body\[data-page="blank"\] #design-clearance-sale\.design-new-arrivals\s*\{[^}]*padding-bottom:\s*48px/s,
   );
   assert.match(
     css,
-    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] #design-clearance-sale\.design-new-arrivals\s*\{[^}]*padding-bottom:\s*64px/s,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] #design-clearance-sale\.design-new-arrivals\s*\{[^}]*padding-bottom:\s*40px/s,
   );
   assert.match(
     css,
@@ -266,10 +361,19 @@ test("design nits: Clearance overlay banner uses deep plum panel + cream type", 
   assert.match(clearanceBanner, /layout:\s*"overlay"/);
   assert.match(clearanceBanner, /src:\s*"\/assets\/design-story-cream\.jpg"/);
   assert.doesNotMatch(clearanceBanner, /design-collection-festive\.jpg/);
+  assert.match(clearanceBanner, /badge:\s*"Upto 50% off"/);
   assert.match(css, /design-feature-banner--overlay/);
   assert.match(
     css,
+    /design-feature-banner--overlay \.design-feature-banner__inner\s*\{[\s\S]*min-height:\s*clamp\(364px,\s*42vw,\s*504px\)/,
+  );
+  assert.match(
+    css,
     /design-feature-banner--overlay \.design-feature-banner__inner\s*\{[\s\S]*background:\s*var\(--color-primary-900\)/,
+  );
+  assert.match(
+    css,
+    /design-feature-banner--overlay \.design-feature-banner__badge\s*\{[\s\S]*text-transform:\s*uppercase/,
   );
   assert.match(
     css,
@@ -294,7 +398,35 @@ test("design nits: Clearance overlay banner uses deep plum panel + cream type", 
   );
   assert.match(
     css,
-    /\.design-feature-banner__title\s*\{[^}]*text-transform:\s*none/,
+    /\.design-feature-banner__title\s*\{[^}]*text-transform:\s*uppercase/,
+  );
+  assert.match(
+    css,
+    /#design-ready-to-wear-banner \.design-feature-banner__title\s*\{[^}]*text-transform:\s*none/,
+  );
+  assert.match(
+    css,
+    /#design-clearance-banner \.design-feature-banner__title\s*\{[^}]*text-transform:\s*none/,
+  );
+  assert.match(
+    css,
+    /#design-ready-to-wear-banner\.design-feature-banner\s*\{[^}]*padding:\s*36px 24px/,
+  );
+  assert.match(
+    css,
+    /design-new-arrivals__view-all\s*\{[^}]*font-size:\s*13px/,
+  );
+  assert.match(
+    css,
+    /design-feature-banner--overlay \.design-feature-banner__copy\s*\{[\s\S]*max-width:\s*52ch/,
+  );
+  assert.match(
+    css,
+    /design-shop-under__heading\s*\{[^}]*margin:\s*0 auto 40px/,
+  );
+  assert.match(
+    css,
+    /design-testimonials__header\s*\{[^}]*align-items:\s*center/,
   );
   assert.match(
     css,

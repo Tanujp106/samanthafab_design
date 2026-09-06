@@ -97,11 +97,11 @@ export const blank = {
       title: "Shop by collection",
       copy: "Start with the moment. The saree follows.",
       hideReviewNotes: true,
-      annotation: "Edge-to-edge 2+3 occasion bento. Image fill, bottom scrim, bottom-left labels.",
+      annotation: "Edge-to-edge 2+3 occasion bento. Image fill, left scrim, left labels.",
       items: [
         {
           title: "Everyday",
-          copy: "Starting with ₹1,299",
+          icon: "sunrise",
           href: "/?route=occasion-everyday",
           media: {
             src: "/assets/design-collection-everyday.jpg",
@@ -112,7 +112,7 @@ export const blank = {
         },
         {
           title: "Work",
-          copy: "Starting with ₹1,899",
+          icon: "briefcase-business",
           href: "/?route=occasion-work",
           media: {
             src: "/assets/design-collection-work.jpg",
@@ -123,7 +123,7 @@ export const blank = {
         },
         {
           title: "Festive",
-          copy: "Starting with ₹1,999",
+          icon: "party-popper",
           href: "/?route=occasion-festive",
           media: {
             src: "/assets/design-collection-festive.jpg",
@@ -134,7 +134,7 @@ export const blank = {
         },
         {
           title: "Wedding",
-          copy: "Starting with ₹2,499",
+          icon: "gem",
           href: "/?route=occasion-wedding",
           media: {
             src: "/assets/design-collection-wedding.jpg",
@@ -145,7 +145,7 @@ export const blank = {
         },
         {
           title: "Ready-to-wear",
-          copy: "Starting with ₹1,699",
+          icon: "shirt",
           href: "/?route=occasion-rtw",
           media: {
             src: "/assets/design-collection-ready-to-wear.jpg",
@@ -164,7 +164,7 @@ export const blank = {
       hideReviewNotes: true,
       title: "New arrivals",
       copy: "Fresh drapes and easy pieces, newly in the studio.",
-      viewAll: { label: "View all", href: "/?route=new-arrivals" },
+      viewAll: { label: "Shop All", href: "/?route=new-arrivals" },
       products: [
         {
           name: "Sage green handblock saree",
@@ -286,8 +286,151 @@ export const blank = {
       ],
     },
     {
-      id: "design-ready-to-wear-banner",
+      id: "design-usp-row",
+      number: "03b",
+      name: "USP",
+      type: "usp-row",
+      hideReviewNotes: true,
+      annotation: "Four quiet assurances — icon above, label below; sits under New Arrivals.",
+      items: [
+        { icon: "cod", label: "Cash on delivery" },
+        { icon: "returns", label: "Easy returns" },
+        { icon: "shipping", label: "Pan-India shipping" },
+        { icon: "whatsapp", label: "WhatsApp support" },
+      ],
+    },
+    {
+      id: "design-best-sellers",
       number: "04",
+      name: "Best Sellers",
+      type: "product-carousel",
+      hideReviewNotes: true,
+      title: "Best sellers",
+      copy: "The drapes she returns to — most loved right now.",
+      viewAll: { label: "Shop All", href: "/?route=bestsellers" },
+      products: [
+        {
+          name: "Indigo stripe ready-to-wear",
+          material: "Soft linen blend",
+          price: "₹2,499",
+          compareAt: "₹2,999",
+          href: "/?route=product-indigo-rtw",
+          tag: "Ready-to-wear",
+          swatches: [
+            { color: "#1f3a5f", label: "Indigo" },
+            { color: "#c4a574", label: "Sand" },
+            { color: "#5c2a3a", label: "Plum" },
+          ],
+          media: {
+            src: "/assets/design-product-indigo.jpg",
+            alt: "Indigo and ochre geometric saree with a flowing pallu",
+            tone: "indigo",
+            position: "center",
+          },
+        },
+        {
+          name: "Sage green handblock saree",
+          material: "Handblock cotton",
+          price: "₹1,899",
+          compareAt: "₹2,299",
+          href: "/?route=product-sage-handblock",
+          tag: "Everyday",
+          media: {
+            src: "/assets/design-product-sage.jpg",
+            alt: "Sage green floral saree styled in a clean studio",
+            tone: "moss",
+            position: "center",
+          },
+        },
+        {
+          name: "Marigold printed saree",
+          material: "Lightweight georgette",
+          price: "₹1,299",
+          compareAt: "₹1,599",
+          href: "/?route=product-marigold",
+          tag: "Festive",
+          media: {
+            src: "/assets/design-product-marigold.jpg",
+            alt: "Marigold yellow saree with an easy everyday drape",
+            tone: "ochre",
+            position: "center",
+          },
+        },
+        {
+          name: "Courtyard print saree",
+          material: "Cotton silk",
+          price: "₹2,199",
+          compareAt: "₹2,699",
+          href: "/?route=product-courtyard",
+          tag: "Everyday",
+          media: {
+            src: "/assets/design-collection-everyday.jpg",
+            alt: "Pale printed saree seated in a warm sunlit room",
+            tone: "ochre",
+            position: "center",
+          },
+        },
+        {
+          name: "Black border easy saree",
+          material: "Soft linen blend",
+          price: "₹1,799",
+          compareAt: "₹2,299",
+          href: "/?route=product-black-border",
+          tag: "Work",
+          media: {
+            src: "/assets/design-collection-work.jpg",
+            alt: "Cream, black, and maroon saree styled for work",
+            tone: "rust",
+            position: "center",
+          },
+        },
+        {
+          name: "Rust marigold silk saree",
+          material: "Silk blend",
+          price: "₹2,699",
+          compareAt: "₹3,299",
+          href: "/?route=product-rust-marigold",
+          tag: "Wedding",
+          media: {
+            src: "/assets/design-collection-festive.jpg",
+            alt: "Red and marigold saree styled for a festive occasion",
+            tone: "rust",
+            position: "center",
+          },
+        },
+        {
+          name: "Coral easy-drape saree",
+          material: "Lightweight organza",
+          price: "₹2,399",
+          compareAt: "₹2,899",
+          href: "/?route=product-coral-drape",
+          tag: "Ready-to-wear",
+          media: {
+            src: "/assets/design-collection-ready-to-wear.jpg",
+            alt: "Pastel striped saree styled for ready-to-wear ease",
+            tone: "paper",
+            position: "center",
+          },
+        },
+        {
+          name: "Workroom indigo saree",
+          material: "Handloom cotton",
+          price: "₹2,099",
+          compareAt: "₹2,599",
+          href: "/?route=product-workroom-indigo",
+          tag: "Work",
+          media: {
+            src: "/assets/design-campaign-hero-green.jpg",
+            alt: "Woman in a dark teal saree with a flying sheer pallu",
+            tone: "moss",
+            position: "center",
+          },
+        },
+      ],
+    },
+    {
+      id: "design-ready-to-wear-banner",
+      number: "05",
       name: "Ready to Wear Banner",
       type: "feature-banner",
       hideReviewNotes: true,
@@ -324,11 +467,11 @@ export const blank = {
     },
     {
       id: "design-ready-to-wear-products",
-      number: "05",
+      number: "06",
       name: "Ready to wear products",
       type: "product-carousel",
       hideReviewNotes: true,
-      action: { label: "Shop ready-to-wear", href: "/?route=ready-to-wear" },
+      action: { label: "Shop All", href: "/?route=ready-to-wear" },
       products: [
         {
           name: "Indigo stripe ready-to-wear",
@@ -584,6 +727,7 @@ export const blank = {
       hideReviewNotes: true,
       eyebrow: "Final pieces",
       title: "Clearance sale",
+      badge: "Upto 50% off",
       copy: "Last lengths and easy prices — still Samantha.",
       action: { label: "Shop clearance", href: "/?route=clearance" },
       media: {
@@ -826,6 +970,11 @@ export const blank = {
         "Close the trust loop with shipping, returns, COD, WhatsApp, care and contact details.",
       brand: "SAMANTHA FAB",
       brandLine: "Modern drapes, expressive prints and everyday ease.",
+      newsletter: {
+        label: "Join our newsletter for new drops",
+        placeholder: "Email address",
+        cta: "Subscribe",
+      },
       columns: [
         {
           heading: "Shop",

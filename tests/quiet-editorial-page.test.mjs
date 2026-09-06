@@ -125,21 +125,22 @@ test("collection bento uses editorial assets and softened card treatment", async
   assert.match(designStyles, /backdrop-filter:\s*blur\(2px\)/);
   assert.match(
     designStyles,
-    /-webkit-mask-image:\s*linear-gradient\(to top, #000 0%, #000 42%, transparent 100%\)/,
+    /-webkit-mask-image:\s*linear-gradient\(to right, #000 0%, #000 48%, transparent 100%\)/,
   );
   assert.match(
     designStyles,
-    /mask-image:\s*linear-gradient\(to top, #000 0%, #000 42%, transparent 100%\)/,
+    /mask-image:\s*linear-gradient\(to right, #000 0%, #000 48%, transparent 100%\)/,
   );
   assert.match(
     designStyles,
-    /background:\s*linear-gradient\(\s*to top,\s*rgba\(18, 10, 12, 0\.76\) 0%,\s*rgba\(18, 10, 12, 0\.54\) 24%,\s*rgba\(18, 10, 12, 0\.3\) 48%,\s*rgba\(18, 10, 12, 0\.1\) 74%,\s*transparent 100%\s*\)/,
+    /background:\s*linear-gradient\(\s*to right,\s*rgba\(18, 10, 12, 0\.84\) 0%,\s*rgba\(18, 10, 12, 0\.58\) 32%,\s*rgba\(18, 10, 12, 0\.3\) 62%,\s*rgba\(18, 10, 12, 0\.12\) 82%,\s*transparent 100%\s*\)/,
   );
-  assert.match(designStyles, /design-collection-bento__caption\s*\{[\s\S]*gap:\s*10px/);
+  assert.match(designStyles, /design-collection-bento__caption\s*\{[\s\S]*gap:\s*16px/);
   assert.match(designStyles, /border:\s*1px solid color-mix\(in srgb, var\(--color-cream\) 32%, transparent\)/);
-  assert.match(designStyles, /font-size:\s*clamp\(20px, 1\.85vw, 26px\)/);
+  assert.match(designStyles, /font-size:\s*clamp\(24px, 2\.6vw, 38px\)/);
   assert.equal(collection.copy, "Start with the moment. The saree follows.");
-  assert.equal(collection.items[0].copy, "Starting with ₹1,299");
+  assert.equal(collection.items[0].copy, undefined);
+  assert.ok(collection.items.every((item) => !item.copy));
   assert.equal(collection.items[0].media.position, "center top");
   assert.equal(collection.items[1].media.position, "center top");
 });
@@ -164,13 +165,13 @@ test("design page includes a shaped shop-by-material rail", async () => {
   assert.match(designStyles, /design-materials\s*\{[\s\S]*background:\s*var\(--white\)/);
   assert.match(
     designStyles,
-    /design-materials__header\s*\{[\s\S]*align-items:\s*flex-start[\s\S]*text-align:\s*left/,
+    /design-materials__header\s*\{[\s\S]*align-items:\s*center[\s\S]*text-align:\s*center/,
   );
   assert.match(
     designStyles,
     /design-materials__heading\s*\{[\s\S]*font-size:\s*clamp\(28px, 3\.2vw, 42px\)[\s\S]*letter-spacing:\s*-0\.03em/,
   );
-  assert.doesNotMatch(
+  assert.match(
     designStyles,
     /design-materials__heading\s*\{[^}]*text-transform:\s*uppercase/,
   );
@@ -228,6 +229,7 @@ test("design page places a clearance banner then sale carousel after shop by mat
   assert.equal(banner.type, "feature-banner");
   assert.equal(banner.layout, "overlay");
   assert.equal(banner.title, "Clearance sale");
+  assert.equal(banner.badge, "Upto 50% off");
   assert.equal(typeof banner.media, "object");
   assert.equal(Array.isArray(banner.media), false);
   assert.ok(banner.media?.src);
@@ -242,6 +244,8 @@ test("design page places a clearance banner then sale carousel after shop by mat
   assert.match(renderer, /layout === "overlay"/);
   assert.match(renderer, /design-feature-banner--overlay/);
   assert.match(renderer, /design-feature-banner__scrim/);
+  assert.match(renderer, /design-feature-banner__badge/);
+  assert.match(renderer, /footer-newsletter/);
   assert.match(designStyles, /design-feature-banner--overlay/);
   assert.match(
     designStyles,
@@ -260,6 +264,7 @@ test("design page places a four-up new arrivals carousel after shop by collectio
   assert.equal(arrivals.type, "product-carousel");
   assert.equal(arrivals.id, "design-new-arrivals");
   assert.equal(arrivals.products.length, 8);
+  assert.equal(arrivals.viewAll.label, "Shop All");
   assert.equal(arrivals.viewAll.href, "/?route=new-arrivals");
   assert.match(renderer, /case "product-carousel"/);
   assert.match(renderer, /renderProductCarousel/);
@@ -290,6 +295,21 @@ test("design page places a four-up new arrivals carousel after shop by collectio
   assert.match(renderer, /Add to cart/);
   assert.match(renderer, /product-card__swatches/);
   assert.match(renderer, /priceLine\.append\(element\("span", "product-price"/);
+  assert.match(renderer, /product-discount/);
+  assert.match(renderer, /24% off/);
+  assert.match(
+    designStyles,
+    /design-new-arrivals\s*\{[\s\S]*padding:\s*64px 24px 72px/,
+  );
+  assert.match(designStyles, /product-discount/);
+  assert.match(
+    designStyles,
+    /product-discount\s*\{[\s\S]*background:\s*var\(--color-primary\)[\s\S]*color:\s*var\(--cream\)/,
+  );
+  assert.match(
+    designStyles,
+    /design-new-arrivals__card\s*\{[\s\S]*padding-bottom:\s*4px/,
+  );
   assert.match(renderer, /!options\.commerce/);
   assert.equal(arrivals.products[0].tag, "Everyday");
   assert.equal(arrivals.products[0].compareAt, "₹2,299");
@@ -305,7 +325,8 @@ test("new arrivals use the defined Samantha font tokens", async () => {
   const newArrivalsStyles = designStyles.slice(start, end);
 
   assert.match(newArrivalsStyles, /design-new-arrivals__heading\s*\{[\s\S]*font-family:\s*"Sprat Campaign",\s*var\(--font-display\)[\s\S]*font-weight:\s*400[\s\S]*font-variation-settings:\s*"wdth" 122,\s*"wght" 100/);
-  assert.match(newArrivalsStyles, /design-new-arrivals__copy\s*\{[\s\S]*margin:\s*6px 0 0/);
+  assert.match(newArrivalsStyles, /design-new-arrivals__header\s*\{[\s\S]*align-items:\s*center[\s\S]*text-align:\s*center/);
+  assert.match(newArrivalsStyles, /design-new-arrivals__copy\s*\{[\s\S]*margin:\s*6px auto 0/);
   assert.match(newArrivalsStyles, /design-new-arrivals__copy\s*\{[\s\S]*font-family:\s*var\(--font-body\)[\s\S]*font-weight:\s*var\(--weight-body\)/);
   assert.match(newArrivalsStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*font-family:\s*"Sprat Campaign",\s*var\(--font-display\)[\s\S]*font-weight:\s*400/);
   assert.match(newArrivalsStyles, /design-new-arrivals__card \.product-meta\s*\{[\s\S]*font-family:\s*var\(--font-body\)[\s\S]*font-weight:\s*var\(--weight-body\)/);
@@ -319,8 +340,17 @@ test("design page places a ready-to-wear promo banner after new arrivals", async
   const renderer = await source("playground/components/render.js");
   const designStyles = await source("playground/styles/design.css");
   const arrivalsIndex = blank.sections.findIndex((section) => section.id === "design-new-arrivals");
-  const banner = blank.sections[arrivalsIndex + 1];
+  const uspRow = blank.sections[arrivalsIndex + 1];
+  const bestSellers = blank.sections[arrivalsIndex + 2];
+  const banner = blank.sections[arrivalsIndex + 3];
 
+  assert.equal(uspRow.id, "design-usp-row");
+  assert.equal(uspRow.type, "usp-row");
+  assert.equal(uspRow.items.length, 4);
+  assert.equal(bestSellers.id, "design-best-sellers");
+  assert.equal(bestSellers.type, "product-carousel");
+  assert.equal(bestSellers.title, "Best sellers");
+  assert.equal(bestSellers.viewAll.label, "Shop All");
   assert.equal(banner.type, "feature-banner");
   assert.equal(banner.id, "design-ready-to-wear-banner");
   assert.equal(banner.eyebrow, "The drape, made easy");
@@ -332,6 +362,10 @@ test("design page places a ready-to-wear promo banner after new arrivals", async
   assert.notEqual(banner.layout, "overlay");
   assert.match(renderer, /case "feature-banner"/);
   assert.match(renderer, /renderFeatureBanner/);
+  assert.match(renderer, /case "usp-row"/);
+  assert.match(renderer, /renderUspRow/);
+  assert.match(designStyles, /design-usp-row__list/);
+  assert.match(designStyles, /design-usp-row__item\s*\{[\s\S]*flex-direction:\s*column/);
   assert.match(designStyles, /\.design-feature-banner/);
   assert.match(designStyles, /design-feature-banner__collage/);
   assert.match(
@@ -357,6 +391,7 @@ test("design page places a headerless ready-to-wear product rail after the banne
   assert.equal(rail.eyebrow, undefined);
   assert.equal(rail.copy, undefined);
   assert.equal(rail.viewAll, undefined);
+  assert.equal(rail.action.label, "Shop All");
   assert.equal(rail.products.length, 8);
   assert.deepEqual(
     [...new Set(rail.products.map((product) => product.tag))],
@@ -407,8 +442,8 @@ test("design page places a shop-under price band after ready-to-wear products", 
   assert.match(designStyles, /design-shop-under__tile\s*\{[\s\S]*min-height:\s*clamp\(280px, 34vw, 420px\)/);
   assert.match(designStyles, /design-shop-under__heading\s*\{[\s\S]*font-family:\s*"Sprat Campaign"/);
   assert.match(designStyles, /design-shop-under__label-price\s*\{[\s\S]*font-size:\s*clamp\(28px/);
-  assert.match(designStyles, /design-shop-under\s*\{[\s\S]*padding:\s*16px 24px 80px/);
-  assert.match(designStyles, /design-collection-bento__header\s*\{[\s\S]*align-items:\s*flex-start[\s\S]*text-align:\s*left/);
+  assert.match(designStyles, /design-shop-under\s*\{[\s\S]*padding:\s*48px 24px 88px/);
+  assert.match(designStyles, /design-collection-bento__header\s*\{[\s\S]*align-items:\s*center[\s\S]*text-align:\s*center/);
 });
 
 
@@ -510,6 +545,18 @@ test("design page ends with the standard footer navigation", async () => {
       "WhatsApp support",
     ],
   );
+});
+
+test("footer brand includes a newsletter email capture", async () => {
+  const { blank } = await pageModule("playground/pages/blank.js");
+  const renderer = await source("playground/components/render.js");
+  const styles = await source("playground/styles/homepage.css");
+  const footer = blank.sections.at(-1);
+
+  assert.equal(footer.newsletter?.label, "Join our newsletter for new drops");
+  assert.equal(footer.newsletter?.cta, "Subscribe");
+  assert.match(renderer, /data-footer-newsletter/);
+  assert.match(styles, /\.footer-newsletter\s*\{[^}]*margin-top:\s*36px/s);
 });
 
 test("footer brand uses the supplied Samantha logo asset", async () => {

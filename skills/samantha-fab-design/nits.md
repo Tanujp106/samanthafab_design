@@ -2,6 +2,13 @@
 
 Numbers distilled from page feedback. Update when lasting corrections land.
 
+## Surface
+
+| Item | Value |
+| --- | --- |
+| Page / light section fill | `--color-white` / `--color-paper` = `#fcfaf7` (very light cream, not `#fff`, not heavy beige) |
+| Text on dark (footer/CTAs) | `--color-cream` = `#fffdf9` |
+
 ## Spacing
 
 | Item | Value |
@@ -15,8 +22,12 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Split editorial column gap | 32–64px |
 | Collection section vertical padding | ~80px (desktop) |
 | New Arrivals header bottom | ~40px |
+| New Arrivals section padding | `64px 24px 72px` (mobile `48px 16px 64px`) |
+| USP row padding | `48px 24px` (mobile `40px 16px`) |
+| USP row surface | `var(--color-primary-50)` soft plum wash |
+| USP row layout | 4-col desktop; 2-col mobile; icon 32px above 13px label; gap icon→label 12px |
 | RTW rail-only top padding | ~40px |
-| Rail footer CTA top margin | ~32px |
+| Rail footer CTA top margin | 16px |
 
 ## Type
 
@@ -25,12 +36,14 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Campaign headline (desktop) | ~44–80px |
 | Campaign headline (mobile) | ~38–56px |
 | Supporting / lede | 15–17px |
-| Section titles | Sprat Campaign, primary-800, weight 400, ~28–42px |
+| Section titles | Sprat Campaign, primary-800, weight 400, ~28–42px, **uppercase** |
 | Product names | Sprat Campaign, primary-800, ~16–18px |
 | Eyebrow / tags | Karrik, ~10px, wide tracking, uppercase, muted |
-| View all / Add to cart label | Karrik ~11px, uppercase, letter-spacing ~0.12em |
+| View all / Add to cart label | Karrik **13px**, uppercase, letter-spacing ~0.12em; product-rail CTA “Shop All” |
 | Price | ~14px ink; compare-at ~13px muted strikethrough |
-| RTW banner title | Sentence case; `text-transform: none` (eyebrow may stay uppercase) |
+| RTW banner title | Sentence case on `#design-ready-to-wear-banner` (`text-transform: none`) |
+| Clearance banner title | Sentence case on `#design-clearance-banner` (`text-transform: none`) |
+| RTW banner frame | `#design-ready-to-wear-banner` padding `36px 24px` (mobile `28px 16px`) |
 | RTW banner body | Karrik, **not italic** unless asked |
 | Voices quote | Karrik, font-weight 300 |
 
@@ -40,19 +53,25 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | --- | --- |
 | Tile min-height | ~168–240px (keep shorter, not tall posters) |
 | Tile radius | ~16px |
-| Scrim | ~2px blur + slightly deeper multi-stop linear fade spanning ~68% of tile — never a compressed dark band |
+| Scrim | ~2px blur + multi-stop **left** linear fade spanning ~72% of tile width; ink stops ~0.84 → 0.58 → 0.30 → 0.12 → transparent |
 | Tile min-height | Large tiles `clamp(240px, 28vw, 340px)`; smaller tiles `clamp(200px, 23vw, 280px)` |
 | Face crops (Everyday / Work) | `object-position: center top` |
-| Label placement | Bottom-left; optional “Starting with…” subline |
+| Caption layout | Full-tile vertical stack: icon/title lead upper-left, Explore action lower-left |
+| Label placement | Upper-left lead within the caption |
+| Occasion icon | Official Lucide line icon above the title; 20px desktop / 18px mobile; ~10–12px gap; 4px left inset; cream currentColor; no badge or circle |
+| Explore action | Karrik uppercase, ~11px, ~0.14em tracking; 16px arrow; no button chrome |
 | Tile border | None (borderless); keep radius |
 | Hover scale | ~1.03 |
 | Gap title↔lede in header | ~12px |
+| Section header | Centered title + lede |
 
 ## Shop under
 
 | Item | Value |
 | --- | --- |
-| Heading | Sentence case: `Best on budget` |
+| Heading | Source `Best on budget`; displayed uppercase via CSS |
+| Title → cards gap | 40px desktop; 32px mobile |
+| Section padding | `16px 24px 88px` (mobile `16px 16px 80px`) |
 | Tile min-height | clamp(280px, 34vw, 420px) |
 | Mobile tile min-height | min(64vw, 340px) |
 | Tile border | 1px cream 32% hairline OK |
@@ -61,10 +80,10 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 
 | Item | Value |
 | --- | --- |
-| Section background | `var(--white)` |
+| Section background | `var(--white)` / `#fcfaf7` |
 | Section padding | `48px 24px 72px` (mobile `40px 16px 64px`) |
-| Header | left-aligned like Collection |
-| Heading | Sprat clamp(28px, 3.2vw, 42px), letter-spacing -0.03em; no uppercase |
+| Header | Centered like other `/design` section headers |
+| Heading | Sprat clamp(28px, 3.2vw, 42px), letter-spacing -0.03em; **uppercase** |
 | Lede | muted ~15px, weight 200 |
 | Decorative heading hairlines | None |
 | Clip path | Stays within 0–1 (bottom tip `.5 1`); defs `overflow: visible` |
@@ -83,8 +102,11 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Wishlist | Always on; frosted ~60% white + blur; **no hover border ring** |
 | Add to cart | Hover-only on desktop; always on touch |
 | Carousel arrows | Mid-image via `cqw` (not mid-section); ~44px; primary chrome |
-| View all | Filled primary; align with title (offset past eyebrow line) |
-| Price row | Full width; sale + compare-at on the first line; swatches below, left-aligned |
+| Carousel overflow | Fixed viewport height from card width × 3/4 media + `--product-rail-details` (7.75rem — fits title/price/badge/swatches); `overflow-x: auto` + `overflow-y: hidden`; cards `height: auto` / `align-items: start` so details fit content; title line-clamp 2. No wheel JS / touch-action / overscroll hacks |
+| View all | Filled primary “Shop All”; centered under header with title/lede |
+| Price row | Full width; sale + compare-at + “24% off” badge on the first line; swatches below, left-aligned |
+| Discount badge | Primary fill + cream text; 11px Karrik; padding ~3×7; radius-control; text `24% off` on commerce product cards |
+| Product card bottom pad | 4px on `.design-new-arrivals__card` |
 | Product-card price spacing | Tight under title via body `gap: 6px`; `product-meta` `margin-top: 0`; body/link `flex: 0 0 auto` — never `margin-top: auto` (that left a hole when colors were absent) |
 | Swatches | 16px circles below the price line — never on image hover stack; omit entirely when product has no colors |
 | Material line | Hidden |
@@ -100,23 +122,23 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Banner layout | `layout: "overlay"` — one media object (not 4-up bento/collage); class `design-feature-banner--overlay` |
 | Banner surface | White 24px section frame (like campaign/RTW); inner deep plum `primary-900` (not `primary-100`); single cover image + lighter full-panel overlay gradient (`rgba(18,10,12)` ~0.12–0.55), not a near-transparent top fade or darker ~0.48–0.82 band |
 | Banner media | `/assets/design-story-cream.jpg` (warm interior cream saree) — not festive |
-| Banner type | Cream on image; title not forced primary-800; CTA cream fill + primary text |
+| Banner type | Cream on image; title sentence case; CTA cream fill + primary text; overlay copy centered; copy max-width 52ch; cream “Upto 50% off” badge above eyebrow |
 | Pattern | Feature banner + headerless product rail (`design-new-arrivals--rail-only`); banner owns title/copy/CTA |
 | Title | “Clearance sale” in the banner only; no rail header / View all row |
 | Products | Sale price + compareAt on every card |
-| Section bottom padding | `72px` desktop, `64px` mobile |
-| Overlay min-height | Desktop clamp(340px, 42vw, 480px); mobile ~280–320px |
+| Section bottom padding | `48px` desktop, `40px` mobile |
+| Overlay min-height | Desktop clamp(364px, 42vw, 504px); mobile clamp(304px, 58vw, 344px) |
 
 ## RTW / collage
 
 | Item | Value |
 | --- | --- |
-| Banner section | White background + 24px padding (mobile 16px) like campaign frame |
+| Banner section | Light cream background; RTW uses `36px 24px` padding (mobile `28px 16px`); default feature banners stay `24px` / `16px` |
 | Banner inner | primary-100 panel, border-radius 16px |
-| Banner title | Sentence case; `text-transform: none` |
+| Banner title | Uppercase |
 | Collage gutters | 12px desktop / 8px mobile |
 | Banner borders | None (decorative) |
-| Rail CTA | Brand primary, not black |
+| Rail CTA | “Shop All”; brand primary, not black |
 | Banner layout | Copy ~40% left / collage ~60% right |
 
 ## Campaign motion
@@ -133,6 +155,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Section padding | `56px 0 80px` desktop; mobile `40px 0 72px` (top −24px); title/lede constrained with ~24px gutters; ticker full-bleed |
+| Header | Centered title + lede (match other `/design` section headers) |
 | Track | flex row; gap ~28px; `animation: design-testimonials-ticker 55s linear infinite`; `translateX(-50%)` loop |
 | Hover speed | Web Animations `playbackRate` 0.2 on viewport pointerenter/focusin; restore 1 on leave/focusout — do not swap CSS duration (causes snap); do not pause |
 | Reduced motion | `.design-testimonials__track { animation: none; }` |
@@ -149,7 +172,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | --- | --- |
 | Surface | Plum primary; cream inverted logo |
 | Avoid | Payment logos, app badges, SEO link clouds, light-gray theme |
-| Layout | Brand + brandLine; denser 4 columns Shop/Help/About/Stay in touch; trust strip under columns (same width as link columns); copyright |
+| Layout | Brand + brandLine + newsletter (“Join our newsletter for new drops”, Subscribe CTA, margin-top 36px); denser 4 columns Shop/Help/About/Stay in touch; trust strip under columns (same width as link columns); copyright |
 | Trust | 4 items (COD / Easy returns / Pan-India shipping / WhatsApp support); stacked icon→label; 32×32 line icons; label 16px cream ~0.78; 4-col desktop / 2-col mobile; gap matches columns (~28px); lives in footer-grid `grid-column: 2` (mobile `1`); sits above copyright rule |
 | Section padding | clamp 64px/7vw/88px top, 36px bottom; mobile 56px 28px |
 | Grid gap | footer-grid clamp(48px, 5vw, 72px); columns 28px; mobile vertical ~36px |

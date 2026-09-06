@@ -30,15 +30,17 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 ## Always
 
 - Reuse `playground/styles/tokens.css` + `--font-display` / `--font-body`. No duplicate `@font-face` names or isolated color ramps in section CSS.
+- Page / light section surfaces use whisper cream `--color-white` / `--color-paper` (`#fcfaf7`) — not stark `#fff`, not a heavy cream wash.
 - **Sprat Campaign** for section/product titles (`font-variation-settings: "wght" 100, "wdth" 122`). **Karrik** for body/UI.
-- Light-surface section titles: `--color-primary-800`. Lede/body: muted Karrik, weight 400 — not heavy.
-- Side gutters **24px** so the white page frame shows; align nav to that width.
+- Light-surface section titles: `--color-primary-800`, **uppercase** (`text-transform: uppercase`), centered with their ledes across `/design` section headers. Lede/body: muted Karrik, weight 400 — not heavy.
+- Side gutters **24px** so the light cream page frame shows; align nav to that width.
 - Split editorial (media + copy): explicit **32–64px** column gap.
 - Product/occasion tags: `Everyday` / `Work` / `Festive` / `Wedding` / `Ready-to-wear` — never “New”.
 - Primary CTAs (`View all`, `Shop ready-to-wear`): filled primary button.
+- Collection tiles may use one occasion-specific Lucide line icon in a vertically distributed editorial caption; keep it quiet, current-color, and free of enclosing badges or circles. The icon/title leads from the upper-left; a small Explore text action anchors lower-left. No “Starting with…” price sublines.
 - Color swatches in the **price row** (right-aligned), not on image hover with Add to cart.
 - Product-card details stack tightly (tag → name → price ~6px); do not push price to the bottom with `margin-top: auto` — that opens a large title→price gap on cards without colors. When colors exist, keep swatches beneath the price line.
-- Image scrims: long, low-opacity **linear bottom fade** (+ light blur if needed) for collection/bento tiles. Never a solid blur veil or a compressed dark band there. **Shop by Material** cards use a full-tile, lightly blurred dark scrim (no linear gradient).
+- Image scrims: long, low-opacity **linear left fade** (+ light blur if needed) for collection/bento tiles so left captions stay readable. Never a solid blur veil or a compressed dark band there. **Shop by Material** cards use a full-tile, lightly blurred dark scrim (no linear gradient).
 - Annotations / review chrome: only with `?notes=1`. Keep default `/design` clean.
 - Editorial geometry: hairline gaps, restrained radius, varied section rhythm, real or replaceable photos.
 - Material cards use direct textile imagery and editorial copy, not symbolic iconography.
@@ -58,15 +60,17 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 | Section | Defaults |
 | --- | --- |
 | Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); centered prev/next arrows |
-| Shop by collection | Title + light lede → gap → taller 2+3 bento; bottom-left labels; long, slightly deeper soft linear scrim; top-align portraits that crop faces; borderless tiles (radius kept) |
-| New Arrivals | White surface; Sprat/primary-800 titles; left-aligned cards; shared bottom-aligned price rows; tight eyebrow→title; View all = primary button |
-| Ready-to-wear banner | White section + 24px side frame (like campaign); colored panel on inner with radius 16px; text left / collage right; cream gutters in collage; no decorative borders; CTA primary; title sentence case (`text-transform: none`); eyebrow may stay uppercase |
-| RTW product rail | Headerless product cards OK; CTA may sit as rail footer; CTA brand primary (not black) |
-| Shop under | Three image-backed price cards; cream hairline OK; taller tiles clamp(280px, 34vw, 420px); sentence-case Sprat heading (`Best on budget`) |
-| Shop by Material | After Shop under / before Clearance banner; white surface; padding `48px 24px 72px` (mobile `40px 16px 64px`); Collection-like left header; header→grid gap ~24px (mobile ~20–24px); shaped clip-path tiles (path stays within 0–1); defs `overflow: visible`; fabric-led imagery; full-tile blur+dark scrim (no linear gradient / wash / Explore CTA); label+subcopy centered in tile; no decorative icons |
-| Clearance sale | After Shop by Material / before Voices; **overlay** feature-banner (single warm cream-story image + deep plum/`primary-900` panel + lighter ink overlay gradient ~0.12–0.55 + cream type/CTA) — not RTW collage/`primary-100`; banner carries title/copy/CTA; rail is headerless (no title/copy/View all); sale + compareAt prices; bottom padding `72px` (mobile `64px`) |
-| Voices feature | After Clearance sale (Clearance banner+rail after Shop by Material; Material after Shop under); infinite horizontal ticker of wireframe cards (square portrait left / larger lighter-weight quote top-right / name bottom-right; wider cards ~260 / minmax 280–400); no arrows; hover/focus slows via Web Animations `playbackRate` 0.2 (fixed 55s duration — no duration swap / no snap); Sprat/primary-800 title; no star ratings; section padding `56px 0 80px` (mobile top −24px similarly) |
-| Footer | Plum primary; cream inverted logo; brand + denser 4 columns + stacked trust strip (32px icons over 16px labels, width locked to link columns) + copyright; full cream headings; quieter links; deeper padding; stronger bottom rule; no payment logos/app badges/SEO clouds |
+| Shop by collection | Centered title + light lede → gap → taller 2+3 bento; vertically distributed icon/title/Explore captions (no “Starting with…” price lines); soft **left** linear scrim; top-align portraits; borderless tiles |
+| New Arrivals | Light cream surface; Sprat/primary-800 uppercase titles; centered header + Shop All; left-aligned product cards; Shop All primary button 13px; fixed-height horizontal rail; section pad bottom 72px (mobile 64px); product details `--product-rail-details: 7.75rem` (fits badge + swatches); price line shows “24% off” badge |
+| USP row | After New Arrivals / before Best sellers; 4 static items; icon above + label below; no section title; **primary-50** wash; 4-col desktop / 2-col mobile |
+| Best sellers | Same product-carousel as New Arrivals; after USP row / before RTW banner; Shop All CTA |
+| Ready-to-wear banner | Light cream section + 36px/24px frame; primary-100 inner radius 16px; collage right; title sentence case; CTA primary 13px |
+| RTW product rail | Headerless; CTA “Shop All” 13px; brand primary |
+| Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `16px 24px 88px` (mobile `16px 16px 80px`); three image price tiles clamp(280px, 34vw, 420px) |
+| Shop by Material | After Shop under / before Clearance; light cream; padding 48/24/72; centered uppercase header; shaped fabric tiles; blur+dark scrim; no Explore CTA |
+| Clearance sale | After Material / before Voices; overlay banner (cream story image, primary-900, lighter scrim, sentence-case title, Upto 50% off badge); headerless rail; bottom pad 48/40 |
+| Voices feature | After Clearance; centered header; infinite ticker cards; playbackRate hover 0.2; padding 56/0/80 |
+| Footer | Plum; brand + newsletter (“Join our newsletter for new drops” / Subscribe); denser columns + trust strip; no payment logos |
 
 Micro measurements live in [nits.md](nits.md). When unsure, match New Arrivals / Collection hierarchy already on `/design`.
 
@@ -87,6 +91,26 @@ One-off experiments (“try X once”) do not get written until the user confirm
 
 ## Changelog
 
+- 2026-09-07 — Collection bento captions now use an upper-left icon/title lead, supporting copy, and lower-left Explore action for more varied editorial text layout.
+- 2026-09-07 — Collection tile icons inset 4px from the left.
+- 2026-09-07 — Collection left scrim darkened (~0.84 → transparent) for stronger caption contrast.
+- 2026-09-07 — Collection tiles: removed “Starting with…” price lines; scrim switched to left linear fade for caption readability.
+- 2026-09-07 — Product-rail Shop All CTA tightened to 16px above the button (was 32px).
+- 2026-09-07 — USP row background set to primary-50 soft plum wash.
+- 2026-09-07 — Mid-page USP row under New Arrivals: 4 static icon+label assurances (COD / returns / shipping / WhatsApp).
+- 2026-09-07 — Site surfaces shifted from stark white to whisper cream `#fcfaf7` (`--color-white` / `--color-paper`).
+- 2026-09-07 — Added occasion-specific Lucide line icons beside collection tile titles (Sunrise, Briefcase Business, Party Popper, Gem, Shirt); material cards remain icon-free.
+- 2026-09-07 — Product rail details bumped to 7.75rem so discount badge + swatches are not clipped.
+- 2026-09-07 — Discount “24% off” as primary filled badge (cream type); product cards +4px bottom pad.
+- 2026-09-07 — New Arrivals bottom pad −24px; product rail details 6rem + content-fit cards; “24% off” price badges; footer newsletter copy/gap/Subscribe CTA.
+- 2026-09-07 — Shop under +8px bottom pad + larger title→cards gap; clearance overlay copy wider (52ch); Voices header re-centered.
+- 2026-09-07 — Removed generic section header icons from `/design`.
+- 2026-09-07 — Bigger small CTA type (13px); generic section header icons; RTW/Clearance titles sentence case; Voices left-aligned; footer newsletter capture; Best sellers rail after New Arrivals.
+- 2026-09-07 — RTW banner +12px vertical frame; clearance overlay +24px height + “Upto 50% off” badge; section titles uppercase; New Arrivals/RTW rail CTAs “Shop All”; clearance rail bottom pad 48/40.
+- 2026-09-06 — `/design` section headers centered page-wide (Collection, New Arrivals, Materials, Shop under, Voices, Clearance overlay copy); product cards stay left-aligned.
+- 2026-09-06 — Product rails: fixed viewport height (media 3/4 + 7.5rem details); removed wheel/touch scroll hacks; overflow-x only.
+- 2026-09-06 — Product rails: keep overflow-y hidden, but drop pan-x/overscroll traps and forward vertical wheel to the page so hovering a rail still scrolls the document.
+- 2026-09-06 — Product carousels (New Arrivals / RTW / Clearance) horizontal-only: viewport `overflow-y: hidden` + `touch-action: pan-x`.
 - 2026-09-06 — Product price sits tight under the title (~6px body gap); removed meta `margin-top: auto` / flex-grow stretch that left a hole when colors were absent.
 - 2026-09-06 — Product cards without colors reserve an empty 16px swatch slot so title→price no longer opens a larger gap than cards with swatches.
 - 2026-09-06 — Footer trust icons 32×32 (stacked above 16px labels; strip width still locked to link columns).

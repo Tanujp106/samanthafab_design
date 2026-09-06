@@ -201,6 +201,37 @@ function renderUspStrip(section) {
   return root;
 }
 
+const collectionIconPaths = {
+  sunrise:
+    '<path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/>',
+  "briefcase-business":
+    '<path d="M12 12h.01"/><path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M22 13a18.15 18.15 0 0 1-20 0"/><rect width="20" height="14" x="2" y="6" rx="2"/>',
+  "party-popper":
+    '<path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"/><path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11-.11.7-.72 1.22-1.43 1.22H17"/><path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/>',
+  gem:
+    '<path d="M10.5 3 8 9l4 13 4-13-2.5-6"/><path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z"/><path d="M2 9h20"/>',
+  shirt:
+    '<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>',
+};
+
+function renderCollectionIcon(name) {
+  const pathMarkup = collectionIconPaths[name];
+  if (!pathMarkup) return null;
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.classList.add("design-collection-bento__icon");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "2");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = pathMarkup;
+  return icon;
+}
+
 function renderCollectionBento(section, ctx) {
   const root = element("section", "section section--collection-bento design-collection-bento");
   root.id = section.id;
@@ -221,7 +252,11 @@ function renderCollectionBento(section, ctx) {
     tile.href = item.href;
 
     const caption = element("span", "design-collection-bento__caption");
-    caption.append(element("span", "design-collection-bento__label", item.title));
+    const captionTitle = element("span", "design-collection-bento__caption-title");
+    const collectionIcon = renderCollectionIcon(item.icon);
+    if (collectionIcon) captionTitle.append(collectionIcon);
+    captionTitle.append(element("span", "design-collection-bento__label", item.title));
+    caption.append(captionTitle);
     if (item.copy) {
       caption.append(element("span", "design-collection-bento__subcopy", item.copy));
     }
@@ -238,8 +273,12 @@ function renderCollectionBento(section, ctx) {
     arrow.setAttribute("stroke-linejoin", "round");
     arrow.innerHTML = '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>';
 
+    const action = element("span", "design-collection-bento__action");
+    action.append(element("span", "design-collection-bento__action-label", "Explore"), arrow);
+    caption.append(action);
+
     const meta = element("span", "design-collection-bento__meta");
-    meta.append(caption, arrow);
+    meta.append(caption);
 
     tile.append(
       renderMedia(item.media, {
@@ -279,6 +318,29 @@ function renderMaterialShapeDefs() {
   return svg;
 }
 
+function materialCarouselArrow(direction) {
+  const isPrevious = direction === "previous";
+  const arrow = element("button", `design-materials__arrow design-materials__arrow--${direction}`);
+  arrow.type = "button";
+  arrow.dataset.materialDir = isPrevious ? "-1" : "1";
+  arrow.setAttribute("aria-label", isPrevious ? "Previous material" : "Next material");
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.6");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = isPrevious
+    ? '<path d="M15 6l-6 6 6 6"/>'
+    : '<path d="M9 6l6 6-6 6"/>';
+  arrow.append(icon);
+  return arrow;
+}
+
 function renderMaterialRail(section, ctx) {
   const root = element("section", "section section--material-rail design-materials");
   root.id = section.id;
@@ -292,13 +354,23 @@ function renderMaterialRail(section, ctx) {
   header.append(heading);
   if (section.copy) header.append(element("p", "design-materials__lede", section.copy));
 
+  const viewport = element("div", "design-materials__viewport");
+  viewport.dataset.materialViewport = "true";
+  viewport.tabIndex = 0;
+  viewport.setAttribute("role", "region");
+  viewport.setAttribute("aria-roledescription", "carousel");
+  viewport.setAttribute("aria-label", "Shop by material");
+
   const grid = element("div", "design-materials__grid");
-  section.items.forEach((item) => {
+  grid.dataset.materialTrack = "true";
+  section.items.forEach((item, index) => {
     const tile = element("a", "design-materials__tile");
     tile.href = item.href;
+    tile.dataset.materialIndex = String(index);
     tile.dataset.material = item.title.toLowerCase();
     tile.style.setProperty("--material-color", item.color || "var(--color-primary)");
     tile.setAttribute("aria-label", [item.title, item.copy].filter(Boolean).join(": "));
+    tile.setAttribute("aria-roledescription", "slide");
 
     const copy = element("span", "design-materials__copy");
     copy.append(
@@ -321,7 +393,12 @@ function renderMaterialRail(section, ctx) {
     grid.append(tile);
   });
 
-  inner.append(header, grid);
+  const controls = element("div", "design-materials__controls");
+  controls.setAttribute("aria-label", "Browse materials");
+  controls.append(materialCarouselArrow("previous"), materialCarouselArrow("next"));
+
+  viewport.append(grid, controls);
+  inner.append(header, viewport);
   root.append(renderMaterialShapeDefs(), inner);
   return root;
 }
@@ -498,6 +575,10 @@ function renderProductCard(product, ctx, options = {}) {
   priceLine.append(element("span", "product-price", product.price));
   if (product.compareAt) {
     priceLine.append(element("span", "product-compare", product.compareAt));
+  }
+  const discountLabel = product.discount || (options.commerce ? "24% off" : null);
+  if (discountLabel) {
+    priceLine.append(element("span", "product-discount", discountLabel));
   }
   priceWrap.append(priceLine);
   if (options.commerce) {
@@ -718,12 +799,14 @@ function renderTestimonials(section, ctx) {
   root.setAttribute("aria-labelledby", "design-testimonials-title");
 
   const inner = element("div", "design-testimonials__inner");
+  const header = element("header", "design-testimonials__header");
   const heading = element("h2", "design-testimonials__heading", section.title || "Loved by her");
   heading.id = "design-testimonials-title";
-  inner.append(heading);
+  header.append(heading);
   if (section.copy) {
-    inner.append(element("p", "design-testimonials__lede", section.copy));
+    header.append(element("p", "design-testimonials__lede", section.copy));
   }
+  inner.append(header);
 
   const items = section.items || [];
   const stage = element("div", "design-testimonials__stage");
@@ -759,6 +842,9 @@ function renderFeatureBanner(section, ctx) {
 
   const inner = element("div", "design-feature-banner__inner");
   const copy = element("div", "design-feature-banner__copy");
+  if (section.badge) {
+    copy.append(element("p", "design-feature-banner__badge", section.badge));
+  }
   if (section.eyebrow) {
     copy.append(element("p", "design-feature-banner__eyebrow", section.eyebrow));
   }
@@ -867,6 +953,27 @@ function renderStory(section, ctx) {
 
   content.append(copy, mediaWrap);
   return sectionShell(section, content, { className: "section--story" });
+}
+
+function renderUspRow(section) {
+  const root = element("section", "section design-usp-row");
+  root.id = section.id;
+  root.dataset.section = section.number;
+  root.setAttribute("aria-label", section.name || "Why shop with us");
+
+  const inner = element("div", "design-usp-row__inner");
+  const list = element("ul", "design-usp-row__list");
+  (section.items || []).forEach((item) => {
+    const usp = element("li", "design-usp-row__item");
+    const icon = element("span", "design-usp-row__icon");
+    icon.setAttribute("aria-hidden", "true");
+    icon.innerHTML = footerTrustIcon(item.icon);
+    usp.append(icon, element("span", "design-usp-row__label", item.label));
+    list.append(usp);
+  });
+  inner.append(list);
+  root.append(inner);
+  return root;
 }
 
 function renderBenefits(section) {
@@ -997,6 +1104,28 @@ function renderFooter(section) {
     element("p", "footer-brand-copy", section.brandLine),
   );
 
+  if (section.newsletter) {
+    const form = element("form", "footer-newsletter");
+    form.setAttribute("data-footer-newsletter", "true");
+    form.setAttribute("action", "#");
+    form.setAttribute("method", "post");
+    const label = element("label", "footer-newsletter__label", section.newsletter.label || "Newsletter");
+    label.setAttribute("for", "footer-newsletter-email");
+    const row = element("div", "footer-newsletter__row");
+    const input = element("input", "footer-newsletter__input");
+    input.type = "email";
+    input.id = "footer-newsletter-email";
+    input.name = "email";
+    input.required = true;
+    input.autocomplete = "email";
+    input.placeholder = section.newsletter.placeholder || "Email address";
+    const submit = element("button", "footer-newsletter__submit", section.newsletter.cta || "Subscribe");
+    submit.type = "submit";
+    row.append(input, submit);
+    form.append(label, row);
+    brand.append(form);
+  }
+
   const columns = element("nav", "footer-columns");
   columns.setAttribute("aria-label", "Footer navigation");
   section.columns.forEach((column) => {
@@ -1041,6 +1170,8 @@ function renderSection(section, ctx) {
       return renderHeader(section);
     case "usp-strip":
       return renderUspStrip(section);
+    case "usp-row":
+      return renderUspRow(section);
     case "collection-bento":
       return renderCollectionBento(section, ctx);
     case "material-rail":

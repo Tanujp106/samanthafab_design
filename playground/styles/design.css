@@ -153,6 +153,63 @@ body[data-page="blank"] .design-usp-strip__label::after {
   }
 }
 
+/* —— Mid-page USP row: four static assurances under New Arrivals —— */
+
+body[data-page="blank"] .design-usp-row {
+  padding: 48px 24px;
+  border-bottom: 0;
+  background: var(--color-primary-50);
+  color: var(--color-primary-800);
+}
+
+body[data-page="blank"] .design-usp-row__inner {
+  width: min(100%, var(--content-max));
+  margin-inline: auto;
+}
+
+body[data-page="blank"] .design-usp-row__list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body[data-page="blank"] .design-usp-row__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+body[data-page="blank"] .design-usp-row__icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: var(--color-primary-800);
+}
+
+body[data-page="blank"] .design-usp-row__icon svg {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+body[data-page="blank"] .design-usp-row__label {
+  margin: 0;
+  max-width: 16ch;
+  color: var(--color-primary-800);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--weight-body);
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+
 /* —— Sticky nav: soft primary wash + blur —— */
 
 body[data-page="blank"] .site-header {
@@ -463,10 +520,10 @@ body[data-page="blank"] .design-collection-bento {
 body[data-page="blank"] .design-collection-bento__header {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   margin: 0 0 48px;
-  text-align: left;
+  text-align: center;
 }
 
 body[data-page="blank"] .design-collection-bento__heading {
@@ -478,12 +535,13 @@ body[data-page="blank"] .design-collection-bento__heading {
   font-variation-settings: "wdth" 122, "wght" 100;
   letter-spacing: -0.03em;
   line-height: 1.1;
+  text-transform: uppercase;
   text-wrap: balance;
 }
 
 body[data-page="blank"] .design-collection-bento__lede {
   max-width: 36ch;
-  margin: 0;
+  margin: 0 auto;
   color: var(--muted);
   font-family: var(--font-body);
   font-size: 15px;
@@ -556,54 +614,69 @@ body[data-page="blank"] .design-collection-bento__tile:focus-visible .media__fra
 body[data-page="blank"] .design-collection-bento__scrim {
   position: absolute;
   z-index: 1;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 68%;
+  inset: 0;
+  width: 72%;
+  height: 100%;
   pointer-events: none;
   background: linear-gradient(
-    to top,
-    rgba(18, 10, 12, 0.76) 0%,
-    rgba(18, 10, 12, 0.54) 24%,
-    rgba(18, 10, 12, 0.3) 48%,
-    rgba(18, 10, 12, 0.1) 74%,
+    to right,
+    rgba(18, 10, 12, 0.84) 0%,
+    rgba(18, 10, 12, 0.58) 32%,
+    rgba(18, 10, 12, 0.3) 62%,
+    rgba(18, 10, 12, 0.12) 82%,
     transparent 100%
   );
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
-  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 42%, transparent 100%);
-  mask-image: linear-gradient(to top, #000 0%, #000 42%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 48%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 0%, #000 48%, transparent 100%);
 }
 
 body[data-page="blank"] .design-collection-bento__meta {
   position: absolute;
   z-index: 2;
-  right: clamp(18px, 2.4vw, 26px);
-  bottom: clamp(16px, 2.2vw, 24px);
-  left: clamp(18px, 2.4vw, 26px);
+  inset: clamp(18px, 2.4vw, 26px);
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
+  align-items: stretch;
 }
 
 body[data-page="blank"] .design-collection-bento__caption {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 16px;
+  height: 100%;
   min-width: 0;
+}
+
+body[data-page="blank"] .design-collection-bento__caption-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+body[data-page="blank"] .design-collection-bento__icon {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin-left: 4px;
+  color: var(--cream);
+  opacity: 0.92;
 }
 
 body[data-page="blank"] .design-collection-bento__label {
   margin: 0;
   color: var(--cream);
   font-family: "Sprat Campaign", var(--font-display);
-  font-size: clamp(20px, 1.85vw, 26px);
+  max-width: 9ch;
+  font-size: clamp(24px, 2.6vw, 38px);
   font-weight: 400;
   font-variation-settings: "wdth" 122, "wght" 100;
   letter-spacing: -0.015em;
-  line-height: 1.1;
+  line-height: 0.98;
   text-shadow: 0 1px 14px rgba(18, 10, 12, 0.35);
 }
 
@@ -613,16 +686,33 @@ body[data-page="blank"] .design-collection-bento__subcopy {
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: var(--weight-ui);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   line-height: 1.3;
   text-shadow: 0 1px 12px rgba(18, 10, 12, 0.3);
 }
 
+body[data-page="blank"] .design-collection-bento__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--weight-ui);
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: 0 1px 12px rgba(18, 10, 12, 0.3);
+}
+
+body[data-page="blank"] .design-collection-bento__action-label {
+  opacity: 0.9;
+}
+
 body[data-page="blank"] .design-collection-bento__arrow {
   flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  margin-bottom: 2px;
+  width: 16px;
+  height: 16px;
   color: var(--cream);
   opacity: 0.92;
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
@@ -665,10 +755,10 @@ body[data-page="blank"] .design-materials__defs {
 body[data-page="blank"] .design-materials__header {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   margin: 0 0 24px;
-  text-align: left;
+  text-align: center;
 }
 
 body[data-page="blank"] .design-materials__heading {
@@ -680,17 +770,20 @@ body[data-page="blank"] .design-materials__heading {
   font-variation-settings: "wdth" 122, "wght" 100;
   letter-spacing: -0.03em;
   line-height: 1.1;
+  text-transform: uppercase;
   text-wrap: balance;
 }
 
 body[data-page="blank"] .design-materials__lede {
-  margin: 0;
+  margin: 0 auto;
+  max-width: 42ch;
   color: var(--muted);
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 200;
   letter-spacing: 0.02em;
   line-height: var(--leading-copy);
+  text-align: center;
 }
 
 body[data-page="blank"] .design-materials__grid {
@@ -862,7 +955,7 @@ body[data-page="blank"] .design-materials__tile:focus-visible {
 /* —— New arrivals: four-up product rail with touch-friendly overflow —— */
 
 body[data-page="blank"] .design-new-arrivals {
-  padding: 64px 24px 96px;
+  padding: 64px 24px 72px;
   border-bottom: 0;
   background: var(--white);
   color: var(--ink);
@@ -870,7 +963,7 @@ body[data-page="blank"] .design-new-arrivals {
 }
 
 body[data-page="blank"] #design-clearance-sale.design-new-arrivals {
-  padding-bottom: 72px;
+  padding-bottom: 48px;
 }
 
 body[data-page="blank"] .design-new-arrivals__inner {
@@ -884,16 +977,19 @@ body[data-page="blank"] .design-new-arrivals--rail-only {
 
 body[data-page="blank"] .design-new-arrivals__header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 28px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
   margin-bottom: 40px;
+  text-align: center;
 }
 
 body[data-page="blank"] .design-new-arrivals__intro {
   min-width: 0;
   max-width: 42ch;
-  text-align: left;
+  margin-inline: auto;
+  text-align: center;
 }
 
 body[data-page="blank"] .design-new-arrivals__eyebrow {
@@ -917,39 +1013,41 @@ body[data-page="blank"] .design-new-arrivals__heading {
   font-variation-settings: "wdth" 122, "wght" 100;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  text-align: left;
+  text-align: center;
+  text-transform: uppercase;
   text-wrap: pretty;
 }
 
 body[data-page="blank"] .design-new-arrivals__copy {
   max-width: 36ch;
-  margin: 6px 0 0;
+  margin: 6px auto 0;
   color: var(--muted);
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: var(--weight-body);
   letter-spacing: 0.02em;
   line-height: var(--leading-copy);
-  text-align: left;
+  text-align: center;
   text-wrap: pretty;
 }
 
 body[data-page="blank"] .design-new-arrivals__actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 20px;
   flex-shrink: 0;
-  margin-top: calc(10px * var(--leading-label) + 6px);
+  margin-top: 0;
 }
 
 body[data-page="blank"] .design-new-arrivals__view-all {
-  min-height: 40px;
-  padding: 0 20px;
+  min-height: 44px;
+  padding: 0 22px;
   border-color: var(--color-primary);
   background: var(--color-primary);
   color: var(--cream);
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: var(--weight-ui);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -970,13 +1068,18 @@ body[data-page="blank"] .design-new-arrivals__stage {
 body[data-page="blank"] .design-new-arrivals__rail-cta {
   display: flex;
   justify-content: center;
-  margin-top: 32px;
+  margin-top: 16px;
 }
 
 body[data-page="blank"] .design-new-arrivals__rail-cta .button {
   border-color: var(--color-primary);
   background: var(--color-primary);
   color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--weight-ui);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 body[data-page="blank"] .design-new-arrivals__rail-cta .button:hover {
@@ -1043,9 +1146,11 @@ body[data-page="blank"] .design-new-arrivals__arrow:focus-visible {
 }
 
 body[data-page="blank"] .design-new-arrivals__viewport {
+  --product-rail-details: 7.75rem;
+  height: calc(((100cqi - 48px) / 4) * 4 / 3 + var(--product-rail-details));
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
-  overscroll-behavior-x: contain;
   scroll-behavior: smooth;
   scroll-snap-type: x proximity;
 }
@@ -1058,15 +1163,20 @@ body[data-page="blank"] .design-new-arrivals__track {
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: repeat(8, calc((100% - 48px) / 4));
+  align-items: start;
   gap: 16px;
   width: 100%;
+  height: 100%;
 }
 
 body[data-page="blank"] .design-new-arrivals__card {
   min-width: 0;
-  align-self: stretch;
+  height: auto;
+  max-height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  padding-bottom: 4px;
   border-radius: 8px;
   scroll-snap-align: start;
   text-align: left;
@@ -1253,7 +1363,7 @@ body[data-page="blank"] .design-new-arrivals__card .product-card__add-to-cart {
   background: var(--color-primary-800);
   color: var(--cream);
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: var(--weight-ui);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1301,6 +1411,10 @@ body[data-page="blank"] .design-new-arrivals__card .product-tag {
 }
 
 body[data-page="blank"] .design-new-arrivals__card .product-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   width: 100%;
   color: var(--color-primary-800);
   font-family: "Sprat Campaign", var(--font-display);
@@ -1355,11 +1469,27 @@ body[data-page="blank"] .design-new-arrivals__card .product-compare {
 
 body[data-page="blank"] .design-new-arrivals__card .product-price-line {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: flex-start;
   flex-wrap: wrap;
   gap: 8px;
   width: 100%;
+}
+
+body[data-page="blank"] .design-new-arrivals__card .product-discount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 7px;
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--weight-ui);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: lowercase;
 }
 
 body[data-page="blank"] .design-new-arrivals__card .product-price-wrap {
@@ -1382,6 +1512,10 @@ body[data-page="blank"] .design-feature-banner {
   border-bottom: 0;
   background: var(--white);
   color: var(--color-primary-800);
+}
+
+body[data-page="blank"] #design-ready-to-wear-banner.design-feature-banner {
+  padding: 36px 24px;
 }
 
 body[data-page="blank"] .design-feature-banner__inner {
@@ -1428,12 +1562,17 @@ body[data-page="blank"] .design-feature-banner__title {
   font-variation-settings: "wdth" 122, "wght" 100;
   letter-spacing: -0.03em;
   line-height: 0.95;
-  text-transform: none;
+  text-transform: uppercase;
   text-wrap: balance;
 }
 
 body[data-page="blank"] #design-ready-to-wear-banner .design-feature-banner__title {
   font-size: clamp(30px, 3.6vw, 52px);
+  text-transform: none;
+}
+
+body[data-page="blank"] #design-clearance-banner .design-feature-banner__title {
+  text-transform: none;
 }
 
 body[data-page="blank"] .design-feature-banner__cta {
@@ -1445,7 +1584,7 @@ body[data-page="blank"] .design-feature-banner__cta {
   background: var(--color-primary);
   color: var(--cream);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -1533,7 +1672,7 @@ body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__
   position: relative;
   display: grid;
   grid-template: 1fr / 1fr;
-  min-height: clamp(340px, 42vw, 480px);
+  min-height: clamp(364px, 42vw, 504px);
   padding: 0;
   overflow: hidden;
   border-radius: 16px;
@@ -1581,13 +1720,33 @@ body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__
   position: relative;
   z-index: 2;
   grid-area: 1 / 1;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  max-width: 36ch;
+  max-width: 52ch;
+  margin-inline: auto;
+  width: 100%;
   padding: clamp(28px, 4vw, 48px);
   color: var(--cream);
-  text-align: left;
+  text-align: center;
+}
+
+body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 4px;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--cream) 72%, transparent);
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--cream) 92%, transparent);
+  color: var(--color-primary-900);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--weight-ui);
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__eyebrow {
@@ -1621,20 +1780,23 @@ body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__
 /* —— Shop under: three image-backed price-band cards —— */
 
 body[data-page="blank"] .design-shop-under {
-  padding: 16px 24px 80px;
+  padding: 16px 24px 88px;
   border-bottom: 0;
   background: var(--white);
   color: var(--ink);
-  text-align: left;
+  text-align: center;
 }
 
 body[data-page="blank"] .design-shop-under__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: min(100%, var(--content-max));
   margin-inline: auto;
 }
 
 body[data-page="blank"] .design-shop-under__heading {
-  margin: 0 0 24px;
+  margin: 0 auto 40px;
   color: var(--color-primary-800);
   font-family: "Sprat Campaign", var(--font-display);
   font-size: clamp(28px, 3.2vw, 42px);
@@ -1642,6 +1804,8 @@ body[data-page="blank"] .design-shop-under__heading {
   font-variation-settings: "wdth" 122, "wght" 100;
   letter-spacing: -0.03em;
   line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
   text-wrap: pretty;
 }
 
@@ -1649,6 +1813,7 @@ body[data-page="blank"] .design-shop-under__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+  width: 100%;
 }
 
 body[data-page="blank"] .design-shop-under__tile {
@@ -1755,12 +1920,19 @@ body[data-page="blank"] .design-testimonials {
   border-bottom: 0;
   background: var(--white);
   color: var(--ink);
-  text-align: left;
+  text-align: center;
   overflow: hidden;
 }
 body[data-page="blank"] .design-testimonials__inner {
   width: min(100% - 48px, var(--content-max));
   margin-inline: auto;
+}
+body[data-page="blank"] .design-testimonials__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
 }
 body[data-page="blank"] .design-testimonials__heading {
   margin: 0;
@@ -1771,16 +1943,19 @@ body[data-page="blank"] .design-testimonials__heading {
   font-variation-settings: "wdth" 122, "wght" 100;
   letter-spacing: -0.03em;
   line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
   text-wrap: pretty;
 }
 body[data-page="blank"] .design-testimonials__lede {
-  margin: 6px 0 0;
+  margin: 0;
   max-width: 36rem;
   color: color-mix(in srgb, var(--ink) 62%, transparent);
   font-family: var(--font-body);
   font-size: clamp(15px, 1.15vw, 17px);
   font-weight: var(--weight-body);
   line-height: 1.5;
+  text-align: center;
 }
 body[data-page="blank"] .design-testimonials__stage {
   position: relative;
@@ -1990,6 +2165,10 @@ body[data-page="blank"] .design-testimonials__body {
 }
 
 @media (max-width: 980px) {
+  body[data-page="blank"] .design-new-arrivals__viewport {
+    height: calc(((100cqi - 32px) / 3) * 4 / 3 + var(--product-rail-details));
+  }
+
   body[data-page="blank"] .design-new-arrivals__track {
     grid-template-columns: repeat(8, calc((100% - 32px) / 3));
   }
@@ -2075,29 +2254,52 @@ body[data-page="blank"] .design-testimonials__body {
     min-height: min(58vw, 280px);
   }
 
+  body[data-page="blank"] .design-collection-bento__caption-title {
+    gap: 10px;
+  }
+
+  body[data-page="blank"] .design-collection-bento__icon {
+    width: 18px;
+    height: 18px;
+  }
+
   body[data-page="blank"] .design-new-arrivals {
-    padding: 48px 16px 88px;
+    padding: 48px 16px 64px;
+  }
+
+  body[data-page="blank"] .design-usp-row {
+    padding: 40px 16px;
+  }
+
+  body[data-page="blank"] .design-usp-row__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 16px;
   }
 
   body[data-page="blank"] #design-clearance-sale.design-new-arrivals {
-    padding-bottom: 64px;
+    padding-bottom: 40px;
   }
 
   body[data-page="blank"] .design-new-arrivals__header {
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
     gap: 20px;
     margin-bottom: 24px;
+    text-align: center;
   }
 
   body[data-page="blank"] .design-new-arrivals__actions {
     width: 100%;
-    justify-content: flex-start;
+    justify-content: center;
     margin-top: 0;
   }
 
   body[data-page="blank"] .design-new-arrivals__controls {
     top: calc((100cqw - 16px) / 3);
+  }
+
+  body[data-page="blank"] .design-new-arrivals__viewport {
+    height: calc(((100cqi - 16px) / 2) * 4 / 3 + var(--product-rail-details));
   }
 
   body[data-page="blank"] .design-new-arrivals__track {
@@ -2106,6 +2308,10 @@ body[data-page="blank"] .design-testimonials__body {
 
   body[data-page="blank"] .design-feature-banner {
     padding: 16px;
+  }
+
+  body[data-page="blank"] #design-ready-to-wear-banner.design-feature-banner {
+    padding: 28px 16px;
   }
 
   body[data-page="blank"] .design-feature-banner__inner {
@@ -2125,7 +2331,7 @@ body[data-page="blank"] .design-testimonials__body {
   }
 
   body[data-page="blank"] .design-feature-banner--overlay .design-feature-banner__inner {
-    min-height: clamp(280px, 58vw, 320px);
+    min-height: clamp(304px, 58vw, 344px);
     grid-template-columns: 1fr;
     gap: 0;
   }
@@ -2136,11 +2342,11 @@ body[data-page="blank"] .design-testimonials__body {
   }
 
   body[data-page="blank"] .design-shop-under {
-    padding: 16px 16px 72px;
+    padding: 16px 16px 80px;
   }
 
   body[data-page="blank"] .design-shop-under__heading {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
   }
 
   body[data-page="blank"] .design-shop-under__grid {
@@ -2160,6 +2366,10 @@ body[data-page="blank"] .design-testimonials__body {
 }
 
 @media (max-width: 420px) {
+  body[data-page="blank"] .design-new-arrivals__viewport {
+    height: calc(100cqi * 4 / 3 + var(--product-rail-details));
+  }
+
   body[data-page="blank"] .design-new-arrivals__track {
     grid-template-columns: repeat(8, 100%);
   }

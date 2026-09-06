@@ -251,6 +251,12 @@ document.querySelectorAll("[data-new-arrivals-carousel]").forEach((carousel) => 
   });
 });
 
+document.querySelectorAll("[data-footer-newsletter]").forEach((form) => {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+});
+
 document.querySelectorAll("[data-testimonials-ticker]").forEach((section) => {
   const track = section.querySelector(".design-testimonials__track");
   const viewport = section.querySelector("[data-testimonials-viewport]");
