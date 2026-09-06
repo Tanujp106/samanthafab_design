@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "node hooks/design-skill-session-start.mjs",
+        "timeout": 5
+      }
+    ],
+    "beforeSubmitPrompt": [
+      {
+        "command": "node hooks/design-skill-before-prompt.mjs",
+        "matcher": "UserPromptSubmit",
+        "timeout": 5
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "node hooks/design-skill-pre-tool.mjs",
+        "matcher": "Write|StrReplace|EditNotebook",
+        "timeout": 5
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "node hooks/design-skill-after-edit.mjs",
+        "timeout": 5
+      }
+    ],
+    "stop": [
+      {
+        "command": "node hooks/design-skill-stop.mjs",
+        "timeout": 8,
+        "loop_limit": 1
+      }
+    ]
+  }
+}

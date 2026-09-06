@@ -205,12 +205,11 @@ if (campaignHero) {
   startAutoplay();
 }
 
-const newArrivals = document.querySelector("[data-new-arrivals-carousel]");
-if (newArrivals) {
-  const viewport = newArrivals.querySelector("[data-new-arrivals-viewport]");
-  const previous = newArrivals.querySelector('[data-new-arrivals-dir="-1"]');
-  const next = newArrivals.querySelector('[data-new-arrivals-dir="1"]');
-  const firstCard = newArrivals.querySelector(".design-new-arrivals__card");
+document.querySelectorAll("[data-new-arrivals-carousel]").forEach((carousel) => {
+  const viewport = carousel.querySelector("[data-new-arrivals-viewport]");
+  const previous = carousel.querySelector('[data-new-arrivals-dir="-1"]');
+  const next = carousel.querySelector('[data-new-arrivals-dir="1"]');
+  const firstCard = carousel.querySelector(".design-new-arrivals__card");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const syncControls = () => {
@@ -233,7 +232,45 @@ if (newArrivals) {
   viewport.addEventListener("scroll", syncControls, { passive: true });
   window.addEventListener("resize", syncControls);
   syncControls();
-}
+
+  carousel.querySelectorAll(".product-card__wishlist").forEach((button) => {
+    button.addEventListener("click", () => {
+      const pressed = button.getAttribute("aria-pressed") === "true";
+      button.setAttribute("aria-pressed", pressed ? "false" : "true");
+    });
+  });
+
+  carousel.querySelectorAll(".product-card__swatches").forEach((group) => {
+    group.querySelectorAll(".product-card__swatch").forEach((swatch) => {
+      swatch.addEventListener("click", () => {
+        group.querySelectorAll(".product-card__swatch").forEach((item) => {
+          item.setAttribute("aria-pressed", item === swatch ? "true" : "false");
+        });
+      });
+    });
+  });
+});
+
+document.querySelectorAll("[data-testimonials-ticker]").forEach((section) => {
+  const track = section.querySelector(".design-testimonials__track");
+  const viewport = section.querySelector("[data-testimonials-viewport]");
+  if (!track || !viewport) return;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) return;
+
+  const setRate = (rate) => {
+    track.getAnimations().forEach((anim) => {
+      anim.playbackRate = rate;
+    });
+  };
+
+  viewport.addEventListener("pointerenter", () => setRate(0.2));
+  viewport.addEventListener("pointerleave", () => setRate(1));
+  viewport.addEventListener("focusin", () => setRate(0.2));
+  viewport.addEventListener("focusout", (event) => {
+    if (!viewport.contains(event.relatedTarget)) setRate(1);
+  });
+});
 
 if (requestedPage && !pages[requestedPage]) {
   console.warn(`Unknown playground page: ${requestedPage}. Showing homepage.`);

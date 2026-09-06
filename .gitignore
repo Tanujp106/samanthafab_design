@@ -5,3 +5,4 @@
 node_modules
 playground/.dom-*.html
 playground/.preview-*.png
+hooks/state/

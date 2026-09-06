@@ -257,6 +257,75 @@ function renderCollectionBento(section, ctx) {
   return root;
 }
 
+function renderMaterialShapeDefs() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.classList.add("design-materials__defs");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+
+  const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+  const clipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
+  clipPath.id = "design-material-shape";
+  clipPath.setAttribute("clipPathUnits", "objectBoundingBox");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute(
+    "d",
+    "M .5 0 C .515 .025 .55 .065 .6 .09 C .64 .105 .68 .1 .71 .14 C .74 .09 .81 .1 .84 .16 C .92 .14 .98 .21 .97 .29 C 1 .35 .97 .42 .93 .46 C .99 .5 1 .58 .95 .64 C .99 .72 .97 .82 .9 .87 C .87 .92 .82 .92 .77 .91 C .75 .97 .69 .98 .64 .96 C .6 .995 .55 .98 .5 1.03 C .45 .98 .4 .995 .36 .96 C .31 .98 .25 .97 .23 .91 C .18 .92 .13 .91 .1 .87 C .03 .82 .01 .72 .05 .64 C 0 .58 .01 .5 .07 .46 C .03 .42 0 .35 .03 .29 C .02 .21 .08 .14 .16 .16 C .19 .1 .26 .09 .29 .14 C .32 .1 .36 .105 .4 .09 C .45 .065 .485 .025 .5 0 Z",
+  );
+  clipPath.append(path);
+  defs.append(clipPath);
+  svg.append(defs);
+  return svg;
+}
+
+function renderMaterialRail(section, ctx) {
+  const root = element("section", "section section--material-rail design-materials");
+  root.id = section.id;
+  root.dataset.section = section.number;
+  root.setAttribute("aria-labelledby", "design-shop-by-material-title");
+
+  const inner = element("div", "design-materials__inner");
+  const header = element("header", "design-materials__header");
+  const heading = element("h2", "design-materials__heading", section.title || "Shop by material");
+  heading.id = "design-shop-by-material-title";
+  header.append(heading);
+  if (section.copy) header.append(element("p", "design-materials__lede", section.copy));
+
+  const grid = element("div", "design-materials__grid");
+  section.items.forEach((item) => {
+    const tile = element("a", "design-materials__tile");
+    tile.href = item.href;
+    tile.dataset.material = item.title.toLowerCase();
+    tile.style.setProperty("--material-color", item.color || "var(--color-primary)");
+    tile.setAttribute("aria-label", [item.title, item.copy].filter(Boolean).join(": "));
+
+    const copy = element("span", "design-materials__copy");
+    copy.append(
+      element("span", "design-materials__label", item.title),
+      element("span", "design-materials__subcopy", item.copy),
+    );
+
+    const content = element("span", "design-materials__content");
+    content.append(copy);
+
+    tile.append(
+      renderMedia(item.media, {
+        fill: true,
+        notesEnabled: ctx.notesEnabled,
+        className: "design-materials__media",
+      }),
+      element("span", "design-materials__scrim"),
+      content,
+    );
+    grid.append(tile);
+  });
+
+  inner.append(header, grid);
+  root.append(renderMaterialShapeDefs(), inner);
+  return root;
+}
+
 function renderCampaignHero(section, ctx) {
   const stage = element("div", "campaign-hero__stage");
   stage.setAttribute("aria-roledescription", "carousel");
@@ -368,24 +437,100 @@ function renderOccasion(section, ctx) {
   return sectionShell(section, content, { className: "section--occasion" });
 }
 
+function productActionButton(kind, label) {
+  const isWishlist = kind === "wishlist";
+  const buttonNode = element(
+    "button",
+    isWishlist ? "product-card__wishlist" : "product-card__add-to-cart",
+  );
+  buttonNode.type = "button";
+  buttonNode.setAttribute("aria-label", label);
+  if (isWishlist) {
+    buttonNode.setAttribute("aria-pressed", "false");
+    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("aria-hidden", "true");
+    icon.setAttribute("focusable", "false");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "1.6");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.innerHTML =
+      '<path d="M12 20s-7-4.35-7-9.2A4.2 4.2 0 0 1 12 7.1a4.2 4.2 0 0 1 7 3.7C19 15.65 12 20 12 20z"/>';
+    buttonNode.append(icon);
+  } else {
+    buttonNode.textContent = label;
+  }
+  return buttonNode;
+}
+
+function productColorSwatches(product) {
+  if (!Array.isArray(product.swatches) || !product.swatches.length) return null;
+
+  const swatches = element("div", "product-card__swatches");
+  swatches.setAttribute("role", "list");
+  swatches.setAttribute("aria-label", "Available colors");
+  product.swatches.forEach((swatch, index) => {
+    const chip = element("button", "product-card__swatch");
+    chip.type = "button";
+    chip.setAttribute("role", "listitem");
+    chip.setAttribute("aria-label", swatch.label || `Color ${index + 1}`);
+    if (index === 0) chip.setAttribute("aria-pressed", "true");
+    else chip.setAttribute("aria-pressed", "false");
+    chip.style.setProperty("--swatch-color", swatch.color || swatch);
+    swatches.append(chip);
+  });
+  return swatches;
+}
+
 function renderProductCard(product, ctx, options = {}) {
   const card = element("article", ["product-card", options.className || ""].filter(Boolean).join(" "));
-  const link = element("a", "product-card__link");
-  link.href = product.href;
-  link.append(renderMedia(product.media, { ratio: "portrait", notesEnabled: ctx.notesEnabled }));
   const body = element("div", "product-card__body");
   if (product.tag) body.append(element("span", "product-tag", product.tag));
   body.append(element("h3", "product-name", product.name));
   const meta = element("div", "product-meta");
-  meta.append(element("span", "product-material", product.material));
-  const priceWrap = element("span", "product-price-wrap");
+  if (product.material && !options.commerce) {
+    meta.append(element("span", "product-material", product.material));
+  }
+  const priceWrap = element("div", "product-price-wrap");
+  priceWrap.append(element("span", "product-price", product.price));
   if (product.compareAt) {
     priceWrap.append(element("span", "product-compare", product.compareAt));
   }
-  priceWrap.append(element("span", "product-price", product.price));
+  if (options.commerce) {
+    const swatches = productColorSwatches(product);
+    if (swatches) priceWrap.append(swatches);
+  }
   meta.append(priceWrap);
   body.append(meta);
-  link.append(body);
+
+  if (options.commerce) {
+    const mediaStage = element("div", "product-card__media");
+    const mediaLink = element("a", "product-card__media-link");
+    mediaLink.href = product.href;
+    mediaLink.setAttribute("aria-label", product.name);
+    mediaLink.append(renderMedia(product.media, { ratio: "portrait", notesEnabled: ctx.notesEnabled }));
+
+    const mediaActions = element("div", "product-card__media-actions");
+    mediaActions.append(productActionButton("cart", "Add to cart"));
+
+    mediaStage.append(
+      mediaLink,
+      productActionButton("wishlist", `Save ${product.name}`),
+      mediaActions,
+    );
+
+    const detailsLink = element("a", "product-card__link");
+    detailsLink.href = product.href;
+    detailsLink.append(body);
+    card.append(mediaStage, detailsLink);
+    return card;
+  }
+
+  const link = element("a", "product-card__link");
+  link.href = product.href;
+  link.append(renderMedia(product.media, { ratio: "portrait", notesEnabled: ctx.notesEnabled }), body);
   card.append(link);
   return card;
 }
@@ -402,12 +547,12 @@ function renderProducts(section, ctx) {
   return sectionShell(section, content, { className: "section--products" });
 }
 
-function productCarouselArrow(direction) {
+function productCarouselArrow(direction, labelBase = "products") {
   const isPrevious = direction === "previous";
   const arrow = element("button", `design-new-arrivals__arrow design-new-arrivals__arrow--${direction}`);
   arrow.type = "button";
   arrow.dataset.newArrivalsDir = isPrevious ? "-1" : "1";
-  arrow.setAttribute("aria-label", isPrevious ? "Previous new arrivals" : "Next new arrivals");
+  arrow.setAttribute("aria-label", isPrevious ? `Previous ${labelBase}` : `Next ${labelBase}`);
 
   const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   icon.setAttribute("viewBox", "0 0 24 24");
@@ -426,47 +571,179 @@ function productCarouselArrow(direction) {
 }
 
 function renderProductCarousel(section, ctx) {
-  const root = element("section", "section section--new-arrivals design-new-arrivals");
+  const title = section.title;
+  const showHeader = Boolean(title || section.eyebrow || section.copy || section.viewAll);
+  const titleId = `${section.id}-title`;
+  const labelBase = (title || section.name || "products").toLowerCase();
+  const root = element(
+    "section",
+    ["section", "section--new-arrivals", "design-new-arrivals", showHeader ? "" : "design-new-arrivals--rail-only"]
+      .filter(Boolean)
+      .join(" "),
+  );
   root.id = section.id;
   root.dataset.section = section.number;
   root.dataset.newArrivalsCarousel = "true";
-  root.setAttribute("aria-labelledby", "design-new-arrivals-title");
+  if (showHeader && title) root.setAttribute("aria-labelledby", titleId);
+  else root.setAttribute("aria-label", section.name || title || "Products");
 
   const inner = element("div", "design-new-arrivals__inner");
-  const header = element("header", "design-new-arrivals__header");
-  const intro = element("div", "design-new-arrivals__intro");
-  if (section.eyebrow) intro.append(element("span", "design-new-arrivals__eyebrow", section.eyebrow));
-  const heading = element("h2", "design-new-arrivals__heading", section.title || "New arrivals");
-  heading.id = "design-new-arrivals-title";
-  intro.append(heading);
-  if (section.copy) intro.append(element("p", "design-new-arrivals__copy", section.copy));
 
-  const actions = element("div", "design-new-arrivals__actions");
-  if (section.viewAll) {
-    const viewAll = textLink(section.viewAll.label, section.viewAll.href);
-    viewAll.classList.add("design-new-arrivals__view-all");
-    actions.append(viewAll);
+  if (showHeader) {
+    const header = element("header", "design-new-arrivals__header");
+    const intro = element("div", "design-new-arrivals__intro");
+    if (section.eyebrow) intro.append(element("span", "design-new-arrivals__eyebrow", section.eyebrow));
+    if (title) {
+      const heading = element("h2", "design-new-arrivals__heading", title);
+      heading.id = titleId;
+      intro.append(heading);
+    }
+    if (section.copy) intro.append(element("p", "design-new-arrivals__copy", section.copy));
+
+    const actions = element("div", "design-new-arrivals__actions");
+    if (section.viewAll) {
+      const viewAll = button(
+        section.viewAll.label,
+        section.viewAll.href,
+        "button button--fill design-new-arrivals__view-all",
+      );
+      actions.append(viewAll);
+    }
+    header.append(intro, actions);
+    inner.append(header);
   }
-  const controls = element("div", "design-new-arrivals__controls");
-  controls.setAttribute("aria-label", "Browse new arrivals");
-  controls.append(productCarouselArrow("previous"), productCarouselArrow("next"));
-  actions.append(controls);
-  header.append(intro, actions);
 
+  const stage = element("div", "design-new-arrivals__stage");
   const viewport = element("div", "design-new-arrivals__viewport");
   viewport.dataset.newArrivalsViewport = "true";
   viewport.tabIndex = 0;
-  viewport.setAttribute("aria-label", "New arrivals products");
+  viewport.setAttribute("aria-label", `${labelBase} products`);
   const track = element("div", "design-new-arrivals__track");
   section.products.forEach((product) => {
-    track.append(renderProductCard(product, ctx, { className: "design-new-arrivals__card" }));
+    track.append(
+      renderProductCard(product, ctx, {
+        className: "design-new-arrivals__card",
+        commerce: true,
+      }),
+    );
   });
   viewport.append(track);
-  inner.append(header, viewport);
+
+  const controls = element("div", "design-new-arrivals__controls");
+  controls.setAttribute("aria-label", `Browse ${labelBase}`);
+  controls.append(productCarouselArrow("previous", labelBase), productCarouselArrow("next", labelBase));
+  stage.append(viewport, controls);
+  inner.append(stage);
+  if (section.action) {
+    const railCta = element("div", "design-new-arrivals__rail-cta");
+    railCta.append(button(section.action.label, section.action.href, "button button--fill"));
+    inner.append(railCta);
+  }
   root.append(inner);
   return root;
 }
 
+function renderShopUnder(section, ctx) {
+  const root = element("section", "section section--shop-under design-shop-under");
+  root.id = section.id;
+  root.dataset.section = section.number;
+  root.setAttribute("aria-labelledby", "design-shop-under-title");
+
+  const inner = element("div", "design-shop-under__inner");
+  const heading = element("h2", "design-shop-under__heading", section.title || "BEST ON BUDGET");
+  heading.id = "design-shop-under-title";
+
+  const grid = element("div", "design-shop-under__grid");
+  (section.items || []).forEach((item) => {
+    const tile = element("a", "design-shop-under__tile");
+    tile.href = item.href;
+    const labelText = item.title || "Shop under";
+    const priceText = item.price || "";
+    tile.setAttribute("aria-label", [labelText, priceText].filter(Boolean).join(" "));
+    const label = element("span", "design-shop-under__label");
+    label.append(element("span", "design-shop-under__label-text", labelText));
+    if (priceText) {
+      label.append(element("span", "design-shop-under__label-price", priceText));
+    }
+    tile.append(
+      renderMedia(item.media, {
+        fill: true,
+        notesEnabled: ctx.notesEnabled,
+        className: "design-shop-under__media",
+      }),
+      element("span", "design-shop-under__scrim"),
+      label,
+    );
+    grid.append(tile);
+  });
+
+  inner.append(heading, grid);
+  root.append(inner);
+  return root;
+}
+
+function renderTestimonialCard(item, ctx) {
+  const card = element("article", "design-testimonials__card");
+  const mediaWrap = element("div", "design-testimonials__media");
+  mediaWrap.append(
+    renderMedia(item.media, {
+      ratio: "square",
+      notesEnabled: ctx.notesEnabled,
+      className: "design-testimonials__card-media",
+    }),
+  );
+
+  const quote = element("div", "design-testimonials__quote");
+  quote.append(element("blockquote", "design-testimonials__body", item.quote || ""));
+
+  const attribution = element("div", "design-testimonials__attribution");
+  attribution.append(element("p", "design-testimonials__name", item.name || ""));
+  const meta = element("p", "design-testimonials__meta", item.meta || "");
+  if (!item.meta) meta.hidden = true;
+  attribution.append(meta);
+  quote.append(attribution);
+
+  card.append(mediaWrap, quote);
+  return card;
+}
+
+function renderTestimonials(section, ctx) {
+  const root = element("section", "section section--testimonials design-testimonials");
+  root.id = section.id;
+  root.dataset.section = section.number;
+  root.setAttribute("data-testimonials", "true");
+  root.setAttribute("data-testimonials-ticker", "true");
+  root.setAttribute("aria-labelledby", "design-testimonials-title");
+
+  const inner = element("div", "design-testimonials__inner");
+  const heading = element("h2", "design-testimonials__heading", section.title || "Loved by her");
+  heading.id = "design-testimonials-title";
+  inner.append(heading);
+  if (section.copy) {
+    inner.append(element("p", "design-testimonials__lede", section.copy));
+  }
+
+  const items = section.items || [];
+  const stage = element("div", "design-testimonials__stage");
+  const viewport = element("div", "design-testimonials__viewport");
+  viewport.setAttribute("data-testimonials-viewport", "true");
+  viewport.setAttribute("aria-label", "Customer voices");
+
+  const track = element("div", "design-testimonials__track");
+  items.forEach((item) => {
+    track.append(renderTestimonialCard(item, ctx));
+  });
+  items.forEach((item) => {
+    const duplicate = renderTestimonialCard(item, ctx);
+    duplicate.setAttribute("aria-hidden", "true");
+    track.append(duplicate);
+  });
+  viewport.append(track);
+  stage.append(viewport);
+
+  root.append(inner, stage);
+  return root;
+}
 function renderFeatureBanner(section, ctx) {
   const root = element("section", "section section--feature-banner design-feature-banner");
   root.id = section.id;
@@ -481,13 +758,13 @@ function renderFeatureBanner(section, ctx) {
   const heading = element("h2", "design-feature-banner__title", section.title || "Ready to wear");
   heading.id = "design-ready-to-wear-banner-title";
   copy.append(heading);
+  if (section.copy) {
+    copy.append(element("p", "design-feature-banner__lede", section.copy));
+  }
   if (section.action) {
     copy.append(
       button(section.action.label, section.action.href, "button button--fill design-feature-banner__cta"),
     );
-  }
-  if (section.copy) {
-    copy.append(element("p", "design-feature-banner__lede", section.copy));
   }
 
   const collage = element("div", "design-feature-banner__collage");
@@ -716,6 +993,8 @@ function renderSection(section, ctx) {
       return renderUspStrip(section);
     case "collection-bento":
       return renderCollectionBento(section, ctx);
+    case "material-rail":
+      return renderMaterialRail(section, ctx);
     case "campaign-hero":
       return renderCampaignHero(section, ctx);
     case "hero":
@@ -728,6 +1007,10 @@ function renderSection(section, ctx) {
       return renderProductCarousel(section, ctx);
     case "feature-banner":
       return renderFeatureBanner(section, ctx);
+    case "shop-under":
+      return renderShopUnder(section, ctx);
+    case "testimonials":
+      return renderTestimonials(section, ctx);
     case "split":
       return renderSplit(section, ctx);
     case "price":
