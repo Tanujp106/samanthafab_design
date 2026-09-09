@@ -95,10 +95,121 @@ function sectionHeading(section, extra = null) {
   return heading;
 }
 
+const navIconPaths = {
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+  user: '<circle cx="12" cy="7" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  bag: '<path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+};
+
+const mobileIconPaths = {
+  menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+  close: '<path d="M6 6l12 12M18 6 6 18"/>',
+  home: '<path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/>',
+  explore: '<circle cx="12" cy="12" r="9"/><path d="m16 16-3.5-3.5"/><path d="M12 8v4l2.5 2.5"/>',
+  whatsapp:
+    '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8.2 9.8c.6-1.2 1.8-1.9 3-1.9 1.8 0 3.1 1.2 3.1 3 0 1.8-1.3 3.1-3.1 3.1"/><path d="M14.4 14.2c.6-.4 1.5-.6 2.3-.4"/>',
+  heart: '<path d="M12 20.5s-7-4.35-7-10a4 4 0 0 1 7-2.5 4 4 0 0 1 7 2.5c0 5.65-7 10-7 10z"/>',
+  chevron: '<path d="m9 6 6 6-6 6"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+  bag: '<path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+};
+
+function renderMobileIcon(name, className = "mobile-icon") {
+  const pathMarkup = mobileIconPaths[name];
+  if (!pathMarkup) return null;
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.classList.add(className);
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.6");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = pathMarkup;
+  return icon;
+}
+
+function renderNavIcon(name) {
+  const pathMarkup = navIconPaths[name];
+  if (!pathMarkup) return null;
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.classList.add("nav-action__icon");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.5");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = pathMarkup;
+  return icon;
+}
+
+function renderNavigationItem(item, isReference, megaMenuId) {
+  if (item.menu) {
+    const trigger = element("button", ["nav-link", "nav-link--menu", item.active ? "is-active" : ""].filter(Boolean).join(" "), item.label);
+    trigger.type = "button";
+    trigger.setAttribute("data-nav-menu-trigger", item.menu);
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.setAttribute("aria-controls", megaMenuId);
+    return trigger;
+  }
+
+  const link = element("a", isReference ? ["nav-link", item.active ? "is-active" : ""].filter(Boolean).join(" ") : "", item.label);
+  link.href = item.href;
+  return link;
+}
+
+function renderMegaMenu(menu) {
+  const root = element("div", "design-mega-menu");
+  root.id = menu.id || "design-shop-mega-menu";
+  root.setAttribute("aria-hidden", "true");
+  root.dataset.navMenu = menu.label || "shop";
+  root.setAttribute("aria-label", `${menu.label || "Shop"} menu`);
+
+  const groups = element("div", "design-mega-menu__groups");
+  (menu.groups || []).forEach((group) => {
+    const groupNode = element("div", "design-mega-menu__group");
+    groupNode.append(element("h3", "design-mega-menu__heading", group.heading));
+    const links = element("ul", "design-mega-menu__list");
+    (group.links || []).forEach((item) => {
+      const listItem = element("li", "design-mega-menu__item");
+      const link = element("a", "design-mega-menu__link", item.label);
+      link.href = item.href;
+      listItem.append(link);
+      links.append(listItem);
+    });
+    groupNode.append(links);
+    groups.append(groupNode);
+  });
+
+  const featured = menu.featured;
+  const featuredLink = element("a", "design-mega-menu__featured");
+  if (featured?.href) featuredLink.href = featured.href;
+  if (featured?.media) {
+    const image = element("img", "design-mega-menu__image");
+    image.src = featured.media.src;
+    image.alt = featured.media.alt || "";
+    image.loading = "lazy";
+    image.decoding = "async";
+    featuredLink.append(image);
+  }
+  if (featured?.label) featuredLink.append(element("span", "design-mega-menu__featured-label", featured.label));
+
+  root.append(groups, featuredLink);
+  return root;
+}
+
 function renderHeader(section) {
   // Utility + sticky nav are siblings under .site so sticky is not
   // clipped by a short header containing block.
   const frag = document.createDocumentFragment();
+  const isReference = section.variant === "reference";
 
   const utilityItems = Array.isArray(section.utility) ? section.utility : [];
   if (utilityItems.length) {
@@ -112,36 +223,64 @@ function renderHeader(section) {
   header.id = section.id;
   header.dataset.section = section.number;
 
-  const nav = element("div", "primary-nav");
+  const nav = element("div", ["primary-nav", isReference ? "design-reference-nav" : ""].filter(Boolean).join(" "));
   const brand = element("a", "wordmark");
-  brand.href = "/";
+  brand.href = isReference ? "https://www.samanthafab.com/" : "/";
   brand.setAttribute("aria-label", "Samantha Fab home");
   brand.append(renderBrandImage());
 
-  const menuToggle = element("button", "nav-menu-toggle", "Menu");
+  const menuToggle = element("button", "nav-menu-toggle");
   menuToggle.type = "button";
   menuToggle.setAttribute("aria-label", "Open menu");
   menuToggle.setAttribute("aria-expanded", "false");
-  menuToggle.setAttribute("aria-controls", "primary-nav-links");
+  menuToggle.setAttribute("aria-controls", isReference ? "mobile-drawer" : "primary-nav-links");
+  if (isReference) {
+    menuToggle.dataset.mobileDrawerTrigger = "true";
+    menuToggle.append(renderMobileIcon("menu", "nav-menu-toggle__icon"), element("span", "sr-only", "Menu"));
+  } else {
+    menuToggle.textContent = "Menu";
+  }
 
-  const navLinks = element("nav", "nav-links");
+  const navLinks = element("nav", ["nav-links", isReference ? "design-reference-nav__links" : ""].filter(Boolean).join(" "));
   navLinks.id = "primary-nav-links";
   navLinks.setAttribute("aria-label", "Primary");
-  section.nav.forEach((item) => {
-    const link = element("a", "", item.label);
-    link.href = item.href;
-    navLinks.append(link);
-  });
+  section.nav.forEach((item) => navLinks.append(renderNavigationItem(item, isReference, section.megaMenu?.id || "design-shop-mega-menu")));
 
-  const actions = element("div", "nav-actions");
-  section.actions.forEach((item) => {
-    const link = element("a", ["nav-action", item.className || ""].filter(Boolean).join(" "), item.label);
+  const actionLinks = section.actions.map((item) => {
+    const link = element("a", ["nav-action", item.className || ""].filter(Boolean).join(" "));
     link.href = item.href;
     link.setAttribute("aria-label", item.ariaLabel || item.label);
-    actions.append(link);
+    if (isReference && item.icon) {
+      link.classList.add("design-reference-nav__action");
+      if (item.icon === "search" || item.icon === "bag") {
+        link.classList.add("design-reference-nav__action--desktop-only");
+      }
+      const icon = renderNavIcon(item.icon);
+      if (icon) link.append(icon);
+      link.append(element("span", "sr-only", item.label));
+    } else {
+      link.append(document.createTextNode(item.label));
+    }
+    return link;
   });
 
-  nav.append(brand, menuToggle, navLinks, actions);
+  if (isReference) {
+    const top = element("div", "design-reference-nav__top");
+    const start = element("div", "design-reference-nav__start");
+    const center = element("div", "design-reference-nav__center");
+    const end = element("div", "design-reference-nav__end");
+    start.append(menuToggle);
+    center.append(brand);
+    end.append(...actionLinks);
+    top.append(start, center, end, navLinks);
+    nav.append(top);
+    if (section.megaMenu) navLinks.append(renderMegaMenu(section.megaMenu));
+  } else {
+    const actions = element("div", "nav-actions");
+    actionLinks.forEach((link) => actions.append(link));
+    nav.append(brand, menuToggle, navLinks, actions);
+  }
+
   header.append(nav);
   frag.append(header);
 
@@ -214,12 +353,22 @@ const collectionIconPaths = {
     '<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>',
 };
 
-function renderCollectionIcon(name) {
-  const pathMarkup = collectionIconPaths[name];
+const uspLucideIconPaths = {
+  banknote:
+    '<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+  "refresh-cw":
+    '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  "message-circle": '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+};
+
+function renderLucideIcon(name, className, pathMap) {
+  const pathMarkup = pathMap[name];
   if (!pathMarkup) return null;
 
   const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  icon.classList.add("design-collection-bento__icon");
+  icon.classList.add(className);
   icon.setAttribute("viewBox", "0 0 24 24");
   icon.setAttribute("aria-hidden", "true");
   icon.setAttribute("focusable", "false");
@@ -230,6 +379,14 @@ function renderCollectionIcon(name) {
   icon.setAttribute("stroke-linejoin", "round");
   icon.innerHTML = pathMarkup;
   return icon;
+}
+
+function renderCollectionIcon(name) {
+  return renderLucideIcon(name, "design-collection-bento__icon", collectionIconPaths);
+}
+
+function renderUspLucideIcon(name) {
+  return renderLucideIcon(name, "design-usp-row__icon", uspLucideIconPaths);
 }
 
 function renderCollectionBento(section, ctx) {
@@ -345,6 +502,7 @@ function renderMaterialRail(section, ctx) {
   const root = element("section", "section section--material-rail design-materials");
   root.id = section.id;
   root.dataset.section = section.number;
+  root.setAttribute("data-material-carousel", "true");
   root.setAttribute("aria-labelledby", "design-shop-by-material-title");
 
   const inner = element("div", "design-materials__inner");
@@ -355,14 +513,14 @@ function renderMaterialRail(section, ctx) {
   if (section.copy) header.append(element("p", "design-materials__lede", section.copy));
 
   const viewport = element("div", "design-materials__viewport");
-  viewport.dataset.materialViewport = "true";
+  viewport.setAttribute("data-material-viewport", "true");
   viewport.tabIndex = 0;
   viewport.setAttribute("role", "region");
   viewport.setAttribute("aria-roledescription", "carousel");
   viewport.setAttribute("aria-label", "Shop by material");
 
   const grid = element("div", "design-materials__grid");
-  grid.dataset.materialTrack = "true";
+  grid.setAttribute("data-material-track", "true");
   section.items.forEach((item, index) => {
     const tile = element("a", "design-materials__tile");
     tile.href = item.href;
@@ -965,10 +1123,14 @@ function renderUspRow(section) {
   const list = element("ul", "design-usp-row__list");
   (section.items || []).forEach((item) => {
     const usp = element("li", "design-usp-row__item");
-    const icon = element("span", "design-usp-row__icon");
-    icon.setAttribute("aria-hidden", "true");
-    icon.innerHTML = footerTrustIcon(item.icon);
-    usp.append(icon, element("span", "design-usp-row__label", item.label));
+    const icon = renderUspLucideIcon(item.icon);
+    if (icon) {
+      const iconWrap = element("span", "design-usp-row__icon-wrap");
+      iconWrap.setAttribute("aria-hidden", "true");
+      iconWrap.append(icon);
+      usp.append(iconWrap);
+    }
+    usp.append(element("span", "design-usp-row__label", item.label));
     list.append(usp);
   });
   inner.append(list);
@@ -1215,6 +1377,158 @@ function renderSection(section, ctx) {
   }
 }
 
+function renderMobileDrawer(page, headerSection) {
+  const overlay = element("button", "mobile-drawer__overlay");
+  overlay.type = "button";
+  overlay.setAttribute("aria-label", "Close menu");
+  overlay.dataset.mobileDrawerOverlay = "true";
+
+  const drawer = element("aside", "mobile-drawer");
+  drawer.id = "mobile-drawer";
+  drawer.dataset.mobileDrawer = "true";
+  drawer.setAttribute("aria-hidden", "true");
+  drawer.setAttribute("aria-label", "Shop categories");
+
+  const head = element("div", "mobile-drawer__head");
+  const close = element("button", "mobile-drawer__close");
+  close.type = "button";
+  close.setAttribute("aria-label", "Close menu");
+  close.dataset.mobileDrawerClose = "true";
+  close.append(renderMobileIcon("close", "mobile-drawer__close-icon"));
+  head.append(element("span", "mobile-drawer__title", "Shop"), close);
+  drawer.append(head);
+
+  const promo = page.mobile?.drawerPromo;
+  if (promo) {
+    const promoNode = element("div", "mobile-drawer__promo");
+    promoNode.append(element("p", "mobile-drawer__promo-copy", promo.copy));
+    const promoAction = element("a", "mobile-drawer__promo-action", promo.action.label);
+    promoAction.href = promo.action.href;
+    promoAction.append(element("span", "mobile-drawer__promo-arrow", "→"));
+    promoNode.append(promoAction);
+    drawer.append(promoNode);
+  }
+
+  const list = element("ul", "mobile-drawer__list");
+  const megaMenu = headerSection?.megaMenu;
+  const links = (megaMenu?.groups || []).flatMap((group) => group.links || []);
+  const featuredLabel = "Ready To Wear Sarees";
+  links.forEach((item) => {
+    const row = element("li", "mobile-drawer__item");
+    const link = element("a", "mobile-drawer__link", item.label);
+    link.href = item.href;
+    link.append(renderMobileIcon("chevron", "mobile-drawer__chevron"));
+    if (item.label === featuredLabel) link.classList.add("mobile-drawer__link--featured");
+    row.append(link);
+    list.append(row);
+  });
+  drawer.append(list);
+
+  return { overlay, drawer };
+}
+
+function renderMobileExplore(page, ctx) {
+  const bestSellers = page.sections.find((section) => section.id === "design-best-sellers");
+  const products = bestSellers?.products || [];
+
+  const panel = element("section", "mobile-panel mobile-panel--explore");
+  panel.dataset.mobilePanel = "explore";
+  panel.hidden = true;
+
+  const searchWrap = element("div", "mobile-explore__search-wrap");
+  const searchForm = element("form", "mobile-explore__search");
+  searchForm.dataset.mobileSearchForm = "true";
+  searchForm.setAttribute("role", "search");
+  searchForm.append(renderMobileIcon("search", "mobile-explore__search-icon"));
+  const searchInput = element("input", "mobile-explore__input");
+  searchInput.type = "search";
+  searchInput.name = "q";
+  searchInput.placeholder = "Search sarees, fabrics, collections…";
+  searchInput.setAttribute("aria-label", "Search products");
+  searchInput.dataset.mobileSearchInput = "true";
+  searchInput.autocomplete = "off";
+  searchForm.append(searchInput);
+  searchWrap.append(searchForm);
+
+  const trending = element("div", "mobile-explore__trending");
+  trending.append(element("h2", "mobile-explore__trending-title", "Trending searches"));
+  const chips = element("div", "mobile-explore__chips");
+  chips.dataset.mobileTrendingChips = "true";
+  (page.mobile?.trending || []).forEach((item) => {
+    const chip = element("button", "mobile-explore__chip");
+    chip.type = "button";
+    chip.textContent = item.label;
+    chip.dataset.trendingQuery = item.query;
+    chips.append(chip);
+  });
+  trending.append(chips);
+
+  const results = element("div", "mobile-explore__results");
+  results.dataset.mobileSearchResults = "true";
+  results.append(element("h2", "mobile-explore__results-title", "Products"));
+  const grid = element("div", "mobile-explore__grid");
+  grid.dataset.mobileProductGrid = "true";
+  products.forEach((product) => {
+    grid.append(
+      renderProductCard(product, ctx, {
+        className: "design-new-arrivals__card mobile-explore__card",
+        commerce: true,
+      }),
+    );
+  });
+  results.append(grid);
+
+  panel.append(searchWrap, trending, results);
+  return panel;
+}
+
+function renderMobileEmptyPanel(panelId, config, iconName) {
+  const panel = element("section", `mobile-panel mobile-panel--${panelId}`);
+  panel.dataset.mobilePanel = panelId;
+  panel.hidden = true;
+
+  const empty = element("div", "mobile-empty");
+  empty.append(renderMobileIcon(iconName, "mobile-empty__icon"));
+  empty.append(element("h2", "mobile-empty__title", config.title));
+  empty.append(element("p", "mobile-empty__copy", config.copy));
+  panel.append(empty);
+  return panel;
+}
+
+function renderMobileBottomBar(page) {
+  const nav = element("nav", "mobile-bottom-bar");
+  nav.setAttribute("aria-label", "Mobile navigation");
+  nav.dataset.mobileBottomBar = "true";
+
+  const tabs = [
+    { id: "home", label: "Home", icon: "home" },
+    { id: "explore", label: "Explore", icon: "explore" },
+    { id: "whatsapp", label: "WhatsApp", icon: "whatsapp", href: page.mobile?.whatsappHref || "https://wa.me/" },
+    { id: "wishlist", label: "Wishlist", icon: "heart" },
+    { id: "bag", label: "Bag", icon: "bag" },
+  ];
+
+  tabs.forEach((tab, index) => {
+    const isLink = Boolean(tab.href);
+    const item = element(isLink ? "a" : "button", ["mobile-bottom-bar__item", index === 0 ? "is-active" : ""].filter(Boolean).join(" "));
+    if (isLink) {
+      item.href = tab.href;
+      item.target = "_blank";
+      item.rel = "noopener noreferrer";
+    } else {
+      item.type = "button";
+      item.dataset.mobileTab = tab.id;
+    }
+    item.setAttribute("aria-label", tab.label);
+    const icon = renderMobileIcon(tab.icon, "mobile-bottom-bar__icon");
+    if (icon && tab.id === "home") icon.classList.add("mobile-bottom-bar__icon--filled");
+    item.append(icon, element("span", "mobile-bottom-bar__label", tab.label));
+    nav.append(item);
+  });
+
+  return nav;
+}
+
 export function renderPage(page, options = {}) {
   const notesEnabled = Boolean(options.notesEnabled);
   const ctx = { notesEnabled };
@@ -1254,7 +1568,22 @@ export function renderPage(page, options = {}) {
   // USP strip sits above sticky nav (same role as the old utility strip).
   if (uspNode) root.append(uspNode);
   if (headerNode) root.append(headerNode);
+  main.dataset.mobilePanel = "home";
   root.append(main);
+
+  if (page.key === "blank" && page.mobile) {
+    const headerSection = page.sections.find((section) => section.type === "header");
+    root.append(
+      renderMobileExplore(page, ctx),
+      renderMobileEmptyPanel("wishlist", page.mobile.wishlist, "heart"),
+      renderMobileEmptyPanel("bag", page.mobile.bag, "bag"),
+      renderMobileBottomBar(page),
+    );
+    const { overlay, drawer } = renderMobileDrawer(page, headerSection);
+    root.append(overlay, drawer);
+    root.classList.add("site--mobile-shell");
+  }
+
   if (footerNode) root.append(footerNode);
 
   return root;

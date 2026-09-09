@@ -17,11 +17,87 @@ app.replaceChildren(renderPage(page, { notesEnabled }));
 
 const menuToggle = document.querySelector(".nav-menu-toggle");
 const navLinks = document.querySelector(".nav-links");
-if (menuToggle && navLinks) {
+const mobileDrawer = document.querySelector("[data-mobile-drawer]");
+const mobileDrawerOverlay = document.querySelector("[data-mobile-drawer-overlay]");
+const mobileDrawerClose = document.querySelector("[data-mobile-drawer-close]");
+
+const setMobileDrawerOpen = (open) => {
+  if (!mobileDrawer) return;
+  mobileDrawer.classList.toggle("is-open", open);
+  mobileDrawerOverlay?.classList.toggle("is-open", open);
+  mobileDrawer.setAttribute("aria-hidden", String(!open));
+  document.body.classList.toggle("mobile-drawer-open", open);
+  if (menuToggle) {
+    menuToggle.setAttribute("aria-expanded", String(open));
+    menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  }
+};
+
+if (mobileDrawer && menuToggle) {
+  menuToggle.addEventListener("click", () => {
+    setMobileDrawerOpen(!mobileDrawer.classList.contains("is-open"));
+  });
+  mobileDrawerOverlay?.addEventListener("click", () => setMobileDrawerOpen(false));
+  mobileDrawerClose?.addEventListener("click", () => setMobileDrawerOpen(false));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && mobileDrawer.classList.contains("is-open")) {
+      setMobileDrawerOpen(false);
+    }
+  });
+} else if (menuToggle && navLinks) {
   menuToggle.addEventListener("click", () => {
     const open = navLinks.classList.toggle("nav-links--open");
     menuToggle.setAttribute("aria-expanded", String(open));
-    menuToggle.textContent = open ? "Close" : "Menu";
+    menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    if (!menuToggle.querySelector(".nav-menu-toggle__icon")) {
+      menuToggle.textContent = open ? "Close" : "Menu";
+    }
+  });
+}
+
+const navMenuTrigger = document.querySelector("[data-nav-menu-trigger]");
+const navMenu = document.querySelector("[data-nav-menu]");
+if (navMenuTrigger && navMenu) {
+  let closeTimer = null;
+
+  const clearCloseTimer = () => {
+    if (closeTimer) window.clearTimeout(closeTimer);
+    closeTimer = null;
+  };
+
+  const setMenuOpen = (open, returnFocus = false) => {
+    clearCloseTimer();
+    navMenuTrigger.setAttribute("aria-expanded", String(open));
+    navMenu.setAttribute("aria-hidden", String(!open));
+    navMenu.classList.toggle("is-open", open);
+    if (returnFocus) navMenuTrigger.focus();
+  };
+
+  const scheduleMenuClose = () => {
+    clearCloseTimer();
+    closeTimer = window.setTimeout(() => setMenuOpen(false), 140);
+  };
+
+  navMenuTrigger.addEventListener("click", () => {
+    setMenuOpen(navMenuTrigger.getAttribute("aria-expanded") !== "true");
+  });
+  navMenuTrigger.addEventListener("pointerenter", () => setMenuOpen(true));
+  navMenuTrigger.addEventListener("pointerleave", scheduleMenuClose);
+  navMenuTrigger.addEventListener("focus", () => setMenuOpen(true));
+  navMenu.addEventListener("pointerenter", clearCloseTimer);
+  navMenu.addEventListener("pointerleave", scheduleMenuClose);
+  navMenu.addEventListener("focusin", clearCloseTimer);
+
+  document.addEventListener("focusin", (event) => {
+    if (!navMenu.contains(event.target) && event.target !== navMenuTrigger) setMenuOpen(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && navMenuTrigger.getAttribute("aria-expanded") === "true") {
+      setMenuOpen(false, true);
+    }
+  });
+  document.addEventListener("pointerdown", (event) => {
+    if (!navMenu.contains(event.target) && event.target !== navMenuTrigger) setMenuOpen(false);
   });
 }
 
@@ -34,6 +110,7 @@ if (campaignHero) {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const motionMs = 780;
   let activeIndex = 0;
+  let teleportFrame = null;
   let timer = null;
   let paused = reducedMotion;
   let transitionLock = false;
@@ -251,6 +328,115 @@ document.querySelectorAll("[data-new-arrivals-carousel]").forEach((carousel) => 
   });
 });
 
+document.querySelectorAll("[data-material-carousel]").forEach((carousel) => {
+  const viewport = carousel.querySelector("[data-material-viewport]");
+  const track = carousel.querySelector("[data-material-track]");
+  const previous = carousel.querySelector('[data-material-dir="-1"]');
+  const next = carousel.querySelector('[data-material-dir="1"]');
+  const sourceTiles = [...(track?.querySelectorAll("[data-material-index]") || [])];
+  if (!viewport || !track || !previous || !next || !sourceTiles.length) return;
+
+  const setSize = sourceTiles.length;
+  sourceTiles.forEach((tile) => {
+    tile.setAttribute("data-material-copy", "0");
+  });
+  const repeatedTiles = [1, 2, 3, 4].flatMap((copy) =>
+    sourceTiles.map((tile) => {
+      const clone = tile.cloneNode(true);
+      clone.setAttribute("data-material-copy", String(copy));
+      return clone;
+    }),
+  );
+  track.append(...repeatedTiles);
+
+  const tiles = [...track.querySelectorAll("[data-material-index]")];
+  tiles.forEach((tile, virtualIndex) => {
+    tile.dataset.materialVirtualIndex = String(virtualIndex);
+  });
+
+  let activeIndex = setSize * 2;
+  let teleportFrame = null;
+  let recenterTimer = null;
+
+  const wrap = (index) => (index + setSize) % setSize;
+
+  const syncMaterials = (instant = false) => {
+    const needsRecenter = activeIndex >= setSize * 3 || activeIndex < setSize * 2;
+    const activeSlot = wrap(activeIndex);
+    carousel.dataset.materialActive = String(activeSlot);
+    const cardWidth = tiles[0]?.offsetWidth || Number.parseFloat(window.getComputedStyle(tiles[0]).width) || 0;
+    const gap = Number.parseFloat(window.getComputedStyle(viewport).getPropertyValue("--material-gap")) || 16;
+    const teleportingTiles = [];
+
+    tiles.forEach((tile) => {
+      const virtualIndex = Number(tile.dataset.materialVirtualIndex);
+      const relative = virtualIndex - activeIndex;
+      const distance = Math.abs(relative);
+      const previousOffsetValue = tile.style.getPropertyValue("--material-offset");
+      const previousOffset = previousOffsetValue ? Number(previousOffsetValue) : null;
+      const isTeleporting = instant || (previousOffset !== null && Math.abs(relative - previousOffset) > 2);
+      if (isTeleporting) teleportingTiles.push(tile);
+      tile.classList.toggle("is-teleporting", isTeleporting);
+      tile.style.setProperty("--material-offset", String(relative));
+      tile.style.setProperty("--material-distance", String(distance));
+      tile.style.setProperty("--material-shift", String(relative * (cardWidth + gap)) + "px");
+      tile.dataset.distance = String(Math.min(distance, 3));
+      tile.classList.toggle("is-active", virtualIndex === activeIndex);
+      tile.inert = distance > 1;
+      tile.setAttribute("aria-hidden", String(distance > 1));
+      if (virtualIndex === activeIndex) tile.setAttribute("aria-current", "true");
+      else tile.removeAttribute("aria-current");
+    });
+
+    if (teleportFrame) window.cancelAnimationFrame(teleportFrame);
+    teleportFrame = window.requestAnimationFrame(() => {
+      teleportingTiles.forEach((tile) => tile.classList.remove("is-teleporting"));
+      teleportFrame = null;
+    });
+
+    if (!instant && needsRecenter) {
+      if (recenterTimer) window.clearTimeout(recenterTimer);
+      recenterTimer = window.setTimeout(() => {
+        while (activeIndex >= setSize * 3) activeIndex -= setSize;
+        while (activeIndex < setSize * 2) activeIndex += setSize;
+        recenterTimer = null;
+        syncMaterials(true);
+      }, 460);
+    }
+  };
+
+  const moveMaterials = (direction) => {
+    activeIndex += direction;
+    syncMaterials();
+  };
+
+  previous.addEventListener("click", () => moveMaterials(-1));
+  next.addEventListener("click", () => moveMaterials(1));
+  viewport.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      moveMaterials(-1);
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      moveMaterials(1);
+    }
+  });
+
+  tiles.forEach((tile) => {
+    tile.addEventListener("click", (event) => {
+      const virtualIndex = Number(tile.dataset.materialVirtualIndex);
+      if (virtualIndex === activeIndex) return;
+      event.preventDefault();
+      activeIndex = virtualIndex;
+      syncMaterials();
+    });
+  });
+
+  window.addEventListener("resize", syncMaterials, { passive: true });
+  syncMaterials();
+});
+
 document.querySelectorAll("[data-footer-newsletter]").forEach((form) => {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -277,6 +463,74 @@ document.querySelectorAll("[data-testimonials-ticker]").forEach((section) => {
     if (!viewport.contains(event.relatedTarget)) setRate(1);
   });
 });
+
+const mobileBottomBar = document.querySelector("[data-mobile-bottom-bar]");
+if (mobileBottomBar) {
+  const panels = [...document.querySelectorAll("[data-mobile-panel]")];
+  const tabButtons = [...mobileBottomBar.querySelectorAll("[data-mobile-tab]")];
+
+  const setMobileTab = (tabId) => {
+    document.body.dataset.mobileTab = tabId;
+    tabButtons.forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.mobileTab === tabId);
+    });
+    panels.forEach((panel) => {
+      const isActive = panel.dataset.mobilePanel === tabId;
+      panel.hidden = !isActive;
+    });
+    if (tabId !== "home") setMobileDrawerOpen(false);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => setMobileTab(button.dataset.mobileTab));
+  });
+
+  setMobileTab("home");
+}
+
+const mobileSearchInput = document.querySelector("[data-mobile-search-input]");
+const mobileProductGrid = document.querySelector("[data-mobile-product-grid]");
+const mobileTrendingChips = document.querySelector("[data-mobile-trending-chips]");
+const mobileSearchForm = document.querySelector("[data-mobile-search-form]");
+
+if (mobileSearchInput && mobileProductGrid) {
+  const cards = [...mobileProductGrid.querySelectorAll(".mobile-explore__card")];
+
+  const filterExploreProducts = (query = "") => {
+    const normalized = query.trim().toLowerCase();
+    cards.forEach((card) => {
+      const name = card.querySelector(".product-name")?.textContent?.toLowerCase() || "";
+      const tag = card.querySelector(".product-tag")?.textContent?.toLowerCase() || "";
+      const matches = !normalized || name.includes(normalized) || tag.includes(normalized);
+      card.hidden = !matches;
+      card.style.display = matches ? "" : "none";
+    });
+  };
+
+  mobileSearchInput.addEventListener("input", () => {
+    filterExploreProducts(mobileSearchInput.value);
+    mobileTrendingChips?.querySelectorAll(".mobile-explore__chip").forEach((chip) => {
+      chip.classList.toggle("is-active", chip.textContent.toLowerCase().includes(mobileSearchInput.value.trim().toLowerCase()));
+    });
+  });
+
+  mobileSearchForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    filterExploreProducts(mobileSearchInput.value);
+  });
+
+  mobileTrendingChips?.querySelectorAll(".mobile-explore__chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const query = chip.dataset.trendingQuery ?? chip.textContent;
+      mobileSearchInput.value = chip.textContent;
+      mobileTrendingChips.querySelectorAll(".mobile-explore__chip").forEach((item) => {
+        item.classList.toggle("is-active", item === chip);
+      });
+      filterExploreProducts(query);
+    });
+  });
+}
 
 if (requestedPage && !pages[requestedPage]) {
   console.warn(`Unknown playground page: ${requestedPage}. Showing homepage.`);

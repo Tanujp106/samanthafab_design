@@ -59,7 +59,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 
 | Section | Defaults |
 | --- | --- |
-| Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); left-aligned desktop copy with a localized translucent blur veil and quiet textile pattern; centered mobile fallback; centered prev/next arrows |
+| Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); left-aligned desktop copy with a localized translucent blur veil and low-contrast repeating paisley motif; centered mobile fallback; centered prev/next arrows |
 | Shop by collection | Centered title + light lede → gap → taller 2+3 bento; vertically distributed icon/title/Explore captions (no “Starting with…” price lines); soft **left** linear scrim; top-align portraits; borderless tiles |
 | New Arrivals | Light cream surface; Sprat/primary-800 uppercase titles; centered header + Shop All; left-aligned product cards; Shop All primary button 13px; fixed-height horizontal rail; section pad bottom 72px (mobile 64px); product details `--product-rail-details: 7.75rem` (fits badge + swatches); price line shows “24% off” badge |
 | USP row | After New Arrivals / before Best sellers; 4 static items; Lucide line icons (banknote / refresh-cw / truck / message-circle) above labels; no section title; **primary-50** wash; 4-col desktop / 2-col mobile |
@@ -89,10 +89,20 @@ Do **not** wait for the user to say “update the skill” — preference correc
 
 One-off experiments (“try X once”) do not get written until the user confirms they stick.
 
+## Mobile shell (`/design`, ≤900px)
+
+- Top bar: hamburger (left) · centered logo · account icon (right). Search and bag move to the bottom bar on mobile.
+- Bottom bar (fixed): Home · Explore · WhatsApp (external link) · Wishlist · Bag — icon + label; active tab filled/darker.
+- Hamburger opens a **left drawer** with promo strip, category links (from Shop mega menu), and chevrons.
+- **Explore** tab: pill search bar (client-side filter only — prototype), trending chips, 2-up product grid reusing Best sellers catalog.
+- **Wishlist** / **Bag**: quiet empty states; no cart logic yet.
+- Tab panels swap in place of `.site-main` + footer; homepage sections unchanged on Home.
+
 ## Changelog
 
+- 2026-09-09 — Mobile shell: bottom tab bar, left category drawer, Explore search/trending/products, empty Wishlist/Bag; mobile header hamburger · logo · account.
 - 2026-09-09 — Design reference nav top row slimmed to 88px with lighter vertical padding (mobile 64px).
-- 2026-09-09 — Campaign hero gained a localized left-side blur veil and subtle textile pattern to support the left-aligned copy.
+- 2026-09-09 — Campaign hero gained a localized left-side blur veil and a low-contrast repeating paisley motif with a left-to-right gradient to support the left-aligned copy.
 - 2026-09-09 — Corrected campaign hero copy to align left on desktop and return to centered alignment on mobile.
 - 2026-09-07 — Active Shop by Material center card now uses a larger Sprat label (`clamp(24px, 2.2vw, 32px)`) while side-card labels retain the quieter scale.
 - 2026-09-07 — Material carousel now uses repeated card sets with a hidden recenter point for a true seamless infinite loop; side cards gain graduated depth blur while the center card remains crisp.

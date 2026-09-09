@@ -2,6 +2,17 @@
 
 Numbers distilled from page feedback. Update when lasting corrections land.
 
+## Mobile shell (≤900px)
+
+| Item | Value |
+| --- | --- |
+| Top bar height | 64px min-height; 10px vertical padding; 16px side gutters |
+| Bottom bar height | ~72px + safe-area; 5 equal tabs; icon 22px; label 10px Karrik |
+| Drawer width | min(88vw, 360px); slides from left; overlay rgba(18,10,12,0.42) |
+| Explore search | 48px pill; 999px radius; whisper cream fill |
+| Explore grid | 2 columns; 16×12px gap; same commerce cards as Best sellers (no hover wishlist/cart on grid) |
+| Empty state | 40px icon; Sprat uppercase title ~22px; copy max ~28ch |
+
 ## Surface
 
 | Item | Value |
@@ -153,7 +164,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Slide transition | Right-to-left (not fade) |
 | Copy alignment | Left-aligned on desktop; centered on mobile |
 | Desktop copy veil | Left linear dark fade with 2.5px backdrop blur, masked before the right edge |
-| Desktop veil pattern | Subtle crossed 18px/32px repeating lines, soft-light, fading out before the right edge |
+| Desktop veil pattern | Supplied transparent paisley motif, repeated left-to-right on 520px tiles at low opacity, fading out before the right edge |
 | Controls | Centered side arrows (~48px) + dots |
 | Side frame | 24px padding on `.section--campaign-hero` (stage is direct child — no `.campaign-hero__inner`) |
 | Campaign media | Full stage fill; wrapper `margin: 0`; image `object-fit: cover` |

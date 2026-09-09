@@ -25,19 +25,82 @@ export const blank = {
       type: "header",
       hideReviewNotes: true,
       annotation:
-        "Keep the navigation separate from the campaign canvas so the hero can stay completely image-led.",
+        "A two-tier Samantha reference navbar with a live-linked Shop mega menu and a centered wordmark.",
+      variant: "reference",
       brand: "SAMANTHA FAB",
       nav: [
-        { label: "Shop", href: "/?route=shop" },
-        { label: "Collections", href: "/?route=collections" },
-        { label: "Discover", href: "/?route=discover" },
-        { label: "Services", href: "/?route=services" },
+        { label: "Home", href: "https://www.samanthafab.com/", active: true },
+        { label: "Shop", menu: "shop" },
+        { label: "About", href: "https://www.samanthafab.com/pages/about-us" },
+        {
+          label: "Best sellers",
+          href: "https://www.samanthafab.com/collections/all?sort_by=best-selling",
+        },
+        {
+          label: "Surmaye Sisterhood",
+          href: "https://www.samanthafab.com/pages/star-in-our-spotlight",
+        },
+        { label: "Contact", href: "https://www.samanthafab.com/pages/contact" },
       ],
       actions: [
-        { label: "Search", href: "/?route=search", ariaLabel: "Search" },
-        { label: "Account", href: "/?route=account", ariaLabel: "Account", className: "nav-action--account" },
-        { label: "Bag (0)", href: "/?route=bag", ariaLabel: "Bag, 0 items" },
+        { label: "Search", href: "https://www.samanthafab.com/search", ariaLabel: "Search", icon: "search" },
+        { label: "Account", href: "https://www.samanthafab.com/account", ariaLabel: "Account", className: "nav-action--account", icon: "user" },
+        { label: "Bag", href: "https://www.samanthafab.com/cart", ariaLabel: "Shopping bag", icon: "bag" },
       ],
+      megaMenu: {
+        label: "Shop",
+        id: "design-shop-mega-menu",
+        groups: [
+          {
+            heading: "By category",
+            links: [
+              { label: "Sarees", href: "https://www.samanthafab.com/collections/all" },
+              { label: "New Arrival", href: "https://www.samanthafab.com/collections/new-arrival" },
+              { label: "Wedding Collection", href: "https://www.samanthafab.com/collections/wedding-collection" },
+              { label: "Budget Buys", href: "https://www.samanthafab.com/collections/budget-buys" },
+              { label: "Festive Picks", href: "https://www.samanthafab.com/collections/festive-picks" },
+              { label: "Sale", href: "https://www.samanthafab.com/collections/sale" },
+              { label: "Ready To Wear Sarees", href: "https://www.samanthafab.com/collections/ready-to-wear-1" },
+            ],
+          },
+          {
+            heading: "By collection",
+            links: [
+              { label: "Arani Silk", href: "https://www.samanthafab.com/collections/arani-silk" },
+              { label: "Chettinad Cotton", href: "https://www.samanthafab.com/collections/chettinad-cotton" },
+              { label: "Dharmavaram Silk", href: "https://www.samanthafab.com/collections/dharmavaram-silk" },
+              { label: "Gadwal Saree", href: "https://www.samanthafab.com/collections/gadwal-saree" },
+              { label: "Kanchipuram Silk", href: "https://www.samanthafab.com/collections/kanchipuram-silk-kanjivaram" },
+            ],
+          },
+          {
+            heading: "By textile",
+            links: [
+              { label: "Mangalagiri Cotton", href: "https://www.samanthafab.com/collections/mangalagiri-cotton" },
+              { label: "Mysore Silk", href: "https://www.samanthafab.com/collections/mysore-silk" },
+              { label: "Narayanpet Saree", href: "https://www.samanthafab.com/collections/narayanpet-saree" },
+              { label: "Pochampally Ikat", href: "https://www.samanthafab.com/collections/pochampally-ikat" },
+            ],
+          },
+          {
+            heading: "More",
+            links: [
+              { label: "Style Guide", href: "https://www.samanthafab.com/pages/style-guide" },
+              { label: "Star In Our Spotlight", href: "https://www.samanthafab.com/pages/star-in-our-spotlight" },
+              { label: "Design Your Dream Sarees", href: "https://www.samanthafab.com/pages/design-your-dream-sarees" },
+              { label: "Contact", href: "https://www.samanthafab.com/pages/contact" },
+            ],
+          },
+        ],
+        featured: {
+          label: "Wedding Collection",
+          href: "https://www.samanthafab.com/collections/wedding-collection",
+          media: {
+            src: "/assets/design-collection-wedding.jpg",
+            alt: "Woman in a dark teal and gold saree seated against heritage architecture",
+          },
+        },
+      },
     },
     {
       id: "design-campaign-hero",
@@ -293,10 +356,10 @@ export const blank = {
       hideReviewNotes: true,
       annotation: "Four quiet assurances — icon above, label below; sits under New Arrivals.",
       items: [
-        { icon: "cod", label: "Cash on delivery" },
-        { icon: "returns", label: "Easy returns" },
-        { icon: "shipping", label: "Pan-India shipping" },
-        { icon: "whatsapp", label: "WhatsApp support" },
+        { icon: "banknote", label: "Cash on delivery" },
+        { icon: "refresh-cw", label: "Easy returns" },
+        { icon: "truck", label: "Pan-India shipping" },
+        { icon: "message-circle", label: "WhatsApp support" },
       ],
     },
     {
@@ -1029,4 +1092,26 @@ export const blank = {
       copyright: "© Samantha Fab. Playground concept.",
     },
   ],
+  mobile: {
+    trending: [
+      { label: "Bestsellers", query: "" },
+      { label: "Ready-to-wear", query: "ready-to-wear" },
+      { label: "Everyday", query: "everyday" },
+      { label: "Wedding", query: "wedding" },
+      { label: "Festive", query: "festive" },
+    ],
+    drawerPromo: {
+      copy: "Get style guidance and early access to new drops.",
+      action: { label: "Sign in", href: "https://www.samanthafab.com/account" },
+    },
+    whatsappHref: "https://wa.me/",
+    wishlist: {
+      title: "Your wishlist is empty",
+      copy: "Save pieces you love — they'll appear here.",
+    },
+    bag: {
+      title: "Your bag is empty",
+      copy: "Looks like you haven't added anything yet.",
+    },
+  },
 };

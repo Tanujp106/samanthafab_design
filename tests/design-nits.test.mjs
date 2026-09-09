@@ -21,6 +21,45 @@ test("design nits: 24px campaign/nav gutters", async () => {
   );
 });
 
+test("design nits: campaign copy sits left on desktop and centers on mobile", async () => {
+  const css = await source("playground/styles/design.css");
+
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.campaign-slide__content\s*\{[^}]*width:\s*100%[^}]*align-items:\s*flex-start[^}]*text-align:\s*left/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\)[\s\S]*body\[data-page="blank"\] \.campaign-slide__content\s*\{[^}]*align-items:\s*center[^}]*text-align:\s*center/s,
+  );
+});
+
+test("design nits: campaign veil gives left copy a blurred patterned backdrop", async () => {
+  const css = await source("playground/styles/design.css");
+
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.campaign-slide__veil\s*\{[^}]*background:\s*linear-gradient\([\s\S]*?to right[\s\S]*?\)[^}]*backdrop-filter:\s*blur\(2\.5px\)[^}]*mask-image:\s*linear-gradient\(to right/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.campaign-slide__veil::before\s*\{[^}]*background-image:\s*[\s\S]*?design-campaign-paisley\.png[^}]*mask-image:\s*linear-gradient\(to right/s,
+  );
+});
+
+test("design nits: campaign veil repeats the supplied paisley with a left-to-right gradient", async () => {
+  const css = await source("playground/styles/design.css");
+
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.campaign-slide__veil::before\s*\{[^}]*background-image:\s*[\s\S]*?linear-gradient\(\s*to right[\s\S]*?\),\s*[\s\S]*?url\(["']?\.\.\/assets\/design-campaign-paisley\.png["']?\)[^}]*background-repeat:\s*no-repeat,\s*repeat-x/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.campaign-slide__veil::before\s*\{[^}]*background-size:\s*100%\s*100%,\s*520px\s*auto/s,
+  );
+});
+
 test("design nits: New Arrivals eyebrow→title is 6px", async () => {
   const css = await source("playground/styles/design.css");
 
@@ -132,6 +171,24 @@ test("design nits: color swatches sit below a vertically aligned price line", as
   assert.doesNotMatch(
     render,
     /product-card__media-actions[\s\S]{0,400}product-card__swatches/,
+  );
+});
+
+test("design nits: USP row icons use a staggered infinite loop", async () => {
+  const css = await source("playground/styles/design.css");
+  const render = await source("playground/components/render.js");
+  const reducedMotion = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));
+
+  assert.match(render, /design-usp-row__icon-wrap/);
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-usp-row__icon-wrap\s*\{[^}]*animation:\s*design-usp-row-icon\s+3\.6s\s+ease-in-out\s+infinite/s,
+  );
+  assert.match(css, /design-usp-row__item:nth-child\(2\)[\s\S]*animation-delay:\s*-0\.9s/);
+  assert.match(css, /@keyframes\s+design-usp-row-icon[\s\S]*transform:\s*translateY\(-6px\)\s+scale\(1\.06\)/);
+  assert.match(
+    reducedMotion,
+    /body\[data-page="blank"\] \.design-usp-row__icon-wrap\s*\{[^}]*animation:\s*none/s,
   );
 });
 
@@ -267,11 +324,27 @@ test("design nits: material cards use blur+dark scrim without Explore CTA", asyn
   assert.match(app, /material-offset/);
   assert.match(app, /material-distance/);
   assert.match(app, /inert = distance > 1/);
+  assert.match(app, /const activeSlot = wrap\(activeIndex\)/);
+  assert.match(app, /activeIndex \+= direction/);
+  assert.match(app, /cloneNode\(true\)/);
+  assert.match(app, /track\.append/);
+  assert.match(app, /data-material-copy/);
+  assert.match(app, /activeIndex >= setSize \* 3/);
+  assert.match(app, /Math\.abs\(relative - previousOffset\) > 2/);
+  assert.match(app, /is-teleporting/);
   assert.match(css, /design-materials__viewport/);
-  assert.match(css, /--material-card-width/);
+  assert.match(css, /--material-card-width: min\(calc\(\(100cqi - 64px\) \/ 5\),/);
+  assert.match(css, /--material-visible-count: 5/);
   assert.match(css, /data-distance="0"/);
   assert.match(css, /data-distance="1"/);
   assert.match(css, /data-distance="2"/);
+  assert.match(
+    css,
+    /design-materials__tile\[data-distance="0"\] \.design-materials__label\s*\{[^}]*font-size:\s*clamp\(24px, 2\.2vw, 32px\)/s,
+  );
+  assert.match(css, /design-materials__tile\.is-teleporting\s*\{[^}]*transition:\s*none !important/s);
+  assert.match(css, /design-materials__tile\[data-distance="1"\]\s*\{[^}]*filter:\s*blur\(1\.5px\)/s);
+  assert.match(css, /design-materials__tile\[data-distance="2"\]\s*\{[^}]*filter:\s*blur\(3px\)/s);
 });
 
 test("design nits: Shop under uses uppercase titles and tightened section bottoms", async () => {
