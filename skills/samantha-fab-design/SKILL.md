@@ -59,15 +59,15 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 
 | Section | Defaults |
 | --- | --- |
-| Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); centered prev/next arrows |
+| Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); left-aligned desktop copy with a localized translucent blur veil and quiet textile pattern; centered mobile fallback; centered prev/next arrows |
 | Shop by collection | Centered title + light lede → gap → taller 2+3 bento; vertically distributed icon/title/Explore captions (no “Starting with…” price lines); soft **left** linear scrim; top-align portraits; borderless tiles |
 | New Arrivals | Light cream surface; Sprat/primary-800 uppercase titles; centered header + Shop All; left-aligned product cards; Shop All primary button 13px; fixed-height horizontal rail; section pad bottom 72px (mobile 64px); product details `--product-rail-details: 7.75rem` (fits badge + swatches); price line shows “24% off” badge |
-| USP row | After New Arrivals / before Best sellers; 4 static items; icon above + label below; no section title; **primary-50** wash; 4-col desktop / 2-col mobile |
+| USP row | After New Arrivals / before Best sellers; 4 static items; Lucide line icons (banknote / refresh-cw / truck / message-circle) above labels; no section title; **primary-50** wash; 4-col desktop / 2-col mobile |
 | Best sellers | Same product-carousel as New Arrivals; after USP row / before RTW banner; Shop All CTA |
 | Ready-to-wear banner | Light cream section + 36px/24px frame; primary-100 inner radius 16px; collage right; title sentence case; CTA primary 13px |
 | RTW product rail | Headerless; CTA “Shop All” 13px; brand primary |
-| Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `16px 24px 88px` (mobile `16px 16px 80px`); three image price tiles clamp(280px, 34vw, 420px) |
-| Shop by Material | After Shop under / before Clearance; light cream; padding 48/24/72; centered uppercase header; shaped fabric tiles; blur+dark scrim; no Explore CTA |
+| Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `48px 24px 88px` (mobile `16px 16px 80px`); three image price tiles clamp(280px, 34vw, 420px) |
+| Shop by Material | After Shop under / before Clearance; light cream; padding 48/24/72; centered uppercase header; shaped fabric tiles in an infinite circular center-mode 5-up carousel on desktop (100% active / 80% adjacent / 60% distance-2; 3-up mobile fallback); depth blur on side cards; keyboard + arrow controls; blur+dark scrim; no Explore CTA |
 | Clearance sale | After Material / before Voices; overlay banner (cream story image, primary-900, lighter scrim, sentence-case title, Upto 50% off badge); headerless rail; bottom pad 48/40 |
 | Voices feature | After Clearance; centered header; infinite ticker cards; playbackRate hover 0.2; padding 56/0/80 |
 | Footer | Plum; brand + newsletter (“Join our newsletter for new drops” / Subscribe); denser columns + trust strip; no payment logos |
@@ -91,7 +91,15 @@ One-off experiments (“try X once”) do not get written until the user confirm
 
 ## Changelog
 
+- 2026-09-09 — Design reference nav top row slimmed to 88px with lighter vertical padding (mobile 64px).
+- 2026-09-09 — Campaign hero gained a localized left-side blur veil and subtle textile pattern to support the left-aligned copy.
+- 2026-09-09 — Corrected campaign hero copy to align left on desktop and return to centered alignment on mobile.
+- 2026-09-07 — Active Shop by Material center card now uses a larger Sprat label (`clamp(24px, 2.2vw, 32px)`) while side-card labels retain the quieter scale.
+- 2026-09-07 — Material carousel now uses repeated card sets with a hidden recenter point for a true seamless infinite loop; side cards gain graduated depth blur while the center card remains crisp.
+- 2026-09-07 — Shop by Material now shows five items on desktop with a responsive three-item mobile fallback.
+- 2026-09-07 — Shop under gained 32px desktop top breathing room; Shop by Material became a circular three-up center-mode carousel with 100/80/60 distance scaling, keyboard/arrow controls, and wrap-aware transitions that keep off-screen cards from sweeping across the background.
 - 2026-09-07 — Collection bento captions now use an upper-left icon/title lead, supporting copy, and lower-left Explore action for more varied editorial text layout.
+- 2026-09-07 — USP row icons switched to Lucide (banknote, refresh-cw, truck, message-circle).
 - 2026-09-07 — Collection tile icons inset 4px from the left.
 - 2026-09-07 — Collection left scrim darkened (~0.84 → transparent) for stronger caption contrast.
 - 2026-09-07 — Collection tiles: removed “Starting with…” price lines; scrim switched to left linear fade for caption readability.

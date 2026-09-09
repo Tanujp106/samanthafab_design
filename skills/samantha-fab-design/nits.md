@@ -14,6 +14,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Page / section side gutters | 24px |
+| Reference nav top row | 88px min-height with 12px vertical padding (mobile 64px / 10px) |
 | Eyebrow → title | ~6px |
 | Title → body / lede | ~6px |
 | Collection header → bento grid | ~48px |
@@ -25,7 +26,8 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | New Arrivals section padding | `64px 24px 72px` (mobile `48px 16px 64px`) |
 | USP row padding | `48px 24px` (mobile `40px 16px`) |
 | USP row surface | `var(--color-primary-50)` soft plum wash |
-| USP row layout | 4-col desktop; 2-col mobile; icon 32px above 13px label; gap icon→label 12px |
+| USP row layout | 4-col desktop; 2-col mobile; Lucide 28px icons above 13px label; gap icon→label 12px |
+| USP row icons | Lucide banknote / refresh-cw / truck / message-circle; stroke 2; primary-800 |
 | RTW rail-only top padding | ~40px |
 | Rail footer CTA top margin | 16px |
 
@@ -71,7 +73,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | --- | --- |
 | Heading | Source `Best on budget`; displayed uppercase via CSS |
 | Title → cards gap | 40px desktop; 32px mobile |
-| Section padding | `16px 24px 88px` (mobile `16px 16px 80px`) |
+| Section padding | `48px 24px 88px` (mobile `16px 16px 80px`) |
 | Tile min-height | clamp(280px, 34vw, 420px) |
 | Mobile tile min-height | min(64vw, 340px) |
 | Tile border | 1px cream 32% hairline OK |
@@ -88,12 +90,15 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Decorative heading hairlines | None |
 | Clip path | Stays within 0–1 (bottom tip `.5 1`); defs `overflow: visible` |
 | Tile overflow | `visible` (shape comes from clip-path; do not `overflow: hidden` or the bottom tip shears) |
-| Card label | Sprat Campaign + cream; `clamp(18px, 1.65vw, 24px)` |
+| Card label | Sprat Campaign + cream; side cards `clamp(18px, 1.65vw, 24px)`, active center card `clamp(24px, 2.2vw, 32px)` |
 | Card subcopy | Karrik |
 | Card media | Fabric-led macro textile imagery; no decorative icon layer |
 | Card overlay | Full-tile `.design-materials__scrim`: `rgba(18,10,12,0.38)` + `backdrop-filter: blur(1.5px)` — no `::after` linear gradient, no multiply wash |
 | Card CTA | None (no Explore / arrow) |
 | Card copy placement | Horizontally + vertically centered in the tile (`justify-content: center`) |
+| Carousel layout | Repeated-track infinite center-mode 5-up on desktop / 3-up mobile; active center 100%, adjacent cards 80%, distance-2 cards 60%; hidden recenter point |
+| Carousel depth | Active card crisp; adjacent cards blur 1.5px; distance-2 cards blur 3px; deepest cards blur 4.5px |
+| Carousel controls | 40px mid-rail arrow controls; keyboard ArrowLeft/ArrowRight; wrapped off-screen cards reposition without a cross-track sweep; reduced-motion removes transitions |
 
 ## Product chrome
 
@@ -146,6 +151,9 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Slide transition | Right-to-left (not fade) |
+| Copy alignment | Left-aligned on desktop; centered on mobile |
+| Desktop copy veil | Left linear dark fade with 2.5px backdrop blur, masked before the right edge |
+| Desktop veil pattern | Subtle crossed 18px/32px repeating lines, soft-light, fading out before the right edge |
 | Controls | Centered side arrows (~48px) + dots |
 | Side frame | 24px padding on `.section--campaign-hero` (stage is direct child — no `.campaign-hero__inner`) |
 | Campaign media | Full stage fill; wrapper `margin: 0`; image `object-fit: cover` |

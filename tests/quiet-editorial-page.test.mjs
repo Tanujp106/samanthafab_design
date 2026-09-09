@@ -63,6 +63,62 @@ test("blank design canvas is available at the clean /design path", async () => {
   assert.match(designShell, /\.\.\/app\.js/);
 });
 
+test("design page uses the live Samantha reference navbar structure", async () => {
+  const { blank } = await pageModule("playground/pages/blank.js");
+  const renderer = await source("playground/components/render.js");
+  const app = await source("playground/app.js");
+  const designStyles = await source("playground/styles/design.css");
+  const header = blank.sections.find((section) => section.id === "design-utility-navigation");
+
+  assert.equal(header.variant, "reference");
+  assert.deepEqual(
+    header.nav.map((item) => item.label),
+    ["Home", "Shop", "About", "Best sellers", "Surmaye Sisterhood", "Contact"],
+  );
+  assert.equal(header.nav[1].menu, "shop");
+  assert.deepEqual(
+    header.nav.filter((item) => item.href).map((item) => item.href),
+    [
+      "https://www.samanthafab.com/",
+      "https://www.samanthafab.com/pages/about-us",
+      "https://www.samanthafab.com/collections/all?sort_by=best-selling",
+      "https://www.samanthafab.com/pages/star-in-our-spotlight",
+      "https://www.samanthafab.com/pages/contact",
+    ],
+  );
+  assert.deepEqual(
+    header.actions.map((item) => item.icon),
+    ["search", "user", "bag"],
+  );
+  assert.equal(header.megaMenu.groups.length, 4);
+  assert.ok(
+    header.megaMenu.groups
+      .flatMap((group) => group.links)
+      .every((item) => item.href.startsWith("https://www.samanthafab.com/")),
+  );
+  assert.match(renderer, /data-nav-menu-trigger/);
+  assert.match(renderer, /data-nav-menu/);
+  assert.match(renderer, /design-mega-menu/);
+  assert.match(renderer, /isReference \? "https:\/\/www\.samanthafab\.com\/" : "\/"/);
+  assert.match(renderer, /top\.append\(brandTools, navLinks, rightTools\)/);
+  assert.match(app, /data-nav-menu-trigger/);
+  assert.match(app, /Escape/);
+  assert.match(app, /setAttribute\("aria-label", open \? "Close menu" : "Open menu"\)/);
+  assert.match(designStyles, /design-reference-nav__top/);
+  assert.match(designStyles, /design-reference-nav__top[\s\S]*min-height: 88px[\s\S]*padding: 12px 24px/);
+  assert.match(designStyles, /grid-template-columns: minmax\(180px, 1fr\) auto minmax\(180px, 1fr\)/);
+  assert.match(designStyles, /design-reference-nav__links/);
+  assert.match(designStyles, /design-reference-nav__links[\s\S]*min-height: 28px[\s\S]*padding: 0;/);
+  assert.match(designStyles, /design-mega-menu/);
+  assert.match(designStyles, /design-reference-nav__links\.nav-links--open/);
+  assert.match(designStyles, /@media \(max-width: 900px\)[\s\S]*design-reference-nav__top[\s\S]*min-height: 64px[\s\S]*padding: 10px 16px/);
+  assert.match(designStyles, /@media \(max-width: 900px\)[\s\S]*design-reference-nav__brand-tools[\s\S]*gap: 12px/);
+  assert.match(designStyles, /design-reference-nav \.wordmark__image[\s\S]*width: clamp\(120px, 42vw, 164px\)/);
+  assert.match(designStyles, /:has\(\[data-nav-menu-trigger\]:hover\)[\s\S]*design-mega-menu/);
+  assert.match(designStyles, /design-mega-menu__groups[\s\S]*grid-template-columns: 1fr 1fr/);
+  assert.match(designStyles, /design-mega-menu\.is-open[\s\S]*animation:\s*none/);
+});
+
 test("design page contains an icon-led rotating USP strip", async () => {
   const blankPage = await source("playground/pages/blank.js");
   const renderer = await source("playground/components/render.js");
@@ -347,6 +403,10 @@ test("design page places a ready-to-wear promo banner after new arrivals", async
   assert.equal(uspRow.id, "design-usp-row");
   assert.equal(uspRow.type, "usp-row");
   assert.equal(uspRow.items.length, 4);
+  assert.deepEqual(
+    uspRow.items.map((item) => item.icon),
+    ["banknote", "refresh-cw", "truck", "message-circle"],
+  );
   assert.equal(bestSellers.id, "design-best-sellers");
   assert.equal(bestSellers.type, "product-carousel");
   assert.equal(bestSellers.title, "Best sellers");
@@ -364,6 +424,8 @@ test("design page places a ready-to-wear promo banner after new arrivals", async
   assert.match(renderer, /renderFeatureBanner/);
   assert.match(renderer, /case "usp-row"/);
   assert.match(renderer, /renderUspRow/);
+  assert.match(renderer, /uspLucideIconPaths/);
+  assert.match(renderer, /renderUspLucideIcon/);
   assert.match(designStyles, /design-usp-row__list/);
   assert.match(designStyles, /design-usp-row__item\s*\{[\s\S]*flex-direction:\s*column/);
   assert.match(designStyles, /\.design-feature-banner/);
