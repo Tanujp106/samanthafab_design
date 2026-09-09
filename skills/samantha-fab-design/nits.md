@@ -10,6 +10,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Bottom bar height | ~72px + safe-area; 5 equal tabs; icon 22px; label 10px Karrik |
 | Drawer width | min(88vw, 360px); slides from left; overlay rgba(18,10,12,0.42) |
 | Explore search | 48px pill; 999px radius; whisper cream fill |
+| Explore trending | 5 chips: Bestsellers (all), Ready-to-wear, Everyday, Wedding, Festive — client filter by tag/name |
 | Explore grid | 2 columns; 16×12px gap; same commerce cards as Best sellers (no hover wishlist/cart on grid) |
 | Empty state | 40px icon; Sprat uppercase title ~22px; copy max ~28ch |
 
