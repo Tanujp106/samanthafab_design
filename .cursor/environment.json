@@ -1,0 +1,6 @@
+{
+  "name": "Samantha Fab Playground",
+  "install": "echo \"Static playground — no dependencies to install\"",
+  "start": "cd playground && python3 -m http.server 4173 --bind 0.0.0.0",
+  "ports": [4173]
+}
