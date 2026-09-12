@@ -1,4 +1,5 @@
 import { renderMedia } from "./media.js";
+import { renderCollectionPlp, renderContentPage } from "./collection-plp.js";
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -97,6 +98,7 @@ function sectionHeading(section, extra = null) {
 
 const navIconPaths = {
   search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+  heart: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/>',
   user: '<circle cx="12" cy="7" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
   bag: '<path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
 };
@@ -108,7 +110,7 @@ const mobileIconPaths = {
   explore: '<circle cx="12" cy="12" r="9"/><path d="m16 16-3.5-3.5"/><path d="M12 8v4l2.5 2.5"/>',
   whatsapp:
     '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8.2 9.8c.6-1.2 1.8-1.9 3-1.9 1.8 0 3.1 1.2 3.1 3 0 1.8-1.3 3.1-3.1 3.1"/><path d="M14.4 14.2c.6-.4 1.5-.6 2.3-.4"/>',
-  heart: '<path d="M12 20.5s-7-4.35-7-10a4 4 0 0 1 7-2.5 4 4 0 0 1 7 2.5c0 5.65-7 10-7 10z"/>',
+  heart: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/>',
   chevron: '<path d="m9 6 6 6-6 6"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
   bag: '<path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
@@ -252,7 +254,7 @@ function renderHeader(section) {
     link.setAttribute("aria-label", item.ariaLabel || item.label);
     if (isReference && item.icon) {
       link.classList.add("design-reference-nav__action");
-      if (item.icon === "search" || item.icon === "bag") {
+      if (item.icon === "search" || item.icon === "heart" || item.icon === "bag") {
         link.classList.add("design-reference-nav__action--desktop-only");
       }
       const icon = renderNavIcon(item.icon);
@@ -272,7 +274,7 @@ function renderHeader(section) {
     start.append(menuToggle);
     center.append(brand);
     end.append(...actionLinks);
-    top.append(start, center, end, navLinks);
+    top.append(start, center, navLinks, end);
     nav.append(top);
     if (section.megaMenu) navLinks.append(renderMegaMenu(section.megaMenu));
   } else {
@@ -561,6 +563,28 @@ function renderMaterialRail(section, ctx) {
   return root;
 }
 
+function renderHighlightedTitle(tag, className, config, accentClass = `${className}-accent`) {
+  const title = element(tag, className);
+  const text = config.title || "";
+  const highlight = config.highlight;
+  const start = highlight ? text.indexOf(highlight) : -1;
+
+  if (start >= 0) {
+    if (start > 0) title.append(document.createTextNode(text.slice(0, start)));
+    title.append(element("em", accentClass, highlight));
+    const end = start + highlight.length;
+    if (end < text.length) title.append(document.createTextNode(text.slice(end)));
+    return title;
+  }
+
+  title.textContent = text;
+  return title;
+}
+
+function renderCampaignTitle(tag, slide) {
+  return renderHighlightedTitle(tag, "campaign-slide__title", slide, "campaign-slide__title-accent");
+}
+
 function renderCampaignHero(section, ctx) {
   const stage = element("div", "campaign-hero__stage");
   stage.setAttribute("aria-roledescription", "carousel");
@@ -584,7 +608,7 @@ function renderCampaignHero(section, ctx) {
     });
     const veil = element("div", "campaign-slide__veil");
     const copy = element("div", "campaign-slide__content");
-    const title = element(index === 0 ? "h1" : "h2", "campaign-slide__title", slide.title);
+    const title = renderCampaignTitle(index === 0 ? "h1" : "h2", slide);
     copy.append(
       element("span", "campaign-slide__eyebrow", slide.eyebrow),
       title,
@@ -719,7 +743,7 @@ function productColorSwatches(product) {
   return swatches;
 }
 
-function renderProductCard(product, ctx, options = {}) {
+export function renderProductCard(product, ctx, options = {}) {
   const card = element("article", ["product-card", options.className || ""].filter(Boolean).join(" "));
   const body = element("div", "product-card__body");
   if (product.tag) body.append(element("span", "product-tag", product.tag));
@@ -1006,7 +1030,12 @@ function renderFeatureBanner(section, ctx) {
   if (section.eyebrow) {
     copy.append(element("p", "design-feature-banner__eyebrow", section.eyebrow));
   }
-  const heading = element("h2", "design-feature-banner__title", section.title || "Ready to wear");
+  const heading = renderHighlightedTitle(
+    "h2",
+    "design-feature-banner__title",
+    section,
+    "design-feature-banner__title-accent",
+  );
   heading.id = titleId;
   copy.append(heading);
   if (section.copy) {
@@ -1532,6 +1561,9 @@ function renderMobileBottomBar(page) {
 export function renderPage(page, options = {}) {
   const notesEnabled = Boolean(options.notesEnabled);
   const ctx = { notesEnabled };
+  const collectionView = options.collectionView || null;
+  const contentView = options.contentView || null;
+  const secondaryView = Boolean(collectionView || contentView);
 
   const root = element("div", "site");
 
@@ -1562,11 +1594,28 @@ export function renderPage(page, options = {}) {
     if (section.type === "header") headerNode = node;
     else if (section.type === "usp-strip") uspNode = node;
     else if (section.type === "footer") footerNode = node;
-    else main.append(node);
+    else if (!secondaryView) main.append(node);
   });
 
+  if (collectionView) {
+    main.append(
+      renderCollectionPlp({
+        collection: collectionView.collection,
+        products: collectionView.products,
+        allProducts: collectionView.allProducts,
+        state: collectionView.state,
+        ctx,
+        renderProductCard,
+      }),
+    );
+    root.classList.add("site--collection-plp");
+  } else if (contentView) {
+    main.append(renderContentPage({ page: contentView.page }));
+    root.classList.add("site--content-page");
+  }
+
   // USP strip sits above sticky nav (same role as the old utility strip).
-  if (uspNode) root.append(uspNode);
+  if (uspNode && !secondaryView) root.append(uspNode);
   if (headerNode) root.append(headerNode);
   main.dataset.mobilePanel = "home";
   root.append(main);

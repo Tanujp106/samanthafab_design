@@ -31,9 +31,10 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 
 - Reuse `playground/styles/tokens.css` + `--font-display` / `--font-body`. No duplicate `@font-face` names or isolated color ramps in section CSS.
 - Page / light section surfaces use whisper cream `--color-white` / `--color-paper` (`#fcfaf7`) — not stark `#fff`, not a heavy cream wash.
-- **Sprat Campaign** for section/product titles (`font-variation-settings: "wght" 100, "wdth" 122`). **Karrik** for body/UI.
+- **Sprat Campaign** for section/product titles (`font-variation-settings: "wght" 100, "wdth" 122`). **Karrik** for body/UI. Highlighted title words use the existing plum palette, not an unrelated accent ramp; campaign hero accents use the deeper `--color-primary-400` on dark imagery.
 - Light-surface section titles: `--color-primary-800`, **uppercase** (`text-transform: uppercase`), centered with their ledes across `/design` section headers. Lede/body: muted Karrik, weight 400 — not heavy.
 - Side gutters **24px** so the light cream page frame shows; align nav to that width.
+- Reference navigation on desktop stays one three-column row: brand left, primary links centered, utility actions right; keep search, wishlist, account, and bag in the utility cluster while the mobile shell uses its dedicated controls.
 - Split editorial (media + copy): explicit **32–64px** column gap.
 - Product/occasion tags: `Everyday` / `Work` / `Festive` / `Wedding` / `Ready-to-wear` — never “New”.
 - Primary CTAs (`View all`, `Shop ready-to-wear`): filled primary button.
@@ -59,11 +60,12 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 
 | Section | Defaults |
 | --- | --- |
-| Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); left-aligned desktop copy with a localized translucent blur veil and low-contrast repeating paisley motif; centered mobile fallback; centered prev/next arrows |
+| Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); left-aligned desktop copy with a localized translucent blur veil and a darker, smaller repeating paisley motif constrained to the left 60%; centered mobile fallback; centered prev/next arrows; Sprat title with optional palette-native accent word (`highlight`) via `skewX(-12deg)` (Sprat variable face ignores italic alone) |
 | Shop by collection | Centered title + light lede → gap → taller 2+3 bento; vertically distributed icon/title/Explore captions (no “Starting with…” price lines); soft **left** linear scrim; top-align portraits; borderless tiles |
 | New Arrivals | Light cream surface; Sprat/primary-800 uppercase titles; centered header + Shop All; left-aligned product cards; Shop All primary button 13px; fixed-height horizontal rail; section pad bottom 72px (mobile 64px); product details `--product-rail-details: 7.75rem` (fits badge + swatches); price line shows “24% off” badge |
 | USP row | After New Arrivals / before Best sellers; 4 static items; Lucide line icons (banknote / refresh-cw / truck / message-circle) above labels; no section title; **primary-50** wash; 4-col desktop / 2-col mobile |
-| Best sellers | Same product-carousel as New Arrivals; after USP row / before RTW banner; Shop All CTA |
+| Best sellers | Same product-carousel as New Arrivals; after USP row / before RTW banner; Shop All CTA → `/design?route=collection&slug=bestsellers` |
+| Collection PLP | Reusable template for all collections via `?route=collection&slug=…` (aliases like `?route=bestsellers` also resolve). Desktop: sticky left filters + 3-col grid. Mobile: Filters + Sort as separate bottom sheets. Facets: Availability, Price, Category, Collections, Size, Color. Reuse commerce `renderProductCard`. Shared catalog in `playground/data/`. |
 | Ready-to-wear banner | Light cream section + 36px/24px frame; primary-100 inner radius 16px; collage right; title sentence case; CTA primary 13px |
 | RTW product rail | Headerless; CTA “Shop All” 13px; brand primary |
 | Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `48px 24px 88px` (mobile `16px 16px 80px`); three image price tiles clamp(280px, 34vw, 420px) |
@@ -100,6 +102,12 @@ One-off experiments (“try X once”) do not get written until the user confirm
 
 ## Changelog
 
+- 2026-09-13 — Navbar + Shop mega menu: every primary/mega-menu link resolves in-playground (collection PLP or content page); no external Shopify collection hrefs on `/design` nav.
+- 2026-09-13 — Collection PLP: reusable `/design?route=collection&slug=…` template with desktop sidebar filters and mobile Filters/Sort bottom sheets; homepage Shop All / occasion / footer shop links point into it.
+- 2026-09-12 — Mega-menu link hover is scale-only (`1.03`); campaign title accents use deeper `--color-primary-400`; the paisley veil is darker, repeats at 280px, and fades out within the left 60% of the hero.
+- 2026-09-12 — Campaign and feature-banner titles use one palette-native plum accent word per title; RTW/clearance share the skewed Sprat treatment, with `--color-primary-500` on light panels and `--color-primary-200` on dark media.
+- 2026-09-11 — Campaign titles keep Sprat serif cream type, with one accent word per slide (`--color-primary-200`, `skewX(-12deg)` — Sprat variable face ignores italic alone).
+- 2026-09-11 — Reference nav primary links now use an explicit centered grid cell; added the desktop wishlist action beside Search; increased the reference row's top padding by 8px while preserving mobile spacing.
 - 2026-09-09 — Mobile shell: bottom tab bar, left category drawer, Explore search/trending/products, empty Wishlist/Bag; mobile header hamburger · logo · account.
 - 2026-09-09 — Design reference nav top row slimmed to 88px with lighter vertical padding (mobile 64px).
 - 2026-09-09 — Campaign hero gained a localized left-side blur veil and a low-contrast repeating paisley motif with a left-to-right gradient to support the left-aligned copy.

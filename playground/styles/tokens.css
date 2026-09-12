@@ -40,6 +40,7 @@
   --color-paper: #fcfaf7;
   --color-paper-deep: #f0e9e3;
   --color-cream: #fffdf9;
+  --color-campaign-accent: var(--color-primary-400);
   --color-ink: #24171c;
   --color-ink-soft: #4f3e44;
   --color-muted: #745e66;
@@ -52,6 +53,7 @@
   --paper: var(--color-paper);
   --paper-deep: var(--color-paper-deep);
   --cream: var(--color-cream);
+  --campaign-accent: var(--color-campaign-accent);
   --ink: var(--color-ink);
   --ink-soft: var(--color-ink-soft);
   --muted: var(--color-muted);

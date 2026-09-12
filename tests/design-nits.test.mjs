@@ -47,7 +47,7 @@ test("design nits: campaign veil gives left copy a blurred patterned backdrop", 
   );
 });
 
-test("design nits: campaign veil repeats the supplied paisley with a left-to-right gradient", async () => {
+test("design nits: campaign veil uses a darker, smaller left-side paisley repeat", async () => {
   const css = await source("playground/styles/design.css");
 
   assert.match(
@@ -56,7 +56,76 @@ test("design nits: campaign veil repeats the supplied paisley with a left-to-rig
   );
   assert.match(
     css,
-    /body\[data-page="blank"\] \.campaign-slide__veil::before\s*\{[^}]*background-size:\s*100%\s*100%,\s*520px\s*auto/s,
+    /body\[data-page="blank"\] \.campaign-slide__veil::before\s*\{[^}]*inset:\s*0\s*auto\s*0\s*0[^}]*width:\s*min\(60%,\s*720px\)[^}]*background-size:\s*100%\s*100%,\s*280px\s*auto[^}]*opacity:\s*0\.44[^}]*mask-image:\s*linear-gradient\(to right,\s*#000 0%,\s*#000 68%,\s*transparent 100%\)/s,
+  );
+});
+
+test("design nits: campaign titles use a deeper italic plum highlight word", async () => {
+  const css = await source("playground/styles/design.css");
+  const tokens = await source("playground/styles/tokens.css");
+  const blank = await source("playground/pages/blank.js");
+  const render = await source("playground/components/render.js");
+
+  assert.match(tokens, /--color-campaign-accent:\s*var\(--color-primary-400\)/);
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.campaign-slide__title-accent\s*\{[^}]*color:\s*var\(--campaign-accent\)[^}]*font-style:\s*italic[^}]*transform:\s*skewX\(-12deg\)/s,
+  );
+  assert.doesNotMatch(css, /#c4a06b/);
+  assert.match(css, /font-family:\s*"Sprat Campaign"[\s\S]*font-style:\s*italic/);
+  assert.match(render, /campaign-slide__title-accent/);
+  assert.match(render, /function renderCampaignTitle/);
+  assert.match(blank, /highlight:\s*"art"/);
+  assert.match(blank, /highlight:\s*"moment"/);
+  assert.match(blank, /highlight:\s*"feeling"/);
+});
+
+test("design nits: mega-menu links scale with a restrained hover treatment", async () => {
+  const css = await source("playground/styles/design.css");
+
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-mega-menu__link\s*\{[^}]*transform-origin:\s*left center[^}]*transition:\s*color 160ms ease,\s*transform 160ms ease/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-mega-menu__link:hover,[\s\S]*?transform:\s*scale\(1\.03\)/,
+  );
+  assert.doesNotMatch(
+    css,
+    /body\[data-page="blank"\] \.design-mega-menu__link:hover,[^\{]*\{[^}]*translateX\(/s,
+  );
+});
+
+test("design nits: every feature banner highlights one title word", async () => {
+  const css = await source("playground/styles/design.css");
+  const blank = await source("playground/pages/blank.js");
+  const render = await source("playground/components/render.js");
+
+  const readyToWear = blank.slice(
+    blank.indexOf('id: "design-ready-to-wear-banner"'),
+    blank.indexOf('id: "design-ready-to-wear-products"'),
+  );
+  const clearance = blank.slice(
+    blank.indexOf('id: "design-clearance-banner"'),
+    blank.indexOf('id: "design-clearance-sale"'),
+  );
+
+  assert.match(readyToWear, /title:\s*"Ready to wear"[\s\S]*highlight:\s*"wear"/);
+  assert.match(clearance, /title:\s*"Clearance sale"[\s\S]*highlight:\s*"sale"/);
+  assert.match(render, /function renderHighlightedTitle/);
+  assert.match(
+    render,
+    /const heading = renderHighlightedTitle\([\s\S]*?"h2",\s*"design-feature-banner__title"/s,
+  );
+  assert.match(render, /design-feature-banner__title-accent/);
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-feature-banner__title-accent\s*\{[^}]*color:\s*var\(--color-primary-500\)[^}]*font-style:\s*italic[^}]*transform:\s*skewX\(-12deg\)/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-feature-banner--overlay \.design-feature-banner__title-accent\s*\{[^}]*color:\s*var\(--color-primary-200\)/s,
   );
 });
 

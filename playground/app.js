@@ -1,19 +1,86 @@
 import { pages } from "./pages/index.js";
-import { renderPage } from "./components/render.js";
+import { renderPage, renderProductCard } from "./components/render.js";
+import { renderCollectionPlp } from "./components/collection-plp.js";
+import {
+  getCollection,
+  getCollectionProducts,
+  getContentPage,
+  resolveCollectionSlug,
+  resolveContentSlug,
+} from "./data/collections.js";
+import { applyCollectionFilters, DEFAULT_SORT } from "./lib/collection-filters.mjs";
 
 const app = document.querySelector("#app");
-const reviewRequested = new URLSearchParams(window.location.search).get("notes") === "1";
-const requestedPage = new URLSearchParams(window.location.search).get("page");
+const searchParams = new URLSearchParams(window.location.search);
+const reviewRequested = searchParams.get("notes") === "1";
+const requestedPage = searchParams.get("page");
+const routeParam = searchParams.get("route");
+const slugParam = searchParams.get("slug");
 const cleanPath = window.location.pathname.replace(/\/+$/, "") || "/";
 const pathPage = cleanPath === "/design" ? "blank" : null;
 const pageKey = requestedPage || pathPage || app.dataset.page || "homepage";
 const page = pages[pageKey] || pages.homepage;
 const notesEnabled = reviewRequested && page.key !== "blank";
 
+const collectionSlug = page.key === "blank" ? resolveCollectionSlug(routeParam, slugParam) : null;
+const contentSlug =
+  page.key === "blank" && !collectionSlug ? resolveContentSlug(routeParam, slugParam) : null;
+const emptyFilterState = () => ({
+  sort: DEFAULT_SORT,
+  availability: [],
+  categories: [],
+  collectionFilters: [],
+  sizes: [],
+  colors: [],
+  priceMin: null,
+  priceMax: null,
+});
+
+let collectionState = emptyFilterState();
+
+function buildCollectionView(slug, state) {
+  if (!slug) return null;
+  const collection = getCollection(slug);
+  const allProducts = getCollectionProducts(slug);
+  if (!collection) {
+    return {
+      collection: null,
+      allProducts: [],
+      products: [],
+      state,
+    };
+  }
+  return {
+    collection,
+    allProducts,
+    products: applyCollectionFilters(allProducts, state),
+    state,
+  };
+}
+
 document.body.dataset.notes = String(notesEnabled);
 document.body.dataset.page = page.key;
-document.title = page.title;
-app.replaceChildren(renderPage(page, { notesEnabled }));
+if (collectionSlug) {
+  document.body.dataset.collectionSlug = collectionSlug;
+  document.title = getCollection(collectionSlug)?.title
+    ? `${getCollection(collectionSlug).title} — Samantha Fab`
+    : page.title;
+} else if (contentSlug) {
+  document.body.dataset.contentSlug = contentSlug;
+  document.title = getContentPage(contentSlug)?.title
+    ? `${getContentPage(contentSlug).title} — Samantha Fab`
+    : page.title;
+} else {
+  document.title = page.title;
+}
+
+app.replaceChildren(
+  renderPage(page, {
+    notesEnabled,
+    collectionView: collectionSlug ? buildCollectionView(collectionSlug, collectionState) : null,
+    contentView: contentSlug ? { page: getContentPage(contentSlug) } : null,
+  }),
+);
 
 const menuToggle = document.querySelector(".nav-menu-toggle");
 const navLinks = document.querySelector(".nav-links");
@@ -535,3 +602,141 @@ if (mobileSearchInput && mobileProductGrid) {
 if (requestedPage && !pages[requestedPage]) {
   console.warn(`Unknown playground page: ${requestedPage}. Showing homepage.`);
 }
+
+function readCheckedValues(scope, name) {
+  return [...scope.querySelectorAll(`input[name="${name}"]:checked`)].map((input) => input.value);
+}
+
+function readFilterStateFrom(scope, base = collectionState) {
+  const priceMinInput = scope.querySelector('[data-filter-key="priceMin"]');
+  const priceMaxInput = scope.querySelector('[data-filter-key="priceMax"]');
+  return {
+    ...base,
+    availability: readCheckedValues(scope, "availability"),
+    categories: readCheckedValues(scope, "categories"),
+    collectionFilters: readCheckedValues(scope, "collectionFilters"),
+    sizes: readCheckedValues(scope, "sizes"),
+    colors: readCheckedValues(scope, "colors"),
+    priceMin: priceMinInput?.value !== "" && priceMinInput ? Number(priceMinInput.value) : null,
+    priceMax: priceMaxInput?.value !== "" && priceMaxInput ? Number(priceMaxInput.value) : null,
+  };
+}
+
+function setCollectionSheetOpen(id, open) {
+  const sheet = document.querySelector(`[data-collection-sheet="${id}"]`);
+  if (!sheet) return;
+  sheet.classList.toggle("is-open", open);
+  sheet.setAttribute("aria-hidden", String(!open));
+  document.body.classList.toggle("collection-sheet-open", open);
+}
+
+function closeAllCollectionSheets() {
+  document.querySelectorAll("[data-collection-sheet]").forEach((sheet) => {
+    sheet.classList.remove("is-open");
+    sheet.setAttribute("aria-hidden", "true");
+  });
+  document.body.classList.remove("collection-sheet-open");
+}
+
+function rerenderCollectionPlp() {
+  if (!collectionSlug) return;
+  const main = document.querySelector(".site-main");
+  if (!main) return;
+  const view = buildCollectionView(collectionSlug, collectionState);
+  const next = renderCollectionPlp({
+    ...view,
+    ctx: { notesEnabled },
+    renderProductCard,
+  });
+  main.replaceChildren(next);
+  bindCollectionPlp(main);
+}
+
+function bindCollectionPlp(root = document) {
+  const plp = root.querySelector?.("[data-collection-plp]") || document.querySelector("[data-collection-plp]");
+  if (!plp) return;
+
+  const sidebar = plp.querySelector(".collection-plp__sidebar [data-collection-filters]");
+  const desktopSort = plp.querySelector("[data-collection-sort]");
+
+  const applyDesktopFilters = () => {
+    if (!sidebar) return;
+    collectionState = {
+      ...readFilterStateFrom(sidebar, collectionState),
+      sort: desktopSort?.value || collectionState.sort,
+    };
+    rerenderCollectionPlp();
+  };
+
+  sidebar?.addEventListener("change", applyDesktopFilters);
+  desktopSort?.addEventListener("change", () => {
+    collectionState = { ...collectionState, sort: desktopSort.value };
+    rerenderCollectionPlp();
+  });
+
+  plp.querySelector("[data-collection-clear]")?.addEventListener("click", () => {
+    collectionState = emptyFilterState();
+    rerenderCollectionPlp();
+  });
+
+  plp.querySelectorAll("[data-collection-open-sheet]").forEach((button) => {
+    button.addEventListener("click", () => setCollectionSheetOpen(button.dataset.collectionOpenSheet, true));
+  });
+
+  plp.querySelectorAll("[data-collection-sheet-close]").forEach((button) => {
+    button.addEventListener("click", () => setCollectionSheetOpen(button.dataset.collectionSheetClose, false));
+  });
+
+  plp.querySelector("[data-collection-apply-filters]")?.addEventListener("click", () => {
+    const filterSheet = plp.querySelector('[data-collection-sheet="filters"]');
+    const filters = filterSheet?.querySelector("[data-collection-filters]");
+    if (filters) {
+      collectionState = {
+        ...readFilterStateFrom(filters, collectionState),
+        sort: collectionState.sort,
+      };
+    }
+    closeAllCollectionSheets();
+    rerenderCollectionPlp();
+  });
+
+  plp.querySelectorAll("[data-collection-sort-option]").forEach((input) => {
+    input.addEventListener("change", () => {
+      if (!input.checked) return;
+      collectionState = { ...collectionState, sort: input.value };
+      closeAllCollectionSheets();
+      rerenderCollectionPlp();
+    });
+  });
+
+  plp.querySelectorAll("[data-facet-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const section = button.closest(".collection-facet");
+      const expanded = button.getAttribute("aria-expanded") !== "true";
+      button.setAttribute("aria-expanded", String(expanded));
+      section?.classList.toggle("is-collapsed", !expanded);
+      const chevron = button.querySelector(".collection-facet__chevron");
+      if (chevron) chevron.textContent = expanded ? "▴" : "▾";
+    });
+  });
+
+  plp.querySelectorAll("[data-facet-search]").forEach((input) => {
+    input.addEventListener("input", () => {
+      const key = input.dataset.facetSearch;
+      const list = input.closest(".collection-facet")?.querySelector(`[data-facet-list="${key}"]`);
+      const query = input.value.trim().toLowerCase();
+      list?.querySelectorAll(".collection-check, .collection-size-chip").forEach((row) => {
+        const label = row.textContent?.toLowerCase() || "";
+        row.hidden = Boolean(query) && !label.includes(query);
+      });
+    });
+  });
+}
+
+if (collectionSlug) {
+  bindCollectionPlp(document);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeAllCollectionSheets();
+  });
+}
+

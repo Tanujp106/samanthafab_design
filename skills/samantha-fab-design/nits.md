@@ -14,6 +14,19 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Explore grid | 2 columns; 16×12px gap; same commerce cards as Best sellers (no hover wishlist/cart on grid) |
 | Empty state | 40px icon; Sprat uppercase title ~22px; copy max ~28ch |
 
+## Collection PLP
+
+| Item | Value |
+| --- | --- |
+| Route | `/design?route=collection&slug=bestsellers` (aliases: `?route=bestsellers`, occasion routes) |
+| Side gutters | 24px desktop / 16px mobile |
+| Sidebar width | ~220–260px sticky under nav |
+| Desktop grid | 3 columns; 2 below ~1100px |
+| Mobile grid | 2 columns; sidebar hidden |
+| Mobile actions | Filters + Sort buttons → separate bottom sheets |
+| Sheet surface | Whisper cream; primary filled View results CTA |
+| Facets | Availability, Price, Category, Collections, Size, Color |
+
 ## Surface
 
 | Item | Value |
@@ -21,12 +34,18 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Page / light section fill | `--color-white` / `--color-paper` = `#fcfaf7` (very light cream, not `#fff`, not heavy beige) |
 | Text on dark (footer/CTAs) | `--color-cream` = `#fffdf9` |
 
+## Navigation
+
+| Item | Value |
+| --- | --- |
+| Mega-menu link hover | `scale(1.03)` only; no lateral translation |
+
 ## Spacing
 
 | Item | Value |
 | --- | --- |
 | Page / section side gutters | 24px |
-| Reference nav top row | 88px min-height with 12px vertical padding (mobile 64px / 10px) |
+| Reference nav top row | 88px min-height with 20px top / 12px bottom padding (mobile 64px / 10px) |
 | Eyebrow → title | ~6px |
 | Title → body / lede | ~6px |
 | Collection header → bento grid | ~48px |
@@ -165,10 +184,11 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Slide transition | Right-to-left (not fade) |
 | Copy alignment | Left-aligned on desktop; centered on mobile |
 | Desktop copy veil | Left linear dark fade with 2.5px backdrop blur, masked before the right edge |
-| Desktop veil pattern | Supplied transparent paisley motif, repeated left-to-right on 520px tiles at low opacity, fading out before the right edge |
+| Desktop veil pattern | Supplied transparent paisley motif, repeated left-to-right on 280px tiles at `0.44` opacity inside the left 60% of the stage, fading out before the center |
 | Controls | Centered side arrows (~48px) + dots |
 | Side frame | 24px padding on `.section--campaign-hero` (stage is direct child — no `.campaign-hero__inner`) |
 | Campaign media | Full stage fill; wrapper `margin: 0`; image `object-fit: cover` |
+| Title accent | Same Sprat Campaign serif; palette-native plum (`--color-primary-400` via `--campaign-accent` on dark media, `--color-primary-500` on light panels); `skewX(-12deg)` + italic (Sprat variable face ignores font-style alone); one `highlight` word per slide/banner |
 
 ## Voices feature
 

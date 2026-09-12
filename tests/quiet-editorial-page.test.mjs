@@ -88,7 +88,7 @@ test("design page uses the live Samantha reference navbar structure", async () =
   );
   assert.deepEqual(
     header.actions.map((item) => item.icon),
-    ["search", "user", "bag"],
+    ["search", "heart", "user", "bag"],
   );
   assert.equal(header.megaMenu.groups.length, 4);
   assert.ok(
@@ -100,19 +100,21 @@ test("design page uses the live Samantha reference navbar structure", async () =
   assert.match(renderer, /data-nav-menu/);
   assert.match(renderer, /design-mega-menu/);
   assert.match(renderer, /isReference \? "https:\/\/www\.samanthafab\.com\/" : "\/"/);
-  assert.match(renderer, /top\.append\(brandTools, navLinks, rightTools\)/);
+  assert.match(renderer, /top\.append\(start, center, navLinks, end\)/);
+  assert.match(renderer, /heart:\s*['"]<path/);
+  assert.equal((renderer.match(/heart: '<path d="M20\.84 4\.61/g) || []).length, 2);
   assert.match(app, /data-nav-menu-trigger/);
   assert.match(app, /Escape/);
   assert.match(app, /setAttribute\("aria-label", open \? "Close menu" : "Open menu"\)/);
   assert.match(designStyles, /design-reference-nav__top/);
-  assert.match(designStyles, /design-reference-nav__top[\s\S]*min-height: 88px[\s\S]*padding: 12px 24px/);
+  assert.match(designStyles, /design-reference-nav__top[\s\S]*min-height: 88px[\s\S]*padding: 20px 24px 12px/);
   assert.match(designStyles, /grid-template-columns: minmax\(180px, 1fr\) auto minmax\(180px, 1fr\)/);
   assert.match(designStyles, /design-reference-nav__links/);
-  assert.match(designStyles, /design-reference-nav__links[\s\S]*min-height: 28px[\s\S]*padding: 0;/);
+  assert.match(designStyles, /design-reference-nav__links[\s\S]*grid-column: 2[\s\S]*justify-content: center[\s\S]*justify-self: center[\s\S]*min-height: 28px[\s\S]*padding: 0;/);
   assert.match(designStyles, /design-mega-menu/);
   assert.match(designStyles, /design-reference-nav__links\.nav-links--open/);
   assert.match(designStyles, /@media \(max-width: 900px\)[\s\S]*design-reference-nav__top[\s\S]*min-height: 64px[\s\S]*padding: 10px 16px/);
-  assert.match(designStyles, /@media \(max-width: 900px\)[\s\S]*design-reference-nav__brand-tools[\s\S]*gap: 12px/);
+  assert.match(designStyles, /@media \(max-width: 900px\)[\s\S]*design-reference-nav__start[\s\S]*gap: 12px/);
   assert.match(designStyles, /design-reference-nav \.wordmark__image[\s\S]*width: clamp\(120px, 42vw, 164px\)/);
   assert.match(designStyles, /:has\(\[data-nav-menu-trigger\]:hover\)[\s\S]*design-mega-menu/);
   assert.match(designStyles, /design-mega-menu__groups[\s\S]*grid-template-columns: 1fr 1fr/);

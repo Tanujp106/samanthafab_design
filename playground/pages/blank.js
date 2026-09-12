@@ -1,3 +1,5 @@
+import { collectionUrl, contentUrl, MEGA_MENU_LINKS } from "../data/collections.js";
+
 export const blank = {
   key: "blank",
   title: "Samantha Fab — Campaign Hero",
@@ -29,23 +31,24 @@ export const blank = {
       variant: "reference",
       brand: "SAMANTHA FAB",
       nav: [
-        { label: "Home", href: "https://www.samanthafab.com/", active: true },
+        { label: "Home", href: "/design", active: true },
         { label: "Shop", menu: "shop" },
-        { label: "About", href: "https://www.samanthafab.com/pages/about-us" },
+        { label: "About", href: contentUrl("about") },
         {
           label: "Best sellers",
-          href: "https://www.samanthafab.com/collections/all?sort_by=best-selling",
+          href: collectionUrl("bestsellers"),
         },
         {
           label: "Surmaye Sisterhood",
-          href: "https://www.samanthafab.com/pages/star-in-our-spotlight",
+          href: contentUrl("star-in-our-spotlight"),
         },
-        { label: "Contact", href: "https://www.samanthafab.com/pages/contact" },
+        { label: "Contact", href: contentUrl("contact") },
       ],
       actions: [
-        { label: "Search", href: "https://www.samanthafab.com/search", ariaLabel: "Search", icon: "search" },
-        { label: "Account", href: "https://www.samanthafab.com/account", ariaLabel: "Account", className: "nav-action--account", icon: "user" },
-        { label: "Bag", href: "https://www.samanthafab.com/cart", ariaLabel: "Shopping bag", icon: "bag" },
+        { label: "Search", href: "/design", ariaLabel: "Search", icon: "search" },
+        { label: "Wishlist", href: "/design", ariaLabel: "Wishlist", icon: "heart" },
+        { label: "Account", href: "/design", ariaLabel: "Account", className: "nav-action--account", icon: "user" },
+        { label: "Bag", href: "/design", ariaLabel: "Shopping bag", icon: "bag" },
       ],
       megaMenu: {
         label: "Shop",
@@ -54,47 +57,47 @@ export const blank = {
           {
             heading: "By category",
             links: [
-              { label: "Sarees", href: "https://www.samanthafab.com/collections/all" },
-              { label: "New Arrival", href: "https://www.samanthafab.com/collections/new-arrival" },
-              { label: "Wedding Collection", href: "https://www.samanthafab.com/collections/wedding-collection" },
-              { label: "Budget Buys", href: "https://www.samanthafab.com/collections/budget-buys" },
-              { label: "Festive Picks", href: "https://www.samanthafab.com/collections/festive-picks" },
-              { label: "Sale", href: "https://www.samanthafab.com/collections/sale" },
-              { label: "Ready To Wear Sarees", href: "https://www.samanthafab.com/collections/ready-to-wear-1" },
+              { label: "Sarees", href: MEGA_MENU_LINKS.sarees },
+              { label: "New Arrival", href: MEGA_MENU_LINKS["new-arrival"] },
+              { label: "Wedding Collection", href: MEGA_MENU_LINKS["wedding-collection"] },
+              { label: "Budget Buys", href: MEGA_MENU_LINKS["budget-buys"] },
+              { label: "Festive Picks", href: MEGA_MENU_LINKS["festive-picks"] },
+              { label: "Sale", href: MEGA_MENU_LINKS.sale },
+              { label: "Ready To Wear Sarees", href: MEGA_MENU_LINKS["ready-to-wear"] },
             ],
           },
           {
             heading: "By collection",
             links: [
-              { label: "Arani Silk", href: "https://www.samanthafab.com/collections/arani-silk" },
-              { label: "Chettinad Cotton", href: "https://www.samanthafab.com/collections/chettinad-cotton" },
-              { label: "Dharmavaram Silk", href: "https://www.samanthafab.com/collections/dharmavaram-silk" },
-              { label: "Gadwal Saree", href: "https://www.samanthafab.com/collections/gadwal-saree" },
-              { label: "Kanchipuram Silk", href: "https://www.samanthafab.com/collections/kanchipuram-silk-kanjivaram" },
+              { label: "Arani Silk", href: MEGA_MENU_LINKS["arani-silk"] },
+              { label: "Chettinad Cotton", href: MEGA_MENU_LINKS["chettinad-cotton"] },
+              { label: "Dharmavaram Silk", href: MEGA_MENU_LINKS["dharmavaram-silk"] },
+              { label: "Gadwal Saree", href: MEGA_MENU_LINKS["gadwal-saree"] },
+              { label: "Kanchipuram Silk", href: MEGA_MENU_LINKS["kanchipuram-silk"] },
             ],
           },
           {
             heading: "By textile",
             links: [
-              { label: "Mangalagiri Cotton", href: "https://www.samanthafab.com/collections/mangalagiri-cotton" },
-              { label: "Mysore Silk", href: "https://www.samanthafab.com/collections/mysore-silk" },
-              { label: "Narayanpet Saree", href: "https://www.samanthafab.com/collections/narayanpet-saree" },
-              { label: "Pochampally Ikat", href: "https://www.samanthafab.com/collections/pochampally-ikat" },
+              { label: "Mangalagiri Cotton", href: MEGA_MENU_LINKS["mangalagiri-cotton"] },
+              { label: "Mysore Silk", href: MEGA_MENU_LINKS["mysore-silk"] },
+              { label: "Narayanpet Saree", href: MEGA_MENU_LINKS["narayanpet-saree"] },
+              { label: "Pochampally Ikat", href: MEGA_MENU_LINKS["pochampally-ikat"] },
             ],
           },
           {
             heading: "More",
             links: [
-              { label: "Style Guide", href: "https://www.samanthafab.com/pages/style-guide" },
-              { label: "Star In Our Spotlight", href: "https://www.samanthafab.com/pages/star-in-our-spotlight" },
-              { label: "Design Your Dream Sarees", href: "https://www.samanthafab.com/pages/design-your-dream-sarees" },
-              { label: "Contact", href: "https://www.samanthafab.com/pages/contact" },
+              { label: "Style Guide", href: MEGA_MENU_LINKS["style-guide"] },
+              { label: "Star In Our Spotlight", href: MEGA_MENU_LINKS["star-in-our-spotlight"] },
+              { label: "Design Your Dream Sarees", href: MEGA_MENU_LINKS["design-your-dream-sarees"] },
+              { label: "Contact", href: MEGA_MENU_LINKS.contact },
             ],
           },
         ],
         featured: {
           label: "Wedding Collection",
-          href: "https://www.samanthafab.com/collections/wedding-collection",
+          href: MEGA_MENU_LINKS["wedding-collection"],
           media: {
             src: "/assets/design-collection-wedding.jpg",
             alt: "Woman in a dark teal and gold saree seated against heritage architecture",
@@ -114,6 +117,7 @@ export const blank = {
         {
           eyebrow: "New collection / 2026",
           title: "The art of becoming.",
+          highlight: "art",
           copy: "Statement sarees for evenings that deserve to be remembered.",
           primaryAction: { label: "Shop Now", href: "/?route=new-edit" },
           media: {
@@ -127,6 +131,7 @@ export const blank = {
         {
           eyebrow: "The festive edit",
           title: "Made for your moment.",
+          highlight: "moment",
           copy: "Drapes with colour, ease, and a little more occasion.",
           primaryAction: { label: "Shop Now", href: "/?route=festive" },
           media: {
@@ -140,6 +145,7 @@ export const blank = {
         {
           eyebrow: "Everyday, reimagined",
           title: "Wear the feeling.",
+          highlight: "feeling",
           copy: "Soft movement and expressive prints for all your in-between hours.",
           primaryAction: { label: "Shop Now", href: "/?route=everyday" },
           media: {
@@ -165,7 +171,7 @@ export const blank = {
         {
           title: "Everyday",
           icon: "sunrise",
-          href: "/?route=occasion-everyday",
+          href: "/design?route=collection&slug=everyday",
           media: {
             src: "/assets/design-collection-everyday.jpg",
             alt: "Woman in a pale printed saree seated in a warm sunlit room",
@@ -176,7 +182,7 @@ export const blank = {
         {
           title: "Work",
           icon: "briefcase-business",
-          href: "/?route=occasion-work",
+          href: "/design?route=collection&slug=everyday",
           media: {
             src: "/assets/design-collection-work.jpg",
             alt: "Woman in a cream, black, and maroon graphic saree in a clean studio",
@@ -187,7 +193,7 @@ export const blank = {
         {
           title: "Festive",
           icon: "party-popper",
-          href: "/?route=occasion-festive",
+          href: "/design?route=collection&slug=festive",
           media: {
             src: "/assets/design-collection-festive.jpg",
             alt: "Woman in a vivid red and marigold saree in a clean studio",
@@ -198,7 +204,7 @@ export const blank = {
         {
           title: "Wedding",
           icon: "gem",
-          href: "/?route=occasion-wedding",
+          href: "/design?route=collection&slug=wedding",
           media: {
             src: "/assets/design-collection-wedding.jpg",
             alt: "Woman in a dark teal and gold saree seated against heritage architecture",
@@ -209,7 +215,7 @@ export const blank = {
         {
           title: "Ready-to-wear",
           icon: "shirt",
-          href: "/?route=occasion-rtw",
+          href: "/design?route=collection&slug=ready-to-wear",
           media: {
             src: "/assets/design-collection-ready-to-wear.jpg",
             alt: "Woman sweeping a pastel striped saree through a clean studio",
@@ -227,7 +233,7 @@ export const blank = {
       hideReviewNotes: true,
       title: "New arrivals",
       copy: "Fresh drapes and easy pieces, newly in the studio.",
-      viewAll: { label: "Shop All", href: "/?route=new-arrivals" },
+      viewAll: { label: "Shop All", href: "/design?route=collection&slug=new-arrivals" },
       products: [
         {
           name: "Sage green handblock saree",
@@ -370,7 +376,7 @@ export const blank = {
       hideReviewNotes: true,
       title: "Best sellers",
       copy: "The drapes she returns to — most loved right now.",
-      viewAll: { label: "Shop All", href: "/?route=bestsellers" },
+      viewAll: { label: "Shop All", href: "/design?route=collection&slug=bestsellers" },
       products: [
         {
           name: "Indigo stripe ready-to-wear",
@@ -499,8 +505,9 @@ export const blank = {
       hideReviewNotes: true,
       eyebrow: "The drape, made easy",
       title: "Ready to wear",
+      highlight: "wear",
       copy: "Pre-stitched sarees with pockets — easy on, easy all day.",
-      action: { label: "Shop ready-to-wear", href: "/?route=ready-to-wear" },
+      action: { label: "Shop ready-to-wear", href: "/design?route=collection&slug=ready-to-wear" },
       media: [
         {
           src: "/assets/design-collection-ready-to-wear.jpg",
@@ -534,7 +541,7 @@ export const blank = {
       name: "Ready to wear products",
       type: "product-carousel",
       hideReviewNotes: true,
-      action: { label: "Shop All", href: "/?route=ready-to-wear" },
+      action: { label: "Shop All", href: "/design?route=collection&slug=ready-to-wear" },
       products: [
         {
           name: "Indigo stripe ready-to-wear",
@@ -790,9 +797,10 @@ export const blank = {
       hideReviewNotes: true,
       eyebrow: "Final pieces",
       title: "Clearance sale",
+      highlight: "sale",
       badge: "Upto 50% off",
       copy: "Last lengths and easy prices — still Samantha.",
-      action: { label: "Shop clearance", href: "/?route=clearance" },
+      action: { label: "Shop clearance", href: "/design?route=collection&slug=clearance" },
       media: {
         src: "/assets/design-story-cream.jpg",
         alt: "Woman in a cream floral saree holding flowers in a warm lived-in interior",
@@ -1042,13 +1050,13 @@ export const blank = {
         {
           heading: "Shop",
           links: [
-            { label: "New arrivals", href: "/?route=new-arrivals" },
-            { label: "Sarees", href: "/?route=sarees" },
-            { label: "Ready-to-wear", href: "/?route=ready-to-wear" },
-            { label: "Bestsellers", href: "/?route=bestsellers" },
+            { label: "New arrivals", href: "/design?route=collection&slug=new-arrivals" },
+            { label: "Sarees", href: "/design?route=collection&slug=sarees" },
+            { label: "Ready-to-wear", href: "/design?route=collection&slug=ready-to-wear" },
+            { label: "Bestsellers", href: "/design?route=collection&slug=bestsellers" },
             { label: "Best on budget", href: "/?route=shop-under" },
             { label: "Sale", href: "/?route=sale" },
-            { label: "Clearance", href: "/?route=clearance" },
+            { label: "Clearance", href: "/design?route=collection&slug=clearance" },
           ],
         },
         {
