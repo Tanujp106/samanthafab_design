@@ -71,7 +71,20 @@ function facetHeader(label, open = true) {
   button.dataset.facetToggle = "true";
   button.setAttribute("aria-expanded", String(open));
   button.append(element("span", "collection-facet__label", label));
-  button.append(element("span", "collection-facet__chevron", open ? "▴" : "▾"));
+
+  const chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  chevron.setAttribute("class", "collection-facet__chevron");
+  chevron.setAttribute("viewBox", "0 0 24 24");
+  chevron.setAttribute("aria-hidden", "true");
+  chevron.setAttribute("focusable", "false");
+  chevron.setAttribute("fill", "none");
+  chevron.setAttribute("stroke", "currentColor");
+  chevron.setAttribute("stroke-width", "1.6");
+  chevron.setAttribute("stroke-linecap", "round");
+  chevron.setAttribute("stroke-linejoin", "round");
+  chevron.innerHTML = '<path d="M6 9l6 6 6-6"/>';
+  if (open) chevron.classList.add("is-open");
+  button.append(chevron);
   return button;
 }
 
@@ -83,8 +96,17 @@ function checkboxRow({ name, value, label, count, checked }) {
   input.value = value;
   input.checked = Boolean(checked);
   input.dataset.filterKey = name;
-  const text = element("span", "collection-check__text", `${label}${count != null ? ` (${count})` : ""}`);
-  row.append(input, text);
+
+  const box = element("span", "collection-check__box");
+  box.setAttribute("aria-hidden", "true");
+
+  const text = element("span", "collection-check__text");
+  text.append(element("span", "collection-check__name", label));
+  if (count != null) {
+    text.append(element("span", "collection-check__count", String(count)));
+  }
+
+  row.append(input, box, text);
   return row;
 }
 

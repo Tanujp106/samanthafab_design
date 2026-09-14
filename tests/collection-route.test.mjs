@@ -41,4 +41,7 @@ test("design.css includes collection PLP styles", async () => {
   assert.match(css, /\.collection-plp/);
   assert.match(css, /\.collection-sheet/);
   assert.match(css, /\.collection-plp__sidebar/);
+  assert.match(css, /collection-plp__sidebar[\s\S]*position:\s*sticky/);
+  assert.match(css, /collection-plp__sidebar[\s\S]*max-height:\s*var\(--collection-pane-height\)/);
+  assert.match(css, /scrollbar-width:\s*thin/);
 });

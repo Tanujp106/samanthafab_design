@@ -9,9 +9,7 @@ async function source(path) {
 }
 
 async function pageModule(path) {
-  const contents = await source(path);
-  const encoded = Buffer.from(contents).toString("base64");
-  return import(`data:text/javascript;base64,${encoded}`);
+  return import(new URL(path, root).href);
 }
 
 test("design page uses the curated archive images by section role", async () => {

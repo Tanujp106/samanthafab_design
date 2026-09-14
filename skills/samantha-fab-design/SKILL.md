@@ -31,25 +31,28 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 
 - Reuse `playground/styles/tokens.css` + `--font-display` / `--font-body`. No duplicate `@font-face` names or isolated color ramps in section CSS.
 - Page / light section surfaces use whisper cream `--color-white` / `--color-paper` (`#fcfaf7`) — not stark `#fff`, not a heavy cream wash.
-- **Sprat Campaign** for section/product titles (`font-variation-settings: "wght" 100, "wdth" 122`). **Karrik** for body/UI. Highlighted title words use the existing plum palette, not an unrelated accent ramp; campaign hero accents use the deeper `--color-primary-400` on dark imagery.
+- **Lora** for section/product titles through `--font-display`; restore **Karrik** for body copy and UI through `--font-body` so supporting text keeps its original voice. Use each loaded family’s weight range instead of switching families. Highlighted title words use the existing plum palette, not an unrelated accent ramp; campaign hero accents use the deeper `--color-primary-400` on dark imagery.
 - Light-surface section titles: `--color-primary-800`, **uppercase** (`text-transform: uppercase`), centered with their ledes across `/design` section headers. Lede/body: muted Karrik, weight 400 — not heavy.
 - Side gutters **24px** so the light cream page frame shows; align nav to that width.
-- Reference navigation on desktop stays one three-column row: brand left, primary links centered, utility actions right; keep search, wishlist, account, and bag in the utility cluster while the mobile shell uses its dedicated controls.
+- Reference navigation on desktop stays one three-column row: brand left, primary links centered, utility actions right; the wordmark is the sole Home affordance and links to `/design`, so do not repeat Home in the primary links; keep search, wishlist, account, and bag in the utility cluster while the mobile shell uses its dedicated controls.
 - Split editorial (media + copy): explicit **32–64px** column gap.
 - Product/occasion tags: `Everyday` / `Work` / `Festive` / `Wedding` / `Ready-to-wear` — never “New”.
 - Primary CTAs (`View all`, `Shop ready-to-wear`): filled primary button.
 - Collection tiles may use one occasion-specific Lucide line icon in a vertically distributed editorial caption; keep it quiet, current-color, and free of enclosing badges or circles. The icon/title leads from the upper-left; a small Explore text action anchors lower-left. No “Starting with…” price sublines.
 - Color swatches in the **price row** (right-aligned), not on image hover with Add to cart.
 - Product-card details stack tightly (tag → name → price ~6px); do not push price to the bottom with `margin-top: auto` — that opens a large title→price gap on cards without colors. When colors exist, keep swatches beneath the price line.
+- Commerce product cards crossfade to an alternate archive image on desktop hover / focus-within when a hover pair exists (`media--primary` + `media--hover`); fine-pointer only; reduced motion keeps the swap instant (no zoom fight with the hover layer).
 - Image scrims: long, low-opacity **linear left fade** (+ light blur if needed) for collection/bento tiles so left captions stay readable. Never a solid blur veil or a compressed dark band there. **Shop by Material** cards use a full-tile, lightly blurred dark scrim (no linear gradient).
 - Annotations / review chrome: only with `?notes=1`. Keep default `/design` clean.
 - Editorial geometry: hairline gaps, restrained radius, varied section rhythm, real or replaceable photos.
 - Material cards use direct textile imagery and editorial copy, not symbolic iconography.
+- Search overlay uses a 100% width search form and Karrik body/UI type throughout; omit Clear search controls and helper status copy such as “Showing top products.”
+- Account login overlay uses a centered whisper-cream panel with OTP-first email login, Google fallback, a dimmed scrim, and close behavior that restores focus to the account trigger.
 
 ## Never
 
 - Rounded-card / gradient-heavy / purple-glow “AI slop”.
-- Heavy Sprat display weights; italic RTW banner body unless explicitly requested.
+- Heavy display weights or decorative font switching; italic RTW banner body unless explicitly requested.
 - Decorative borders on feature/RTW banners.
 - Wishlist hover borders; material lines under product cards.
 - Nesting sticky nav inside a short header wrapper (breaks sticky).
@@ -60,17 +63,18 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 
 | Section | Defaults |
 | --- | --- |
-| Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); left-aligned desktop copy with a localized translucent blur veil and a darker, smaller repeating paisley motif constrained to the left 60%; centered mobile fallback; centered prev/next arrows; Sprat title with optional palette-native accent word (`highlight`) via `skewX(-12deg)` (Sprat variable face ignores italic alone) |
+| Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); left-aligned desktop copy with a localized translucent blur veil and a darker, smaller repeating paisley motif constrained to the left 60%; centered mobile fallback; centered prev/next arrows; Lora title with optional palette-native accent word (`highlight`) via `skewX(-12deg)` |
 | Shop by collection | Centered title + light lede → gap → taller 2+3 bento; vertically distributed icon/title/Explore captions (no “Starting with…” price lines); soft **left** linear scrim; top-align portraits; borderless tiles |
-| New Arrivals | Light cream surface; Sprat/primary-800 uppercase titles; centered header + Shop All; left-aligned product cards; Shop All primary button 13px; fixed-height horizontal rail; section pad bottom 72px (mobile 64px); product details `--product-rail-details: 7.75rem` (fits badge + swatches); price line shows “24% off” badge |
+| New Arrivals | Light cream surface; Lora/primary-800 uppercase titles; centered header + Shop All; left-aligned product cards; Shop All primary button 13px; fixed-height horizontal rail; section pad bottom 72px (mobile 64px); product details `--product-rail-details: 7.75rem` (fits badge + swatches); price line shows “24% off” badge |
 | USP row | After New Arrivals / before Best sellers; 4 static items; Lucide line icons (banknote / refresh-cw / truck / message-circle) above labels; no section title; **primary-50** wash; 4-col desktop / 2-col mobile |
 | Best sellers | Same product-carousel as New Arrivals; after USP row / before RTW banner; Shop All CTA → `/design?route=collection&slug=bestsellers` |
 | Collection PLP | Reusable template for all collections via `?route=collection&slug=…` (aliases like `?route=bestsellers` also resolve). Desktop: sticky left filters + 3-col grid. Mobile: Filters + Sort as separate bottom sheets. Facets: Availability, Price, Category, Collections, Size, Color. Reuse commerce `renderProductCard`. Shared catalog in `playground/data/`. |
-| Ready-to-wear banner | Light cream section + 36px/24px frame; primary-100 inner radius 16px; collage right; title sentence case; CTA primary 13px |
+| Ready-to-wear banner | Light cream section + 36px/24px frame; primary-100 inner radius 16px; collage right; title sentence case; CTA primary 13px; three compact icon+label USPs beneath the CTA |
 | RTW product rail | Headerless; CTA “Shop All” 13px; brand primary |
 | Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `48px 24px 88px` (mobile `16px 16px 80px`); three image price tiles clamp(280px, 34vw, 420px) |
 | Shop by Material | After Shop under / before Clearance; light cream; padding 48/24/72; centered uppercase header; shaped fabric tiles in an infinite circular center-mode 5-up carousel on desktop (100% active / 80% adjacent / 60% distance-2; 3-up mobile fallback); depth blur on side cards; keyboard + arrow controls; blur+dark scrim; no Explore CTA |
 | Clearance sale | After Material / before Voices; overlay banner (cream story image, primary-900, lighter scrim, sentence-case title, Upto 50% off badge); headerless rail; bottom pad 48/40 |
+| Account login overlay | Centered max-width panel over a dimmed page; Samantha Fab wordmark, Login with OTP form, Google fallback, terms copy; Escape, backdrop, and close button dismiss |
 | Voices feature | After Clearance; centered header; infinite ticker cards; playbackRate hover 0.2; padding 56/0/80 |
 | Footer | Plum; brand + newsletter (“Join our newsletter for new drops” / Subscribe); denser columns + trust strip; no payment logos |
 
@@ -97,11 +101,32 @@ One-off experiments (“try X once”) do not get written until the user confirm
 - Bottom bar (fixed): Home · Explore · WhatsApp (external link) · Wishlist · Bag — icon + label; active tab filled/darker.
 - Hamburger opens a **left drawer** with promo strip, category links (from Shop mega menu), and chevrons.
 - **Explore** tab: pill search bar (client-side filter only — prototype), trending chips, 2-up product grid reusing Best sellers catalog.
-- **Wishlist** / **Bag**: quiet empty states; no cart logic yet.
+- **Wishlist** / **Bag**: Wishlist stays a page at `/design?route=wishlist` using the same commerce product cards at New Arrivals scale (4-up; × cancel removes). Bag is a **right-side overlay drawer** (nav bag / mobile Bag / Add to cart) — not a routed page; `?route=bag` opens the drawer on the current surface. Prototype persistence via localStorage. Empty wishlist and bag use familiar heart/bag icons in soft circular fields, sentence-case titles and copy, and one clear action each (Shop best sellers / Continue shopping); no helper tips or secondary links. Filled bag: × on media, Save for later, sticky order summary with quiet trust line.
+- Wishlist routes omit the search overlay and its trigger so the saved-items surface stays focused.
 - Tab panels swap in place of `.site-main` + footer; homepage sections unchanged on Home.
 
 ## Changelog
 
+- 2026-09-14 — Added a Samantha Fab account login overlay with OTP-first email entry, Google fallback, dimmed scrim, and focus-safe dismissal.
+- 2026-09-14 — Removed the search overlay and search trigger from the wishlist route so `/design?route=wishlist` stays focused on saved items.
+- 2026-09-14 — Search overlay simplified: removed Clear search controls and “Showing top products” helper copy, expanded the form to full width, and restored Karrik body/UI typography throughout.
+- 2026-09-14 — Restored Karrik for body/UI copy while keeping Lora on headings, matching the original supporting-text typography.
+- 2026-09-14 — Ready-to-wear banner now includes three compact product-specific USPs beneath its CTA, with line icons and reduced-motion-safe staggered motion.
+- 2026-09-14 — Removed the divider above the RTW banner USPs and increased their top breathing room.
+- 2026-09-14 — Removed the campaign title marker highlight; `<em>` accents now use only the existing Lora italic plum treatment.
+- 2026-09-14 — Reference nav now removes the redundant Home link, makes the Samantha Fab wordmark the local `/design` home link, and gives campaign `<em>` accents a visible primary-200 marker highlight.
+- 2026-09-14 — Typography unified on Google Fonts Lora: `--font-display` and `--font-body` now share Lora, with direct Sprat/Karrik overrides removed from `/design`.
+- 2026-09-14 — Empty commerce states simplified: familiar heart/bag icons replace abstract artwork and collage; titles use sentence case; bag keeps one Continue shopping action with no helper tip or secondary link.
+- 2026-09-14 — Bag drawer empty/filled polish: collage + bag badge empty state; × on line media, Save for later, sticky summary + trust line.
+- 2026-09-14 — Empty wishlist: plum SVG illustration (no product photos), lighter copy, one sentence-case “Shop best sellers” CTA; tip removed.
+- 2026-09-14 — Empty wishlist: editorial collage + frosted heart, clearer save guidance, dual CTAs (bestsellers / new arrivals).
+- 2026-09-14 — Wishlist cards match New Arrivals 4-up scale with × cancel (not heart); commerce page top pad tightened to 20px.
+- 2026-09-14 — Wishlist grid reuses commerce product cards (heart removes); bag is a right-side overlay drawer instead of a full page.
+- 2026-09-14 — Wishlist heart fills on save with a quiet toast + nav count badge so the Save action reads as functional; clicks use document delegation.
+- 2026-09-14 — Product-card desktop hover crossfades to an alternate archive image; Wishlist and Bag are real `/design` routes with localStorage prototype persistence (grid + bag summary), wired from nav and mobile tabs.
+- 2026-09-13 — Collection PLP scroll: sticky filter sidebar with independent thin plum scrollbar; product grid scrolls with the page (no nested results pane).
+- 2026-09-13 — Removed About from primary nav and dropped the `/design?route=page&slug=about` content page.
+- 2026-09-13 — Collection filter sidebar refined: custom plum checkboxes, soft primary-50 wells, quieter counts, SVG chevrons — still whisper-cream/plum, not browser-default chrome.
 - 2026-09-13 — Navbar + Shop mega menu: every primary/mega-menu link resolves in-playground (collection PLP or content page); no external Shopify collection hrefs on `/design` nav.
 - 2026-09-13 — Collection PLP: reusable `/design?route=collection&slug=…` template with desktop sidebar filters and mobile Filters/Sort bottom sheets; homepage Shop All / occasion / footer shop links point into it.
 - 2026-09-12 — Mega-menu link hover is scale-only (`1.03`); campaign title accents use deeper `--color-primary-400`; the paisley veil is darker, repeats at 280px, and fades out within the left 60% of the hero.

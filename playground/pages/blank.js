@@ -1,4 +1,4 @@
-import { collectionUrl, contentUrl, MEGA_MENU_LINKS } from "../data/collections.js";
+import { collectionUrl, commerceUrl, contentUrl, MEGA_MENU_LINKS } from "../data/collections.js";
 
 export const blank = {
   key: "blank",
@@ -31,9 +31,7 @@ export const blank = {
       variant: "reference",
       brand: "SAMANTHA FAB",
       nav: [
-        { label: "Home", href: "/design", active: true },
         { label: "Shop", menu: "shop" },
-        { label: "About", href: contentUrl("about") },
         {
           label: "Best sellers",
           href: collectionUrl("bestsellers"),
@@ -46,7 +44,7 @@ export const blank = {
       ],
       actions: [
         { label: "Search", href: "/design", ariaLabel: "Search", icon: "search" },
-        { label: "Wishlist", href: "/design", ariaLabel: "Wishlist", icon: "heart" },
+        { label: "Wishlist", href: commerceUrl("wishlist"), ariaLabel: "Wishlist", icon: "heart" },
         { label: "Account", href: "/design", ariaLabel: "Account", className: "nav-action--account", icon: "user" },
         { label: "Bag", href: "/design", ariaLabel: "Shopping bag", icon: "bag" },
       ],
@@ -508,6 +506,11 @@ export const blank = {
       highlight: "wear",
       copy: "Pre-stitched sarees with pockets — easy on, easy all day.",
       action: { label: "Shop ready-to-wear", href: "/design?route=collection&slug=ready-to-wear" },
+      usps: [
+        { icon: "shirt", label: "Pre-stitched ease" },
+        { icon: "briefcase-business", label: "Pockets included" },
+        { icon: "clock-3", label: "Ready in minutes" },
+      ],
       media: [
         {
           src: "/assets/design-collection-ready-to-wear.jpg",
@@ -1100,6 +1103,7 @@ export const blank = {
       copyright: "© Samantha Fab. Playground concept.",
     },
   ],
+  searchTerms: ["sarees", "silk sarees", "ready-to-wear", "wedding edit"],
   mobile: {
     trending: [
       { label: "Bestsellers", query: "" },
@@ -1114,12 +1118,12 @@ export const blank = {
     },
     whatsappHref: "https://wa.me/",
     wishlist: {
-      title: "Your wishlist is empty",
-      copy: "Save pieces you love — they'll appear here.",
+      title: "Nothing saved yet",
+      copy: "Tap the heart on a saree you love. Saved pieces gather here so you can return to them anytime.",
     },
     bag: {
       title: "Your bag is empty",
-      copy: "Looks like you haven't added anything yet.",
+      copy: "Add a piece you love and it will appear here.",
     },
   },
 };

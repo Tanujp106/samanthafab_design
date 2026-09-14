@@ -10,6 +10,11 @@ export function contentUrl(slug) {
   return `/design?route=page&slug=${encodeURIComponent(slug)}`;
 }
 
+export function commerceUrl(kind) {
+  const route = kind === "bag" || kind === "cart" ? "bag" : "wishlist";
+  return `/design?route=${route}`;
+}
+
 function collection(slug, title, options = {}) {
   return {
     slug,
@@ -59,11 +64,6 @@ export const collectionsBySlug = {
 
 /** Editorial / utility pages from the navbar (not product grids). */
 export const contentPagesBySlug = {
-  about: contentPage(
-    "about",
-    "About",
-    "Samantha Fab is a modern Indian saree house — expressive prints, easy drapes, and pieces made for real life.",
-  ),
   "style-guide": contentPage(
     "style-guide",
     "Style Guide",
@@ -147,12 +147,18 @@ export const ROUTE_COLLECTION_ALIASES = {
 };
 
 export const ROUTE_CONTENT_ALIASES = {
-  about: "about",
   contact: "contact",
   "style-guide": "style-guide",
   "star-in-our-spotlight": "star-in-our-spotlight",
   "design-your-dream-sarees": "design-your-dream-sarees",
   "surmaye-sisterhood": "star-in-our-spotlight",
+};
+
+/** Wishlist / bag destinations (not editorial content pages). */
+export const ROUTE_COMMERCE_ALIASES = {
+  wishlist: "wishlist",
+  bag: "bag",
+  cart: "bag",
 };
 
 export function resolveCollectionSlug(route, slug) {
@@ -164,6 +170,11 @@ export function resolveCollectionSlug(route, slug) {
 export function resolveContentSlug(route, slug) {
   if (route === "page" && slug) return slug;
   if (route && ROUTE_CONTENT_ALIASES[route]) return ROUTE_CONTENT_ALIASES[route];
+  return null;
+}
+
+export function resolveCommerceKind(route) {
+  if (route && ROUTE_COMMERCE_ALIASES[route]) return ROUTE_COMMERCE_ALIASES[route];
   return null;
 }
 

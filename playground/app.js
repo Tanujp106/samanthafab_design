@@ -1,14 +1,31 @@
 import { pages } from "./pages/index.js";
 import { renderPage, renderProductCard } from "./components/render.js";
 import { renderCollectionPlp } from "./components/collection-plp.js";
+import { renderBagDrawerBody, renderWishlistPage } from "./components/commerce-pages.js";
+import { filterSearchProducts, normalizeSearchQuery } from "./components/search-overlay.js";
 import {
   getCollection,
   getCollectionProducts,
   getContentPage,
   resolveCollectionSlug,
+  resolveCommerceKind,
   resolveContentSlug,
 } from "./data/collections.js";
 import { applyCollectionFilters, DEFAULT_SORT } from "./lib/collection-filters.mjs";
+import {
+  addToBag,
+  bagCount,
+  isWishlisted,
+  moveBagItemToWishlist,
+  productIdFrom,
+  readBag,
+  readWishlist,
+  removeFromBag,
+  removeWishlist,
+  setBagQuantity,
+  toggleWishlist,
+  wishlistCount,
+} from "./lib/commerce-store.mjs";
 
 const app = document.querySelector("#app");
 const searchParams = new URLSearchParams(window.location.search);
@@ -16,6 +33,7 @@ const reviewRequested = searchParams.get("notes") === "1";
 const requestedPage = searchParams.get("page");
 const routeParam = searchParams.get("route");
 const slugParam = searchParams.get("slug");
+const searchQueryParam = searchParams.get("q") || "";
 const cleanPath = window.location.pathname.replace(/\/+$/, "") || "/";
 const pathPage = cleanPath === "/design" ? "blank" : null;
 const pageKey = requestedPage || pathPage || app.dataset.page || "homepage";
@@ -25,6 +43,11 @@ const notesEnabled = reviewRequested && page.key !== "blank";
 const collectionSlug = page.key === "blank" ? resolveCollectionSlug(routeParam, slugParam) : null;
 const contentSlug =
   page.key === "blank" && !collectionSlug ? resolveContentSlug(routeParam, slugParam) : null;
+const commerceKind =
+  page.key === "blank" && !collectionSlug && !contentSlug ? resolveCommerceKind(routeParam) : null;
+const wishlistView = commerceKind === "wishlist" ? "wishlist" : null;
+const openBagOnLoad = commerceKind === "bag";
+const openSearchOnLoad = page.key === "blank" && routeParam === "search";
 const emptyFilterState = () => ({
   sort: DEFAULT_SORT,
   availability: [],
@@ -37,6 +60,7 @@ const emptyFilterState = () => ({
 });
 
 let collectionState = emptyFilterState();
+const searchProducts = page.sections.find((section) => section.id === "design-best-sellers")?.products || [];
 
 function buildCollectionView(slug, state) {
   if (!slug) return null;
@@ -70,6 +94,9 @@ if (collectionSlug) {
   document.title = getContentPage(contentSlug)?.title
     ? `${getContentPage(contentSlug).title} — Samantha Fab`
     : page.title;
+} else if (wishlistView) {
+  document.body.dataset.commerceKind = "wishlist";
+  document.title = "Wishlist — Samantha Fab";
 } else {
   document.title = page.title;
 }
@@ -79,8 +106,13 @@ app.replaceChildren(
     notesEnabled,
     collectionView: collectionSlug ? buildCollectionView(collectionSlug, collectionState) : null,
     contentView: contentSlug ? { page: getContentPage(contentSlug) } : null,
+    commerceView: wishlistView ? { kind: "wishlist" } : null,
   }),
 );
+
+// Bind wishlist / bag early so later carousel setup errors can't leave hearts inert.
+bindCommerceInteractions(document);
+syncNavCommerceCounts();
 
 const menuToggle = document.querySelector(".nav-menu-toggle");
 const navLinks = document.querySelector(".nav-links");
@@ -118,6 +150,258 @@ if (mobileDrawer && menuToggle) {
     menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     if (!menuToggle.querySelector(".nav-menu-toggle__icon")) {
       menuToggle.textContent = open ? "Close" : "Menu";
+    }
+  });
+}
+
+const searchOverlay = document.querySelector("[data-search-overlay]");
+const searchInput = searchOverlay?.querySelector("[data-search-input]");
+const searchForm = searchOverlay?.querySelector("[data-search-form]");
+const searchPlaceholder = searchOverlay?.querySelector("[data-search-animated-placeholder]");
+const searchGrid = searchOverlay?.querySelector("[data-search-product-grid]");
+const searchEmpty = searchOverlay?.querySelector("[data-search-empty]");
+const searchTitle = searchOverlay?.querySelector(".search-overlay__products-title");
+const searchTerms = (() => {
+  try {
+    const parsed = JSON.parse(searchOverlay?.dataset.searchTerms || "[]");
+    return Array.isArray(parsed) && parsed.length ? parsed : ["sarees"];
+  } catch {
+    return ["sarees"];
+  }
+})();
+const searchReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let searchTypingTimer = null;
+let searchTypingTermIndex = 0;
+let searchTypingCharacterIndex = 0;
+let searchTypingPhase = "typing";
+let searchReturnFocus = null;
+
+function stopSearchTyping() {
+  if (searchTypingTimer) window.clearTimeout(searchTypingTimer);
+  searchTypingTimer = null;
+}
+
+function scheduleSearchTyping(delay) {
+  stopSearchTyping();
+  searchTypingTimer = window.setTimeout(tickSearchTyping, delay);
+}
+
+function tickSearchTyping() {
+  if (!searchOverlay?.classList.contains("is-open") || searchInput?.value) {
+    stopSearchTyping();
+    return;
+  }
+
+  const term = searchTerms[searchTypingTermIndex] || "sarees";
+  if (searchTypingPhase === "typing") {
+    searchTypingCharacterIndex = Math.min(term.length, searchTypingCharacterIndex + 1);
+    searchPlaceholder.textContent = term.slice(0, searchTypingCharacterIndex);
+    if (searchTypingCharacterIndex >= term.length) {
+      searchTypingPhase = "hold";
+      scheduleSearchTyping(1150);
+    } else {
+      scheduleSearchTyping(72);
+    }
+    return;
+  }
+
+  if (searchTypingPhase === "hold") {
+    searchTypingPhase = "deleting";
+    scheduleSearchTyping(38);
+    return;
+  }
+
+  searchTypingCharacterIndex = Math.max(0, searchTypingCharacterIndex - 1);
+  searchPlaceholder.textContent = term.slice(0, searchTypingCharacterIndex);
+  if (searchTypingCharacterIndex === 0) {
+    searchTypingTermIndex = (searchTypingTermIndex + 1) % searchTerms.length;
+    searchTypingPhase = "typing";
+    scheduleSearchTyping(260);
+  } else {
+    scheduleSearchTyping(42);
+  }
+}
+
+function startSearchTyping() {
+  stopSearchTyping();
+  if (!searchPlaceholder) return;
+  if (searchReducedMotion) {
+    searchPlaceholder.textContent = searchTerms[0] || "sarees";
+    return;
+  }
+  if (searchInput?.value) return;
+  searchTypingTermIndex = 0;
+  searchTypingCharacterIndex = 0;
+  searchTypingPhase = "typing";
+  searchPlaceholder.textContent = "";
+  scheduleSearchTyping(120);
+}
+
+function applySearchQuery(value = "") {
+  if (!searchOverlay || !searchGrid) return;
+  const query = normalizeSearchQuery(value);
+  const matchingIds = new Set(filterSearchProducts(searchProducts, query).map((product) => productIdFrom(product)));
+  let visibleCount = 0;
+
+  searchGrid.querySelectorAll("[data-search-product]").forEach((card) => {
+    const matches = !query || matchingIds.has(card.dataset.productId);
+    card.hidden = !matches;
+    card.classList.toggle("is-filtered-out", !matches);
+    if (matches) visibleCount += 1;
+  });
+
+  searchForm?.classList.toggle("is-query", Boolean(query));
+  if (searchTitle) searchTitle.textContent = query ? `Results for “${value.trim()}”` : "Top products";
+  if (searchEmpty) searchEmpty.hidden = visibleCount > 0;
+}
+
+function setSearchOverlayOpen(open) {
+  if (!searchOverlay) return;
+  if (open) {
+    searchReturnFocus = document.activeElement;
+    searchOverlay.inert = false;
+    searchOverlay.setAttribute("aria-hidden", "false");
+    searchOverlay.classList.add("is-open");
+    document.body.classList.add("search-overlay-open");
+    setMobileDrawerOpen(false);
+    if (searchQueryParam && searchInput && !searchInput.value) searchInput.value = searchQueryParam;
+    applySearchQuery(searchInput?.value || "");
+    startSearchTyping();
+    window.requestAnimationFrame(() => searchInput?.focus({ preventScroll: true }));
+    return;
+  }
+
+  stopSearchTyping();
+  searchOverlay.classList.remove("is-open");
+  searchOverlay.setAttribute("aria-hidden", "true");
+  searchOverlay.inert = true;
+  document.body.classList.remove("search-overlay-open");
+  if (searchInput && !searchInput.value) searchPlaceholder.textContent = searchTerms[0] || "sarees";
+  if (searchReturnFocus?.focus) window.requestAnimationFrame(() => searchReturnFocus.focus());
+}
+
+if (searchOverlay && searchInput) {
+  searchInput.addEventListener("input", () => {
+    if (searchInput.value) stopSearchTyping();
+    else startSearchTyping();
+    applySearchQuery(searchInput.value);
+  });
+  searchForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    applySearchQuery(searchInput.value);
+  });
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    const openTrigger = target.closest?.("[data-search-open]");
+    if (openTrigger) {
+      event.preventDefault();
+      setSearchOverlayOpen(true);
+      return;
+    }
+
+    const closeTrigger = target.closest?.("[data-search-close]");
+    if (closeTrigger) {
+      event.preventDefault();
+      setSearchOverlayOpen(false);
+      return;
+    }
+
+    const suggestion = target.closest?.("[data-search-suggestion]");
+    if (suggestion) {
+      event.preventDefault();
+      const query = suggestion.dataset.searchSuggestion || suggestion.textContent.trim();
+      searchInput.value = query;
+      applySearchQuery(query);
+      stopSearchTyping();
+      searchInput.focus();
+      return;
+    }
+
+    const recentClear = target.closest?.("[data-search-recent-clear]");
+    if (recentClear) {
+      event.preventDefault();
+      recentClear.closest(".search-overlay__recent-item")?.remove();
+      return;
+    }
+
+    const recentClearAll = target.closest?.("[data-search-recent-clear-all]");
+    if (recentClearAll) {
+      event.preventDefault();
+      searchOverlay.querySelector("[data-search-recent-list]")?.replaceChildren();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && searchOverlay.classList.contains("is-open")) {
+      event.preventDefault();
+      setSearchOverlayOpen(false);
+    }
+  });
+}
+
+if (openSearchOnLoad) {
+  const url = new URL(window.location.href);
+  url.searchParams.delete("route");
+  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  setSearchOverlayOpen(true);
+}
+
+const accountOverlay = document.querySelector("[data-account-overlay]");
+const accountForm = accountOverlay?.querySelector("[data-account-form]");
+const accountEmail = accountOverlay?.querySelector(".account-overlay__input");
+let accountReturnFocus = null;
+
+function setAccountOverlayOpen(open) {
+  if (!accountOverlay) return;
+  if (open) {
+    accountReturnFocus = document.activeElement;
+    accountOverlay.inert = false;
+    accountOverlay.setAttribute("aria-hidden", "false");
+    accountOverlay.classList.add("is-open");
+    document.body.classList.add("account-overlay-open");
+    setMobileDrawerOpen(false);
+    setBagDrawerOpen(false);
+    window.requestAnimationFrame(() => accountEmail?.focus({ preventScroll: true }));
+    return;
+  }
+
+  accountOverlay.classList.remove("is-open");
+  accountOverlay.setAttribute("aria-hidden", "true");
+  accountOverlay.inert = true;
+  document.body.classList.remove("account-overlay-open");
+  if (accountReturnFocus?.focus) window.requestAnimationFrame(() => accountReturnFocus.focus());
+}
+
+if (accountOverlay) {
+  accountForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    const openTrigger = target.closest?.("[data-account-open]");
+    if (openTrigger) {
+      event.preventDefault();
+      setAccountOverlayOpen(true);
+      return;
+    }
+
+    const closeTrigger = target.closest?.("[data-account-close], [data-account-backdrop]");
+    if (closeTrigger) {
+      event.preventDefault();
+      setAccountOverlayOpen(false);
+      return;
+    }
+
+    const googleTrigger = target.closest?.("[data-account-google]");
+    if (googleTrigger) event.preventDefault();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && accountOverlay.classList.contains("is-open")) {
+      event.preventDefault();
+      setAccountOverlayOpen(false);
     }
   });
 }
@@ -377,13 +661,6 @@ document.querySelectorAll("[data-new-arrivals-carousel]").forEach((carousel) => 
   window.addEventListener("resize", syncControls);
   syncControls();
 
-  carousel.querySelectorAll(".product-card__wishlist").forEach((button) => {
-    button.addEventListener("click", () => {
-      const pressed = button.getAttribute("aria-pressed") === "true";
-      button.setAttribute("aria-pressed", pressed ? "false" : "true");
-    });
-  });
-
   carousel.querySelectorAll(".product-card__swatches").forEach((group) => {
     group.querySelectorAll(".product-card__swatch").forEach((swatch) => {
       swatch.addEventListener("click", () => {
@@ -394,6 +671,242 @@ document.querySelectorAll("[data-new-arrivals-carousel]").forEach((carousel) => 
     });
   });
 });
+
+function parseProductPayload(card) {
+  if (!card?.dataset?.productPayload) return null;
+  try {
+    return JSON.parse(card.dataset.productPayload);
+  } catch {
+    return null;
+  }
+}
+
+function syncNavCommerceCounts() {
+  const wishCount = wishlistCount();
+  const bagItems = bagCount();
+
+  document.querySelectorAll('[data-nav-count="wishlist"]').forEach((node) => {
+    node.textContent = String(wishCount);
+    node.hidden = wishCount <= 0;
+  });
+  document.querySelectorAll('[data-nav-count="bag"]').forEach((node) => {
+    node.textContent = String(bagItems);
+    node.hidden = bagItems <= 0;
+  });
+
+  document.querySelectorAll("[data-nav-wishlist]").forEach((node) => {
+    node.setAttribute("aria-label", wishCount ? `Wishlist, ${wishCount} items` : "Wishlist");
+  });
+  document.querySelectorAll("[data-nav-bag]").forEach((node) => {
+    node.setAttribute("aria-label", bagItems ? `Shopping bag, ${bagItems} items` : "Shopping bag");
+  });
+}
+
+function showCommerceToast(message) {
+  let toast = document.querySelector("[data-commerce-toast]");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.className = "commerce-toast";
+    toast.dataset.commerceToast = "true";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    document.body.append(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add("is-visible");
+  window.clearTimeout(showCommerceToast._timer);
+  showCommerceToast._timer = window.setTimeout(() => {
+    toast.classList.remove("is-visible");
+  }, 2200);
+}
+
+function setWishlistButtonState(button, wishlisted) {
+  const name = button.dataset.productName || "item";
+  button.setAttribute("aria-pressed", wishlisted ? "true" : "false");
+  button.setAttribute("aria-label", wishlisted ? `Saved ${name}` : `Save ${name}`);
+}
+
+function refreshBagDrawerContents() {
+  const drawer = document.querySelector("[data-bag-drawer]");
+  const panel = drawer?.querySelector("[data-bag-drawer-panel]");
+  if (!panel) return;
+  const { body, count } = renderBagDrawerBody({
+    items: readBag(),
+    empty: page.mobile?.bag,
+  });
+  const existing = panel.querySelector("[data-bag-drawer-body]");
+  if (existing) existing.replaceWith(body);
+  else panel.append(body);
+  const countNode = panel.querySelector("[data-bag-drawer-count]");
+  if (countNode) {
+    countNode.textContent = count
+      ? `${count} ${count === 1 ? "piece" : "pieces"} ready to checkout`
+      : "Add something you love";
+  }
+}
+
+function setBagDrawerOpen(open) {
+  const drawer = document.querySelector("[data-bag-drawer]");
+  if (!drawer) return;
+  if (open) refreshBagDrawerContents();
+  drawer.classList.toggle("is-open", open);
+  drawer.setAttribute("aria-hidden", String(!open));
+  document.body.classList.toggle("bag-drawer-open", open);
+  if (open) setMobileDrawerOpen(false);
+}
+
+function refreshCommerceSurfaces() {
+  const ctx = { notesEnabled };
+  const mainPage = document.querySelector("[data-commerce-page]");
+  if (mainPage?.dataset.commercePage === "wishlist") {
+    const next = renderWishlistPage({
+      products: readWishlist(),
+      empty: page.mobile?.wishlist,
+      ctx,
+      renderProductCard,
+    });
+    mainPage.replaceWith(next);
+  }
+
+  const wishMount = document.querySelector('[data-mobile-commerce-mount="wishlist"]');
+  if (wishMount) {
+    wishMount.replaceChildren(
+      renderWishlistPage({
+        products: readWishlist(),
+        empty: page.mobile?.wishlist,
+        ctx,
+        renderProductCard,
+      }),
+    );
+  }
+
+  if (document.body.classList.contains("bag-drawer-open")) {
+    refreshBagDrawerContents();
+  }
+
+  document.querySelectorAll(".product-card[data-product-id]").forEach((card) => {
+    const id = card.dataset.productId;
+    const button = card.querySelector(".product-card__wishlist");
+    if (button && id) setWishlistButtonState(button, isWishlisted(id));
+  });
+
+  syncNavCommerceCounts();
+}
+
+function bindCommerceInteractions(root = document) {
+  if (root !== document) return;
+  if (document.documentElement.dataset.commerceDelegation === "1") return;
+  document.documentElement.dataset.commerceDelegation = "1";
+
+  document.addEventListener("click", (event) => {
+    const bagOpen = event.target.closest?.("[data-bag-open]");
+    if (bagOpen) {
+      event.preventDefault();
+      setBagDrawerOpen(true);
+      return;
+    }
+
+    const bagClose = event.target.closest?.("[data-bag-close]");
+    if (bagClose) {
+      const isLink = bagClose.tagName === "A" && bagClose.getAttribute("href");
+      if (!isLink) event.preventDefault();
+      setBagDrawerOpen(false);
+      return;
+    }
+
+    const wishlistBtn = event.target.closest?.("[data-commerce-action='wishlist-toggle'], .product-card__wishlist");
+    if (wishlistBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const card = wishlistBtn.closest(".product-card");
+      const product = parseProductPayload(card);
+      if (!product) return;
+      if (!wishlistBtn.dataset.productName && product.name) {
+        wishlistBtn.dataset.productName = product.name;
+      }
+      const result = toggleWishlist(product);
+      setWishlistButtonState(wishlistBtn, result.wishlisted);
+      showCommerceToast(result.wishlisted ? "Saved to wishlist" : "Removed from wishlist");
+      refreshCommerceSurfaces();
+      return;
+    }
+
+    const addBtn = event.target.closest?.("[data-commerce-action='add-to-bag'], .product-card__add-to-cart");
+    if (addBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const card = addBtn.closest(".product-card");
+      const product = parseProductPayload(card);
+      if (!product) return;
+      addToBag(product);
+      showCommerceToast("Added to bag");
+      refreshCommerceSurfaces();
+      setBagDrawerOpen(true);
+      return;
+    }
+
+    const removeWish = event.target.closest?.("[data-wishlist-remove]");
+    if (removeWish) {
+      event.preventDefault();
+      event.stopPropagation();
+      removeWishlist(removeWish.dataset.wishlistRemove);
+      showCommerceToast("Removed from wishlist");
+      refreshCommerceSurfaces();
+      return;
+    }
+
+    const bagRemove = event.target.closest?.("[data-bag-remove]");
+    if (bagRemove) {
+      event.preventDefault();
+      removeFromBag(bagRemove.dataset.bagRemove);
+      showCommerceToast("Removed from bag");
+      refreshCommerceSurfaces();
+      return;
+    }
+
+    const bagQty = event.target.closest?.("[data-bag-qty]");
+    if (bagQty) {
+      event.preventDefault();
+      const id = bagQty.dataset.bagQty;
+      const delta = Number(bagQty.dataset.bagQtyDelta || 0);
+      const item = readBag().find((entry) => entry.id === id);
+      if (!item) return;
+      setBagQuantity(id, (item.quantity || 1) + delta);
+      refreshCommerceSurfaces();
+      return;
+    }
+
+    const bagMove = event.target.closest?.("[data-bag-move-wishlist]");
+    if (bagMove) {
+      event.preventDefault();
+      moveBagItemToWishlist(bagMove.dataset.bagMoveWishlist);
+      showCommerceToast("Moved to wishlist");
+      refreshCommerceSurfaces();
+      return;
+    }
+
+    const checkout = event.target.closest?.("[data-bag-checkout]");
+    if (checkout) {
+      event.preventDefault();
+      showCommerceToast("Checkout is a playground prototype");
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && document.body.classList.contains("bag-drawer-open")) {
+      setBagDrawerOpen(false);
+    }
+  });
+}
+
+if (openBagOnLoad) {
+  const url = new URL(window.location.href);
+  if (url.searchParams.get("route") === "bag" || url.searchParams.get("route") === "cart") {
+    url.searchParams.delete("route");
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  }
+  setBagDrawerOpen(true);
+}
 
 document.querySelectorAll("[data-material-carousel]").forEach((carousel) => {
   const viewport = carousel.querySelector("[data-material-viewport]");
@@ -550,7 +1063,17 @@ if (mobileBottomBar) {
   };
 
   tabButtons.forEach((button) => {
-    button.addEventListener("click", () => setMobileTab(button.dataset.mobileTab));
+    button.addEventListener("click", () => {
+      if (button.dataset.mobileTab === "explore") {
+        setSearchOverlayOpen(true);
+        return;
+      }
+      if (button.dataset.mobileTab === "bag") {
+        setBagDrawerOpen(true);
+        return;
+      }
+      setMobileTab(button.dataset.mobileTab);
+    });
   });
 
   setMobileTab("home");
@@ -650,6 +1173,7 @@ function rerenderCollectionPlp() {
   });
   main.replaceChildren(next);
   bindCollectionPlp(main);
+  bindCommerceInteractions(main);
 }
 
 function bindCollectionPlp(root = document) {
@@ -716,7 +1240,7 @@ function bindCollectionPlp(root = document) {
       button.setAttribute("aria-expanded", String(expanded));
       section?.classList.toggle("is-collapsed", !expanded);
       const chevron = button.querySelector(".collection-facet__chevron");
-      if (chevron) chevron.textContent = expanded ? "▴" : "▾";
+      chevron?.classList.toggle("is-open", expanded);
     });
   });
 
@@ -739,4 +1263,3 @@ if (collectionSlug) {
     if (event.key === "Escape") closeAllCollectionSheets();
   });
 }
-

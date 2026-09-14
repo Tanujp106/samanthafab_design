@@ -12,7 +12,34 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Explore search | 48px pill; 999px radius; whisper cream fill |
 | Explore trending | 5 chips: Bestsellers (all), Ready-to-wear, Everyday, Wedding, Festive — client filter by tag/name |
 | Explore grid | 2 columns; 16×12px gap; same commerce cards as Best sellers (no hover wishlist/cart on grid) |
-| Empty state | 40px icon; Sprat uppercase title ~22px; copy max ~28ch |
+| Empty state | 40px icon; Lora title ~22px; Karrik copy max ~28ch |
+| Search overlay | Search form width 100%; Karrik body/UI typography; no Clear search controls or “Showing top products” helper copy |
+
+## Wishlist / Bag
+
+| Item | Value |
+| --- | --- |
+| Wishlist route | `/design?route=wishlist` — centered title + **4-col** grid (3 ≤1100 / 2 mobile) of shared commerce product cards at New Arrivals card scale; **× cancel** removes (not heart) |
+| Bag UI | Right overlay drawer (`min(100vw, 420px)`), not a page; nav bag / mobile Bag / Add to cart open it; `?route=bag` opens then strips the query |
+| Persistence | localStorage keys `sf-design-wishlist` / `sf-design-bag` (playground prototype) |
+| Bag contents | Line items (88px portrait, × on media) + sticky footer summary (subtotal / shipping / total / Checkout / trust); qty ±; Save for later |
+| Empty CTAs | Wishlist → single “Shop best sellers”; Bag drawer → single “Continue shopping” action that closes the drawer |
+| Wishlist empty | Soft primary-50 panel; familiar filled heart icon in a soft circular field; sentence-case “Nothing saved yet”; readable copy; no tip |
+| Bag empty | Soft primary-50 panel; familiar outlined bag icon in a soft circular field; sentence-case “Your bag is empty”; one clear CTA; no secondary link or helper tip |
+| Wishlist search | Do not mount the search overlay or Search trigger on `/design?route=wishlist` |
+| Wishlist page pad | `20px 24px 88px` desktop; header margin `4px 0 32px` |
+
+## Account login overlay
+
+| Item | Value |
+| --- | --- |
+| Scrim | Full viewport `rgba(18, 10, 12, 0.38)` with a centered panel |
+| Panel | `min(100%, 820px)` wide; whisper cream; `4px` desktop radius; full-height up to `1120px` |
+| Panel gutters | `clamp(24px, 8vw, 80px)` desktop; `16px` mobile |
+| Close control | 44px hit target; top/right `18px/20px` desktop; 10px mobile |
+| Form fields | Full-width email field `82px` high + filled OTP CTA `100px` high desktop; 64px each mobile |
+| Google fallback | Full-width outlined button `98px` high desktop; 64px mobile; 54px Google mark desktop / 36px mobile |
+| Dismissal | Close button, backdrop, Escape; focus returns to the account trigger |
 
 ## Collection PLP
 
@@ -26,6 +53,8 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Mobile actions | Filters + Sort buttons → separate bottom sheets |
 | Sheet surface | Whisper cream; primary filled View results CTA |
 | Facets | Availability, Price, Category, Collections, Size, Color |
+| Filter chrome | Custom 4px plum checkboxes (not native); soft primary-50 search/price wells (8px radius); counts right-aligned muted; rotating SVG chevrons; no harsh grey input boxes |
+| Scroll | Sidebar sticky under nav (`top` ~104px), `max-height` viewport remainder, own overflow + thin plum scrollbar; product grid scrolls with the page; no nested facet-list scroll |
 
 ## Surface
 
@@ -38,6 +67,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 
 | Item | Value |
 | --- | --- |
+| Home affordance | Omit Home from the centered primary links; the Samantha Fab wordmark links to `/design` |
 | Mega-menu link hover | `scale(1.03)` only; no lateral translation |
 
 ## Spacing
@@ -69,8 +99,8 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Campaign headline (desktop) | ~44–80px |
 | Campaign headline (mobile) | ~38–56px |
 | Supporting / lede | 15–17px |
-| Section titles | Sprat Campaign, primary-800, weight 400, ~28–42px, **uppercase** |
-| Product names | Sprat Campaign, primary-800, ~16–18px |
+| Section titles | Lora, primary-800, weight 400, ~28–42px, **uppercase** |
+| Product names | Lora, primary-800, ~16–18px |
 | Eyebrow / tags | Karrik, ~10px, wide tracking, uppercase, muted |
 | View all / Add to cart label | Karrik **13px**, uppercase, letter-spacing ~0.12em; product-rail CTA “Shop All” |
 | Price | ~14px ink; compare-at ~13px muted strikethrough |
@@ -78,6 +108,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Clearance banner title | Sentence case on `#design-clearance-banner` (`text-transform: none`) |
 | RTW banner frame | `#design-ready-to-wear-banner` padding `36px 24px` (mobile `28px 16px`) |
 | RTW banner body | Karrik, **not italic** unless asked |
+| RTW banner USPs | 3 compact icon+label items beneath the CTA; no divider; 28px top pad after a 16px desktop margin / 24px mobile top pad; 24px line icons, 11px labels, 12px desktop gap / 8px mobile gap; reduced-motion-safe staggered lift |
 | Voices quote | Karrik, font-weight 300 |
 
 ## Collection tiles
@@ -116,12 +147,12 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Section background | `var(--white)` / `#fcfaf7` |
 | Section padding | `48px 24px 72px` (mobile `40px 16px 64px`) |
 | Header | Centered like other `/design` section headers |
-| Heading | Sprat clamp(28px, 3.2vw, 42px), letter-spacing -0.03em; **uppercase** |
+| Heading | Lora clamp(28px, 3.2vw, 42px), letter-spacing -0.03em; **uppercase** |
 | Lede | muted ~15px, weight 200 |
 | Decorative heading hairlines | None |
 | Clip path | Stays within 0–1 (bottom tip `.5 1`); defs `overflow: visible` |
 | Tile overflow | `visible` (shape comes from clip-path; do not `overflow: hidden` or the bottom tip shears) |
-| Card label | Sprat Campaign + cream; side cards `clamp(18px, 1.65vw, 24px)`, active center card `clamp(24px, 2.2vw, 32px)` |
+| Card label | Lora + cream; side cards `clamp(18px, 1.65vw, 24px)`, active center card `clamp(24px, 2.2vw, 32px)` |
 | Card subcopy | Karrik |
 | Card media | Fabric-led macro textile imagery; no decorative icon layer |
 | Card overlay | Full-tile `.design-materials__scrim`: `rgba(18,10,12,0.38)` + `backdrop-filter: blur(1.5px)` — no `::after` linear gradient, no multiply wash |
@@ -135,8 +166,8 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 
 | Item | Value |
 | --- | --- |
-| Wishlist | Always on; frosted ~60% white + blur; **no hover border ring** |
-| Add to cart | Hover-only on desktop; always on touch |
+| Wishlist | Always on; frosted ~60% white + blur; **no hover border ring**; filled heart + toast when saved |
+| Add to cart | Hover-only on desktop; always on touch; toast confirms “Added to bag” |
 | Carousel arrows | Mid-image via `cqw` (not mid-section); ~44px; primary chrome |
 | Carousel overflow | Fixed viewport height from card width × 3/4 media + `--product-rail-details` (7.75rem — fits title/price/badge/swatches); `overflow-x: auto` + `overflow-y: hidden`; cards `height: auto` / `align-items: start` so details fit content; title line-clamp 2. No wheel JS / touch-action / overscroll hacks |
 | View all | Filled primary “Shop All”; centered under header with title/lede |
@@ -147,6 +178,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Swatches | 16px circles below the price line — never on image hover stack; omit entirely when product has no colors |
 | Material line | Hidden |
 | Image aspect | 3 / 4; left-aligned card + text |
+| Hover image | Desktop fine-pointer: crossfade `media--hover` over primary (~280ms); pair from `playground/data/hover-media.js`; no second-image zoom; touch keeps primary only |
 | RTW banner title | `clamp(30px, 3.6vw, 52px)` |
 | Campaign next arrow | No shadow; `opacity: 0.85`; `backdrop-filter: blur(10px)` |
 
@@ -188,7 +220,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Controls | Centered side arrows (~48px) + dots |
 | Side frame | 24px padding on `.section--campaign-hero` (stage is direct child — no `.campaign-hero__inner`) |
 | Campaign media | Full stage fill; wrapper `margin: 0`; image `object-fit: cover` |
-| Title accent | Same Sprat Campaign serif; palette-native plum (`--color-primary-400` via `--campaign-accent` on dark media, `--color-primary-500` on light panels); `skewX(-12deg)` + italic (Sprat variable face ignores font-style alone); one `highlight` word per slide/banner |
+| Title accent | Same Lora serif; palette-native plum (`--color-primary-400` via `--campaign-accent` on dark media, `--color-primary-500` on light panels); `skewX(-12deg)` + italic; one `highlight` word per slide/banner |
 
 ## Voices feature
 
@@ -201,7 +233,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Reduced motion | `.design-testimonials__track { animation: none; }` |
 | Card layout | grid `260px minmax(280px, 400px)`; soft primary-50 wash; quote column flex space-between |
 | Card media | square 260×260 (`aspect-ratio: 1 / 1`); radius 12px; object-fit cover; object-position center top |
-| Type | Quote Karrik `clamp(16px…19px)` weight 300 top; name Sprat/primary-800 bottom; optional muted meta under name |
+| Type | Quote Karrik `clamp(16px…19px)` weight 300 top; name Lora/primary-800 bottom; optional muted meta under name |
 | Mobile | 180px square; tighter gaps (~16px track / ~12px card) |
 | Controls | None (no arrows / controls) |
 
@@ -216,7 +248,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Trust | 4 items (COD / Easy returns / Pan-India shipping / WhatsApp support); stacked icon→label; 32×32 line icons; label 16px cream ~0.78; 4-col desktop / 2-col mobile; gap matches columns (~28px); lives in footer-grid `grid-column: 2` (mobile `1`); sits above copyright rule |
 | Section padding | clamp 64px/7vw/88px top, 36px bottom; mobile 56px 28px |
 | Grid gap | footer-grid clamp(48px, 5vw, 72px); columns 28px; mobile vertical ~36px |
-| Heading | Full cream; Karrik uppercase; margin-bottom ~16px; tracking ~0.13em |
+| Heading | Full cream; Lora uppercase; margin-bottom ~16px; tracking ~0.13em |
 | Link rhythm | Quiet cream ~0.60; gap ~11px; hover full cream |
 | Brand copy | Quiet cream ~0.65; margin-top ~18px |
 | Bottom band | margin-top ~28px when trust present (trust supplies spacing); padding-top ~22px; border-top cream ~32 percent mix |

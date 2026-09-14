@@ -72,7 +72,7 @@ test("design nits: campaign titles use a deeper italic plum highlight word", asy
     /body\[data-page="blank"\] \.campaign-slide__title-accent\s*\{[^}]*color:\s*var\(--campaign-accent\)[^}]*font-style:\s*italic[^}]*transform:\s*skewX\(-12deg\)/s,
   );
   assert.doesNotMatch(css, /#c4a06b/);
-  assert.match(css, /font-family:\s*"Sprat Campaign"[\s\S]*font-style:\s*italic/);
+  assert.match(css, /font-family:\s*var\(--font-display\)[\s\S]*font-style:\s*italic/);
   assert.match(render, /campaign-slide__title-accent/);
   assert.match(render, /function renderCampaignTitle/);
   assert.match(blank, /highlight:\s*"art"/);

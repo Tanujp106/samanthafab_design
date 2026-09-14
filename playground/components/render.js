@@ -1,5 +1,10 @@
 import { renderMedia } from "./media.js";
 import { renderCollectionPlp, renderContentPage } from "./collection-plp.js";
+import { renderBagDrawer, renderWishlistPage } from "./commerce-pages.js";
+import { renderSearchOverlay } from "./search-overlay.js";
+import { renderAccountOverlay } from "./account-overlay.js";
+import { resolveHoverMedia } from "../data/hover-media.js";
+import { isWishlisted, productIdFrom, readBag, readWishlist, snapshotProduct } from "../lib/commerce-store.mjs";
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -227,7 +232,7 @@ function renderHeader(section) {
 
   const nav = element("div", ["primary-nav", isReference ? "design-reference-nav" : ""].filter(Boolean).join(" "));
   const brand = element("a", "wordmark");
-  brand.href = isReference ? "https://www.samanthafab.com/" : "/";
+  brand.href = isReference ? "/design" : "/";
   brand.setAttribute("aria-label", "Samantha Fab home");
   brand.append(renderBrandImage());
 
@@ -257,8 +262,32 @@ function renderHeader(section) {
       if (item.icon === "search" || item.icon === "heart" || item.icon === "bag") {
         link.classList.add("design-reference-nav__action--desktop-only");
       }
+      if (item.icon === "heart") link.dataset.navWishlist = "true";
+      if (item.icon === "search") {
+        link.dataset.searchOpen = "true";
+        link.href = "#";
+        link.setAttribute("role", "button");
+      }
+      if (item.icon === "user") {
+        link.dataset.accountOpen = "true";
+        link.href = "#";
+        link.setAttribute("role", "button");
+      }
+      if (item.icon === "bag") {
+        link.dataset.navBag = "true";
+        link.dataset.bagOpen = "true";
+        link.href = "#";
+        link.setAttribute("role", "button");
+      }
       const icon = renderNavIcon(item.icon);
       if (icon) link.append(icon);
+      if (item.icon === "heart" || item.icon === "bag") {
+        const count = element("span", "nav-action__count");
+        count.dataset.navCount = item.icon === "heart" ? "wishlist" : "bag";
+        count.hidden = true;
+        count.textContent = "0";
+        link.append(count);
+      }
       link.append(element("span", "sr-only", item.label));
     } else {
       link.append(document.createTextNode(item.label));
@@ -389,6 +418,16 @@ function renderCollectionIcon(name) {
 
 function renderUspLucideIcon(name) {
   return renderLucideIcon(name, "design-usp-row__icon", uspLucideIconPaths);
+}
+
+const featureBannerIconPaths = {
+  shirt: collectionIconPaths.shirt,
+  "briefcase-business": collectionIconPaths["briefcase-business"],
+  "clock-3": '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+};
+
+function renderFeatureBannerIcon(name) {
+  return renderLucideIcon(name, "design-feature-banner__usp-icon", featureBannerIconPaths);
 }
 
 function renderCollectionBento(section, ctx) {
@@ -706,6 +745,7 @@ function productActionButton(kind, label) {
   buttonNode.setAttribute("aria-label", label);
   if (isWishlist) {
     buttonNode.setAttribute("aria-pressed", "false");
+    buttonNode.dataset.commerceAction = "wishlist-toggle";
     const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     icon.setAttribute("viewBox", "0 0 24 24");
     icon.setAttribute("aria-hidden", "true");
@@ -719,6 +759,7 @@ function productActionButton(kind, label) {
       '<path d="M12 20s-7-4.35-7-9.2A4.2 4.2 0 0 1 12 7.1a4.2 4.2 0 0 1 7 3.7C19 15.65 12 20 12 20z"/>';
     buttonNode.append(icon);
   } else {
+    buttonNode.dataset.commerceAction = "add-to-bag";
     buttonNode.textContent = label;
   }
   return buttonNode;
@@ -745,6 +786,10 @@ function productColorSwatches(product) {
 
 export function renderProductCard(product, ctx, options = {}) {
   const card = element("article", ["product-card", options.className || ""].filter(Boolean).join(" "));
+  const productId = productIdFrom(product);
+  card.dataset.productId = productId;
+  card.dataset.productPayload = JSON.stringify(snapshotProduct({ ...product, id: productId }));
+
   const body = element("div", "product-card__body");
   if (product.tag) body.append(element("span", "product-tag", product.tag));
   body.append(element("h3", "product-name", product.name));
@@ -775,16 +820,46 @@ export function renderProductCard(product, ctx, options = {}) {
     const mediaLink = element("a", "product-card__media-link");
     mediaLink.href = product.href;
     mediaLink.setAttribute("aria-label", product.name);
-    mediaLink.append(renderMedia(product.media, { ratio: "portrait", notesEnabled: ctx.notesEnabled }));
+    const primaryMedia = renderMedia(product.media, {
+      ratio: "portrait",
+      notesEnabled: ctx.notesEnabled,
+      className: "media--primary",
+    });
+    mediaLink.append(primaryMedia);
+    const hoverMedia = resolveHoverMedia(product);
+    if (hoverMedia) {
+      mediaStage.classList.add("product-card__media--has-hover");
+      const hoverNode = renderMedia(
+        { ...hoverMedia, alt: "" },
+        {
+          ratio: "portrait",
+          notesEnabled: false,
+          className: "media--hover",
+        },
+      );
+      hoverNode.setAttribute("aria-hidden", "true");
+      mediaLink.append(hoverNode);
+    }
 
     const mediaActions = element("div", "product-card__media-actions");
     mediaActions.append(productActionButton("cart", "Add to cart"));
 
-    mediaStage.append(
-      mediaLink,
-      productActionButton("wishlist", `Save ${product.name}`),
-      mediaActions,
-    );
+    if (options.wishlistMode) {
+      const remove = element("button", "product-card__wishlist product-card__wishlist--remove");
+      remove.type = "button";
+      remove.dataset.wishlistRemove = productId;
+      remove.setAttribute("aria-label", `Remove ${product.name} from wishlist`);
+      remove.textContent = "×";
+      mediaStage.append(mediaLink, remove, mediaActions);
+    } else {
+      const wishlistBtn = productActionButton("wishlist", `Save ${product.name}`);
+      wishlistBtn.dataset.productName = product.name;
+      wishlistBtn.setAttribute("aria-pressed", isWishlisted(productId) ? "true" : "false");
+      if (isWishlisted(productId)) {
+        wishlistBtn.setAttribute("aria-label", `Saved ${product.name}`);
+      }
+      mediaStage.append(mediaLink, wishlistBtn, mediaActions);
+    }
 
     const detailsLink = element("a", "product-card__link");
     detailsLink.href = product.href;
@@ -1045,6 +1120,20 @@ function renderFeatureBanner(section, ctx) {
     copy.append(
       button(section.action.label, section.action.href, "button button--fill design-feature-banner__cta"),
     );
+  }
+  if (section.usps?.length) {
+    const usps = element("ul", "design-feature-banner__usps");
+    section.usps.slice(0, 3).forEach((item, index) => {
+      const usp = element("li", "design-feature-banner__usp");
+      usp.style.setProperty("--usp-index", String(index));
+      const iconWrap = element("span", "design-feature-banner__usp-icon-wrap");
+      iconWrap.setAttribute("aria-hidden", "true");
+      const icon = renderFeatureBannerIcon(item.icon);
+      if (icon) iconWrap.append(icon);
+      usp.append(iconWrap, element("span", "design-feature-banner__usp-label", item.label));
+      usps.append(usp);
+    });
+    copy.append(usps);
   }
 
   if (isOverlay) {
@@ -1516,11 +1605,25 @@ function renderMobileEmptyPanel(panelId, config, iconName) {
   panel.dataset.mobilePanel = panelId;
   panel.hidden = true;
 
-  const empty = element("div", "mobile-empty");
-  empty.append(renderMobileIcon(iconName, "mobile-empty__icon"));
-  empty.append(element("h2", "mobile-empty__title", config.title));
-  empty.append(element("p", "mobile-empty__copy", config.copy));
-  panel.append(empty);
+  const mount = element("div", "mobile-commerce-mount");
+  mount.dataset.mobileCommerceMount = panelId;
+  if (panelId === "wishlist") {
+    mount.append(
+      renderWishlistPage({
+        products: readWishlist(),
+        empty: config,
+        ctx: { notesEnabled: false },
+        renderProductCard,
+      }),
+    );
+  } else {
+    const empty = element("div", "mobile-empty");
+    empty.append(renderMobileIcon(iconName, "mobile-empty__icon"));
+    empty.append(element("h2", "mobile-empty__title", config.title));
+    empty.append(element("p", "mobile-empty__copy", config.copy));
+    mount.append(empty);
+  }
+  panel.append(mount);
   return panel;
 }
 
@@ -1547,6 +1650,7 @@ function renderMobileBottomBar(page) {
     } else {
       item.type = "button";
       item.dataset.mobileTab = tab.id;
+      if (tab.id === "bag") item.dataset.bagOpen = "true";
     }
     item.setAttribute("aria-label", tab.label);
     const icon = renderMobileIcon(tab.icon, "mobile-bottom-bar__icon");
@@ -1563,7 +1667,8 @@ export function renderPage(page, options = {}) {
   const ctx = { notesEnabled };
   const collectionView = options.collectionView || null;
   const contentView = options.contentView || null;
-  const secondaryView = Boolean(collectionView || contentView);
+  const commerceView = options.commerceView || null;
+  const secondaryView = Boolean(collectionView || contentView || commerceView);
 
   const root = element("div", "site");
 
@@ -1590,7 +1695,14 @@ export function renderPage(page, options = {}) {
   const main = element("main", "site-main");
 
   page.sections.forEach((section) => {
-    const node = renderSection(section, ctx);
+    const sectionForRender =
+      commerceView?.kind === "wishlist" && section.type === "header"
+        ? {
+            ...section,
+            actions: (section.actions || []).filter((item) => item.icon !== "search"),
+          }
+        : section;
+    const node = renderSection(sectionForRender, ctx);
     if (section.type === "header") headerNode = node;
     else if (section.type === "usp-strip") uspNode = node;
     else if (section.type === "footer") footerNode = node;
@@ -1612,6 +1724,16 @@ export function renderPage(page, options = {}) {
   } else if (contentView) {
     main.append(renderContentPage({ page: contentView.page }));
     root.classList.add("site--content-page");
+  } else if (commerceView?.kind === "wishlist") {
+    main.append(
+      renderWishlistPage({
+        products: readWishlist(),
+        empty: page.mobile?.wishlist,
+        ctx,
+        renderProductCard,
+      }),
+    );
+    root.classList.add("site--commerce-page", "site--wishlist");
   }
 
   // USP strip sits above sticky nav (same role as the old utility strip).
@@ -1622,14 +1744,31 @@ export function renderPage(page, options = {}) {
 
   if (page.key === "blank" && page.mobile) {
     const headerSection = page.sections.find((section) => section.type === "header");
+    const bestSellers = page.sections.find((section) => section.id === "design-best-sellers");
     root.append(
       renderMobileExplore(page, ctx),
       renderMobileEmptyPanel("wishlist", page.mobile.wishlist, "heart"),
-      renderMobileEmptyPanel("bag", page.mobile.bag, "bag"),
       renderMobileBottomBar(page),
     );
     const { overlay, drawer } = renderMobileDrawer(page, headerSection);
     root.append(overlay, drawer);
+    root.append(
+      renderBagDrawer({
+        items: readBag(),
+        empty: page.mobile.bag,
+      }),
+    );
+    if (commerceView?.kind !== "wishlist") {
+      root.append(
+        renderSearchOverlay({
+          products: bestSellers?.products || [],
+          terms: page.searchTerms,
+          ctx,
+          renderProductCard,
+        }),
+        renderAccountOverlay(),
+      );
+    }
     root.classList.add("site--mobile-shell");
   }
 

@@ -176,7 +176,7 @@ function collectText(node) {
 test("mobile shell: blank page ships mobile config + bestseller products", () => {
   assert.ok(blank.mobile);
   assert.equal(blank.mobile.trending.length, 5);
-  assert.equal(blank.mobile.wishlist.title.includes("wishlist"), true);
+  assert.equal(blank.mobile.wishlist.title.includes("saved") || blank.mobile.wishlist.title.includes("wishlist"), true);
   assert.equal(blank.mobile.bag.title.includes("bag"), true);
 
   const bestSellers = blank.sections.find((section) => section.id === "design-best-sellers");
@@ -187,8 +187,14 @@ test("mobile shell: renderPage builds bottom bar, drawer, explore, empty panels"
   installMinimalDom();
   const { renderPage } = await import("../playground/components/render.js");
   const tree = renderPage(blank, { notesEnabled: false });
+  const wishlistTree = renderPage(blank, {
+    notesEnabled: false,
+    commerceView: { kind: "wishlist" },
+  });
 
   assert.equal(tree.classList.contains("site--mobile-shell"), true);
+  assert.equal(wishlistTree.querySelector("[data-search-overlay]"), null);
+  assert.equal(wishlistTree.querySelector("[data-search-open]"), null);
 
   const bottomBar = tree.querySelector("[data-mobile-bottom-bar]");
   assert.ok(bottomBar);
@@ -217,7 +223,8 @@ test("mobile shell: renderPage builds bottom bar, drawer, explore, empty panels"
   );
 
   assert.ok(tree.querySelector("[data-mobile-panel=wishlist]"));
-  assert.ok(tree.querySelector("[data-mobile-panel=bag]"));
+  assert.ok(tree.querySelector("[data-bag-drawer]"));
+  assert.equal(tree.querySelector("[data-mobile-panel=bag]"), null);
 
   const header = tree.querySelector(".design-reference-nav__top") || tree.querySelectorAll(".design-reference-nav")[0];
   assert.ok(tree.querySelector("[data-mobile-drawer-trigger]") || tree.querySelector(".nav-menu-toggle"));

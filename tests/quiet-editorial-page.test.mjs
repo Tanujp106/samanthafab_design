@@ -9,9 +9,7 @@ async function source(path) {
 }
 
 async function pageModule(path) {
-  const contents = await source(path);
-  const encoded = Buffer.from(contents).toString("base64");
-  return import(`data:text/javascript;base64,${encoded}`);
+  return import(new URL(path, root).href);
 }
 
 test("quiet editorial page is registered without changing the homepage", async () => {
@@ -73,17 +71,15 @@ test("design page uses the live Samantha reference navbar structure", async () =
   assert.equal(header.variant, "reference");
   assert.deepEqual(
     header.nav.map((item) => item.label),
-    ["Home", "Shop", "About", "Best sellers", "Surmaye Sisterhood", "Contact"],
+    ["Shop", "Best sellers", "Surmaye Sisterhood", "Contact"],
   );
-  assert.equal(header.nav[1].menu, "shop");
+  assert.equal(header.nav[0].menu, "shop");
   assert.deepEqual(
     header.nav.filter((item) => item.href).map((item) => item.href),
     [
-      "https://www.samanthafab.com/",
-      "https://www.samanthafab.com/pages/about-us",
-      "https://www.samanthafab.com/collections/all?sort_by=best-selling",
-      "https://www.samanthafab.com/pages/star-in-our-spotlight",
-      "https://www.samanthafab.com/pages/contact",
+      "/design?route=collection&slug=bestsellers",
+      "/design?route=page&slug=star-in-our-spotlight",
+      "/design?route=page&slug=contact",
     ],
   );
   assert.deepEqual(
@@ -94,12 +90,14 @@ test("design page uses the live Samantha reference navbar structure", async () =
   assert.ok(
     header.megaMenu.groups
       .flatMap((group) => group.links)
-      .every((item) => item.href.startsWith("https://www.samanthafab.com/")),
+      .every((item) => item.href.startsWith("/design?")),
   );
   assert.match(renderer, /data-nav-menu-trigger/);
   assert.match(renderer, /data-nav-menu/);
   assert.match(renderer, /design-mega-menu/);
-  assert.match(renderer, /isReference \? "https:\/\/www\.samanthafab\.com\/" : "\/"/);
+  assert.match(renderer, /isReference \? "\/design" : "\/"/);
+  assert.match(renderer, /brand\.append\(renderBrandImage\(\)\)/);
+  assert.match(renderer, /brand\.setAttribute\("aria-label", "Samantha Fab home"\)/);
   assert.match(renderer, /top\.append\(start, center, navLinks, end\)/);
   assert.match(renderer, /heart:\s*['"]<path/);
   assert.equal((renderer.match(/heart: '<path d="M20\.84 4\.61/g) || []).length, 2);
@@ -235,7 +233,7 @@ test("design page includes a shaped shop-by-material rail", async () => {
   );
   assert.match(
     designStyles,
-    /design-materials__label\s*\{[\s\S]*font-family:\s*"Sprat Campaign"/,
+    /design-materials__label\s*\{[\s\S]*font-family:\s*var\(--font-display\)/,
   );
   assert.match(
     designStyles,
@@ -323,7 +321,7 @@ test("design page places a four-up new arrivals carousel after shop by collectio
   assert.equal(arrivals.id, "design-new-arrivals");
   assert.equal(arrivals.products.length, 8);
   assert.equal(arrivals.viewAll.label, "Shop All");
-  assert.equal(arrivals.viewAll.href, "/?route=new-arrivals");
+  assert.equal(arrivals.viewAll.href, "/design?route=collection&slug=new-arrivals");
   assert.match(renderer, /case "product-carousel"/);
   assert.match(renderer, /renderProductCarousel/);
   assert.match(app, /data-new-arrivals-dir/);
@@ -331,8 +329,8 @@ test("design page places a four-up new arrivals carousel after shop by collectio
   assert.match(designStyles, /design-new-arrivals/);
   assert.match(designStyles, /grid-template-columns:\s*repeat\(8,\s*calc\(\(100% - 48px\) \/ 4\)\)/);
   assert.match(designStyles, /design-new-arrivals__track\s*\{[\s\S]*width:\s*100%/);
-  assert.match(designStyles, /design-new-arrivals__heading\s*\{[\s\S]*font-family:\s*"Sprat Campaign",\s*var\(--font-display\)/);
-  assert.match(designStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*font-family:\s*"Sprat Campaign",\s*var\(--font-display\)/);
+  assert.match(designStyles, /design-new-arrivals__heading\s*\{[\s\S]*font-family:\s*var\(--font-display\)/);
+  assert.match(designStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*font-family:\s*var\(--font-display\)/);
   assert.match(designStyles, /design-new-arrivals__card \.product-meta\s*\{[\s\S]*font-family:\s*var\(--font-body\)/);
   assert.match(designStyles, /design-new-arrivals\s*\{[\s\S]*background:\s*var\(--white\)/);
   assert.match(designStyles, /design-new-arrivals__heading\s*\{[\s\S]*color:\s*var\(--color-primary-800\)/);
@@ -382,11 +380,11 @@ test("new arrivals use the defined Samantha font tokens", async () => {
   const end = designStyles.indexOf("/* —— Ready-to-wear");
   const newArrivalsStyles = designStyles.slice(start, end);
 
-  assert.match(newArrivalsStyles, /design-new-arrivals__heading\s*\{[\s\S]*font-family:\s*"Sprat Campaign",\s*var\(--font-display\)[\s\S]*font-weight:\s*400[\s\S]*font-variation-settings:\s*"wdth" 122,\s*"wght" 100/);
+  assert.match(newArrivalsStyles, /design-new-arrivals__heading\s*\{[\s\S]*font-family:\s*var\(--font-display\)[\s\S]*font-weight:\s*400/);
   assert.match(newArrivalsStyles, /design-new-arrivals__header\s*\{[\s\S]*align-items:\s*center[\s\S]*text-align:\s*center/);
   assert.match(newArrivalsStyles, /design-new-arrivals__copy\s*\{[\s\S]*margin:\s*6px auto 0/);
   assert.match(newArrivalsStyles, /design-new-arrivals__copy\s*\{[\s\S]*font-family:\s*var\(--font-body\)[\s\S]*font-weight:\s*var\(--weight-body\)/);
-  assert.match(newArrivalsStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*font-family:\s*"Sprat Campaign",\s*var\(--font-display\)[\s\S]*font-weight:\s*400/);
+  assert.match(newArrivalsStyles, /design-new-arrivals__card \.product-name\s*\{[\s\S]*font-family:\s*var\(--font-display\)[\s\S]*font-weight:\s*400/);
   assert.match(newArrivalsStyles, /design-new-arrivals__card \.product-meta\s*\{[\s\S]*font-family:\s*var\(--font-body\)[\s\S]*font-weight:\s*var\(--weight-body\)/);
   assert.match(newArrivalsStyles, /design-new-arrivals__card \.product-price\s*\{[\s\S]*font-family:\s*var\(--font-body\)[\s\S]*font-weight:\s*var\(--weight-ui\)/);
   assert.match(newArrivalsStyles, /design-new-arrivals__card \.product-compare\s*\{[\s\S]*text-decoration:\s*line-through/);
@@ -419,7 +417,7 @@ test("design page places a ready-to-wear promo banner after new arrivals", async
   assert.equal(banner.title, "Ready to wear");
   assert.equal(banner.copy, "Pre-stitched sarees with pockets — easy on, easy all day.");
   assert.equal(banner.action.label, "Shop ready-to-wear");
-  assert.equal(banner.action.href, "/?route=ready-to-wear");
+  assert.equal(banner.action.href, "/design?route=collection&slug=ready-to-wear");
   assert.equal(banner.media.length, 4);
   assert.notEqual(banner.layout, "overlay");
   assert.match(renderer, /case "feature-banner"/);
@@ -504,7 +502,7 @@ test("design page places a shop-under price band after ready-to-wear products", 
   assert.match(designStyles, /design-shop-under__grid/);
   assert.match(designStyles, /design-shop-under__tile/);
   assert.match(designStyles, /design-shop-under__tile\s*\{[\s\S]*min-height:\s*clamp\(280px, 34vw, 420px\)/);
-  assert.match(designStyles, /design-shop-under__heading\s*\{[\s\S]*font-family:\s*"Sprat Campaign"/);
+  assert.match(designStyles, /design-shop-under__heading\s*\{[\s\S]*font-family:\s*var\(--font-display\)/);
   assert.match(designStyles, /design-shop-under__label-price\s*\{[\s\S]*font-size:\s*clamp\(28px/);
   assert.match(designStyles, /design-shop-under\s*\{[\s\S]*padding:\s*48px 24px 88px/);
   assert.match(designStyles, /design-collection-bento__header\s*\{[\s\S]*align-items:\s*center[\s\S]*text-align:\s*center/);
@@ -580,7 +578,7 @@ test("design page places a testimonials feature after shop under", async () => {
   assert.doesNotMatch(designStyles, /design-testimonials__rail/);
   assert.match(
     designStyles,
-    /design-testimonials__heading\s*\{[\s\S]*font-family:\s*"Sprat Campaign"[\s\S]*color:\s*var\(--color-primary-800\)/,
+    /design-testimonials__heading\s*\{[\s\S]*font-family:\s*var\(--font-display\)[\s\S]*color:\s*var\(--color-primary-800\)/,
   );
   assert.equal(blank.sections.at(-1).id, "footer");
 });
