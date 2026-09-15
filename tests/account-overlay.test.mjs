@@ -33,11 +33,11 @@ test("account login overlay is mounted from the reference account action", async
   assert.match(app, /data-account-close/);
   assert.match(app, /account-overlay-open/);
   assert.match(css, /\.account-overlay\s*\{/);
-  assert.match(css, /\.account-overlay__panel\s*\{[^}]*width:\s*min\(calc\(100%\s*-\s*32px\),\s*600px\)/s);
+  assert.match(css, /\.account-overlay__panel\s*\{[^}]*width:\s*min\(calc\(100%\s*-\s*32px\),\s*480px\)/s);
   assert.match(css, /\.account-overlay__panel\s*\{[^}]*border-radius:\s*4px/s);
-  assert.match(css, /\.account-overlay__input\s*\{[^}]*min-height:\s*82px/s);
-  assert.match(css, /\.account-overlay__submit\s*\{[^}]*min-height:\s*100px/s);
-  assert.match(css, /\.account-overlay__google\s*\{[^}]*min-height:\s*98px/s);
+  assert.match(css, /\.account-overlay__input\s*\{[^}]*min-height:\s*52px/s);
+  assert.match(css, /\.account-overlay__submit\s*\{[^}]*min-height:\s*52px/s);
+  assert.match(css, /\.account-overlay__google\s*\{[^}]*min-height:\s*52px/s);
   assert.match(css, /@media \(max-width: 900px\)[\s\S]*\.account-overlay__panel/);
   assert.match(css, /prefers-reduced-motion/);
 });

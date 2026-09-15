@@ -34,11 +34,12 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Scrim | Full viewport `rgba(18, 10, 12, 0.38)` with a centered panel |
-| Panel | `min(100%, 820px)` wide; whisper cream; `4px` desktop radius; full-height up to `1120px` |
-| Panel gutters | `clamp(24px, 8vw, 80px)` desktop; `16px` mobile |
+| Panel | `min(calc(100% - 32px), 480px)` wide; content-height; whisper cream; `4px` desktop radius; full-screen mobile sheet |
+| Panel gutters | `40px` desktop; `20px` mobile |
 | Close control | 44px hit target; top/right `18px/20px` desktop; 10px mobile |
-| Form fields | Full-width email field `82px` high + filled OTP CTA `100px` high desktop; 64px each mobile |
-| Google fallback | Full-width outlined button `98px` high desktop; 64px mobile; 54px Google mark desktop / 36px mobile |
+| Typography | Karrik throughout: title `18px`; input `15px`; supporting text `14px`; buttons `13px`; terms `12px` |
+| Form fields | Full-width email field + filled OTP CTA, both `52px` high desktop and mobile |
+| Google fallback | Full-width outlined button `52px` high desktop and mobile; 24px Google mark |
 | Dismissal | Close button, backdrop, Escape; focus returns to the account trigger |
 
 ## Collection PLP

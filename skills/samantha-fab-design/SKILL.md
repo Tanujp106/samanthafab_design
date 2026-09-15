@@ -47,7 +47,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 - Editorial geometry: hairline gaps, restrained radius, varied section rhythm, real or replaceable photos.
 - Material cards use direct textile imagery and editorial copy, not symbolic iconography.
 - Search overlay uses a 100% width search form and Karrik body/UI type throughout; omit Clear search controls and helper status copy such as “Showing top products.”
-- Account login overlay uses a centered whisper-cream panel with OTP-first email login, Google fallback, a dimmed scrim, and close behavior that restores focus to the account trigger.
+- Account login overlay uses a centered whisper-cream panel with OTP-first email login, Google fallback, a dimmed scrim, and close behavior that restores focus to the account trigger. Its typography and controls inherit the normal `/design` scale: Karrik UI text, an 18px title, 15px input text, 13px buttons, and 52px controls—never poster-scale login chrome.
 
 ## Never
 
@@ -74,7 +74,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 | Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `48px 24px 88px` (mobile `16px 16px 80px`); three image price tiles clamp(280px, 34vw, 420px) |
 | Shop by Material | After Shop under / before Clearance; light cream; padding 48/24/72; centered uppercase header; shaped fabric tiles in an infinite circular center-mode 5-up carousel on desktop (100% active / 80% adjacent / 60% distance-2; 3-up mobile fallback); depth blur on side cards; keyboard + arrow controls; blur+dark scrim; no Explore CTA |
 | Clearance sale | After Material / before Voices; overlay banner (cream story image, primary-900, lighter scrim, sentence-case title, Upto 50% off badge); headerless rail; bottom pad 48/40 |
-| Account login overlay | Centered max-width panel over a dimmed page; Samantha Fab wordmark, Login with OTP form, Google fallback, terms copy; Escape, backdrop, and close button dismiss |
+| Account login overlay | Compact centered max-width panel over a dimmed page; Samantha Fab wordmark, Login with OTP form, Google fallback, terms copy; use the same Karrik UI scale as `/design`; Escape, backdrop, and close button dismiss |
 | Voices feature | After Clearance; centered header; infinite ticker cards; playbackRate hover 0.2; padding 56/0/80 |
 | Footer | Plum; brand + newsletter (“Join our newsletter for new drops” / Subscribe); denser columns + trust strip; no payment logos |
 
@@ -107,6 +107,7 @@ One-off experiments (“try X once”) do not get written until the user confirm
 
 ## Changelog
 
+- 2026-09-14 — Account overlay typography, logo, controls, and spacing reduced to the standard `/design` UI scale instead of the oversized reference-image scale.
 - 2026-09-14 — Added a Samantha Fab account login overlay with OTP-first email entry, Google fallback, dimmed scrim, and focus-safe dismissal.
 - 2026-09-14 — Removed the search overlay and search trigger from the wishlist route so `/design?route=wishlist` stays focused on saved items.
 - 2026-09-14 — Search overlay simplified: removed Clear search controls and “Showing top products” helper copy, expanded the form to full width, and restored Karrik body/UI typography throughout.

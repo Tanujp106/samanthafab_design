@@ -10,7 +10,9 @@ import {
   resolveCollectionSlug,
   resolveCommerceKind,
   resolveContentSlug,
+  resolveProductSlug,
 } from "./data/collections.js";
+import { catalogProducts, getCatalogProduct } from "./data/catalog.js";
 import { applyCollectionFilters, DEFAULT_SORT } from "./lib/collection-filters.mjs";
 import {
   addToBag,
@@ -45,6 +47,16 @@ const contentSlug =
   page.key === "blank" && !collectionSlug ? resolveContentSlug(routeParam, slugParam) : null;
 const commerceKind =
   page.key === "blank" && !collectionSlug && !contentSlug ? resolveCommerceKind(routeParam) : null;
+const productSlug =
+  page.key === "blank" && !collectionSlug && !contentSlug && !commerceKind
+    ? resolveProductSlug(routeParam, slugParam)
+    : null;
+const productView = productSlug
+  ? {
+      product: getCatalogProduct(productSlug) || getCatalogProduct("sage-handblock"),
+      relatedProducts: catalogProducts.filter((product) => product.id !== productSlug).slice(0, 4),
+    }
+  : null;
 const wishlistView = commerceKind === "wishlist" ? "wishlist" : null;
 const openBagOnLoad = commerceKind === "bag";
 const openSearchOnLoad = page.key === "blank" && routeParam === "search";
@@ -97,6 +109,9 @@ if (collectionSlug) {
 } else if (wishlistView) {
   document.body.dataset.commerceKind = "wishlist";
   document.title = "Wishlist — Samantha Fab";
+} else if (productView) {
+  document.body.dataset.productSlug = productSlug;
+  document.title = `${productView.product.name} — Samantha Fab`;
 } else {
   document.title = page.title;
 }
@@ -107,6 +122,7 @@ app.replaceChildren(
     collectionView: collectionSlug ? buildCollectionView(collectionSlug, collectionState) : null,
     contentView: contentSlug ? { page: getContentPage(contentSlug) } : null,
     commerceView: wishlistView ? { kind: "wishlist" } : null,
+    productView,
   }),
 );
 
@@ -673,9 +689,10 @@ document.querySelectorAll("[data-new-arrivals-carousel]").forEach((carousel) => 
 });
 
 function parseProductPayload(card) {
-  if (!card?.dataset?.productPayload) return null;
+  const source = card?.closest?.("[data-product-payload]") || card;
+  if (!source?.dataset?.productPayload) return null;
   try {
-    return JSON.parse(card.dataset.productPayload);
+    return JSON.parse(source.dataset.productPayload);
   } catch {
     return null;
   }
@@ -789,6 +806,10 @@ function refreshCommerceSurfaces() {
     const button = card.querySelector(".product-card__wishlist");
     if (button && id) setWishlistButtonState(button, isWishlisted(id));
   });
+  document.querySelectorAll("[data-product-page] [data-commerce-action='wishlist-toggle']").forEach((button) => {
+    const id = button.closest("[data-product-page]")?.dataset.productId;
+    if (id) setWishlistButtonState(button, isWishlisted(id));
+  });
 
   syncNavCommerceCounts();
 }
@@ -818,8 +839,7 @@ function bindCommerceInteractions(root = document) {
     if (wishlistBtn) {
       event.preventDefault();
       event.stopPropagation();
-      const card = wishlistBtn.closest(".product-card");
-      const product = parseProductPayload(card);
+      const product = parseProductPayload(wishlistBtn);
       if (!product) return;
       if (!wishlistBtn.dataset.productName && product.name) {
         wishlistBtn.dataset.productName = product.name;
@@ -835,13 +855,34 @@ function bindCommerceInteractions(root = document) {
     if (addBtn) {
       event.preventDefault();
       event.stopPropagation();
-      const card = addBtn.closest(".product-card");
-      const product = parseProductPayload(card);
+      const product = parseProductPayload(addBtn);
       if (!product) return;
       addToBag(product);
       showCommerceToast("Added to bag");
       refreshCommerceSurfaces();
       setBagDrawerOpen(true);
+      return;
+    }
+
+    const pdpSize = event.target.closest?.("[data-pdp-size]");
+    if (pdpSize) {
+      event.preventDefault();
+      const group = pdpSize.closest("[data-product-page]");
+      group?.querySelectorAll("[data-pdp-size]").forEach((size) => {
+        const selected = size === pdpSize;
+        size.classList.toggle("is-selected", selected);
+        size.setAttribute("aria-pressed", String(selected));
+      });
+      return;
+    }
+
+    const pdpSwatch = event.target.closest?.("[data-pdp-swatch]");
+    if (pdpSwatch) {
+      event.preventDefault();
+      const group = pdpSwatch.closest("[data-pdp-swatches]");
+      group?.querySelectorAll("[data-pdp-swatch]").forEach((swatch) => {
+        swatch.setAttribute("aria-pressed", String(swatch === pdpSwatch));
+      });
       return;
     }
 

@@ -43,6 +43,7 @@ export function productIdFrom(product = {}) {
 
 export function snapshotProduct(product = {}) {
   const id = productIdFrom(product);
+  const productSlug = id.replace(/^product-/, "").replace(/^clearance-/, "");
   return {
     id,
     name: product.name,
@@ -50,7 +51,7 @@ export function snapshotProduct(product = {}) {
     price: product.price,
     compareAt: product.compareAt || "",
     discount: product.discount || "",
-    href: product.href || "/design",
+    href: `/design?route=product&slug=${encodeURIComponent(productSlug)}`,
     tag: product.tag || "",
     media: product.media || {},
     hoverMedia: product.hoverMedia || null,

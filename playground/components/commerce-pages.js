@@ -1,4 +1,5 @@
 import { parsePriceValue } from "../lib/collection-filters.mjs";
+import { productUrl, resolveProductSlug } from "../data/collections.js";
 import { renderMedia } from "./media.js";
 
 function element(tag, className, text) {
@@ -21,6 +22,11 @@ function breadcrumbs(currentLabel) {
   crumbs.append(element("span", "collection-plp__crumb-sep", "/"));
   crumbs.append(element("span", "collection-plp__crumb collection-plp__crumb--current", currentLabel));
   return crumbs;
+}
+
+function productHref(item = {}) {
+  const slug = resolveProductSlug(item.id, null);
+  return slug ? productUrl(slug) : item.href || "/design";
 }
 
 function emptyIconVisual(iconKind = "heart") {
@@ -152,7 +158,7 @@ function bagLine(item) {
 
   const mediaWrap = element("div", "commerce-bag-line__media-wrap");
   const mediaLink = element("a", "commerce-bag-line__media");
-  mediaLink.href = item.href || "/design";
+  mediaLink.href = productHref(item);
   mediaLink.setAttribute("aria-label", item.name);
   mediaLink.append(renderMedia(item.media, { ratio: "portrait", notesEnabled: false }));
 
@@ -167,7 +173,7 @@ function bagLine(item) {
   if (item.tag) body.append(element("span", "product-tag", item.tag));
 
   const title = element("a", "commerce-bag-line__title", item.name);
-  title.href = item.href || "/design";
+  title.href = productHref(item);
   body.append(title);
 
   const priceLine = element("div", "product-price-line");

@@ -3,7 +3,9 @@ import { renderCollectionPlp, renderContentPage } from "./collection-plp.js";
 import { renderBagDrawer, renderWishlistPage } from "./commerce-pages.js";
 import { renderSearchOverlay } from "./search-overlay.js";
 import { renderAccountOverlay } from "./account-overlay.js";
+import { renderProductPage } from "./product-page.js";
 import { resolveHoverMedia } from "../data/hover-media.js";
+import { productUrl } from "../data/collections.js";
 import { isWishlisted, productIdFrom, readBag, readWishlist, snapshotProduct } from "../lib/commerce-store.mjs";
 
 function element(tag, className, text) {
@@ -787,6 +789,7 @@ function productColorSwatches(product) {
 export function renderProductCard(product, ctx, options = {}) {
   const card = element("article", ["product-card", options.className || ""].filter(Boolean).join(" "));
   const productId = productIdFrom(product);
+  const href = productUrl(productId);
   card.dataset.productId = productId;
   card.dataset.productPayload = JSON.stringify(snapshotProduct({ ...product, id: productId }));
 
@@ -818,7 +821,7 @@ export function renderProductCard(product, ctx, options = {}) {
   if (options.commerce) {
     const mediaStage = element("div", "product-card__media");
     const mediaLink = element("a", "product-card__media-link");
-    mediaLink.href = product.href;
+    mediaLink.href = href;
     mediaLink.setAttribute("aria-label", product.name);
     const primaryMedia = renderMedia(product.media, {
       ratio: "portrait",
@@ -862,14 +865,14 @@ export function renderProductCard(product, ctx, options = {}) {
     }
 
     const detailsLink = element("a", "product-card__link");
-    detailsLink.href = product.href;
+    detailsLink.href = href;
     detailsLink.append(body);
     card.append(mediaStage, detailsLink);
     return card;
   }
 
   const link = element("a", "product-card__link");
-  link.href = product.href;
+  link.href = href;
   link.append(renderMedia(product.media, { ratio: "portrait", notesEnabled: ctx.notesEnabled }), body);
   card.append(link);
   return card;
@@ -1668,7 +1671,8 @@ export function renderPage(page, options = {}) {
   const collectionView = options.collectionView || null;
   const contentView = options.contentView || null;
   const commerceView = options.commerceView || null;
-  const secondaryView = Boolean(collectionView || contentView || commerceView);
+  const productView = options.productView || null;
+  const secondaryView = Boolean(collectionView || contentView || commerceView || productView);
 
   const root = element("div", "site");
 
@@ -1734,6 +1738,16 @@ export function renderPage(page, options = {}) {
       }),
     );
     root.classList.add("site--commerce-page", "site--wishlist");
+  } else if (productView?.product) {
+    main.append(
+      renderProductPage({
+        product: productView.product,
+        relatedProducts: productView.relatedProducts || [],
+        ctx,
+        renderProductCard,
+      }),
+    );
+    root.classList.add("site--product-page");
   }
 
   // USP strip sits above sticky nav (same role as the old utility strip).

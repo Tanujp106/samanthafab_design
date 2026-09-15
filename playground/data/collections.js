@@ -15,6 +15,33 @@ export function commerceUrl(kind) {
   return `/design?route=${route}`;
 }
 
+export function productUrl(productId) {
+  return `/design?route=product&slug=${encodeURIComponent(productId)}`;
+}
+
+const LEGACY_PRODUCT_ALIASES = {
+  marigold: "marigold-print",
+  "courtyard": "courtyard-print",
+  "courtyard-rtw": "courtyard-print",
+  "indigo-stripe": "indigo-rtw",
+  "sage-rtw": "sage-handblock",
+  "marigold-rtw": "marigold-print",
+  "black-border-rtw": "black-border",
+  "workroom-rtw": "workroom-indigo",
+  "rust-rtw": "rust-marigold",
+};
+
+/** Resolve canonical and legacy product routes to the shared prototype PDP. */
+export function resolveProductSlug(route, slug) {
+  let candidate = route === "product" ? slug : route;
+  if (!candidate) return null;
+
+  candidate = String(candidate)
+    .replace(/^product-/, "")
+    .replace(/^clearance-/, "");
+  return LEGACY_PRODUCT_ALIASES[candidate] || candidate;
+}
+
 function collection(slug, title, options = {}) {
   return {
     slug,
