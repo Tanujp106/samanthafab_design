@@ -47,3 +47,17 @@ test("product page wiring uses one reusable PDP surface and existing commerce ac
   assert.match(css, /\.product-detail__gallery/);
   assert.match(css, /\.product-detail__purchase/);
 });
+
+test("product page uses a dense gallery and structured reference-inspired purchase panel", async () => {
+  const app = await source("playground/app.js");
+  const productPage = await source("playground/components/product-page.js");
+  const css = await source("playground/styles/design.css");
+
+  assert.match(productPage, /product-detail__tax-note/);
+  assert.match(productPage, /product-detail__delivery-check/);
+  assert.match(productPage, /product-detail__buy-now/);
+  assert.match(app, /data-pdp-delivery/);
+  assert.match(app, /buy-now/);
+  assert.match(css, /\.product-detail__gallery[\s\S]*grid-template-columns:\s*repeat\(2/);
+  assert.match(css, /\.product-detail__delivery-check/);
+});

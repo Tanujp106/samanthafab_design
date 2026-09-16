@@ -129,6 +129,29 @@ test("design nits: every feature banner highlights one title word", async () => 
   );
 });
 
+test("design nits: New Arrivals highlight wash, filled wishlist, and zero rail-top pads", async () => {
+  const css = await source("playground/styles/design.css");
+  const app = await source("playground/app.js");
+
+  assert.match(
+    css,
+    /body\[data-page="blank"\] #design-new-arrivals\.design-new-arrivals\s*\{[^}]*background:\s*var\(--white\)[^}]*padding:\s*36px 24px/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] #design-new-arrivals \.design-new-arrivals__inner\s*\{[^}]*border-radius:\s*16px[^}]*background:\s*var\(--color-primary-100\)/s,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-new-arrivals--rail-only\s*\{[^}]*padding-top:\s*0/s,
+  );
+  assert.match(
+    css,
+    /product-card__wishlist\[aria-pressed="true"\] svg(?:\s*,\s*[^\{]+)?\s*\{[^}]*fill:\s*currentColor/s,
+  );
+  assert.match(app, /svg\.setAttribute\("fill",\s*wishlisted \? "currentColor" : "none"\)/);
+});
+
 test("design nits: New Arrivals eyebrow→title is 6px", async () => {
   const css = await source("playground/styles/design.css");
 
@@ -217,6 +240,43 @@ test("design nits: collection captions use a stacked Explore action", async () =
   );
 });
 
+test("design feedback: mobile collection tiles remove Explore and anchor titles at the bottom", async () => {
+  const css = await source("playground/styles/design.css");
+
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*width:\s*100%[^}]*background:\s*linear-gradient\(\s*to top/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*-webkit-mask-image:\s*linear-gradient\(to top/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__caption\s*\{[^}]*justify-content:\s*flex-end/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__caption-title\s*\{[^}]*order:\s*2/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__subcopy\s*\{[^}]*order:\s*1/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__action\s*\{[^}]*display:\s*none/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*rgba\(18,\s*10,\s*12,\s*0\.68\)\s*0%[^}]*rgba\(18,\s*10,\s*12,\s*0\.34\)\s*28%[^}]*rgba\(18,\s*10,\s*12,\s*0\.12\)\s*56%[^}]*transparent\s*78%/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__scrim\s*\{[^}]*-webkit-mask-image:\s*linear-gradient\(to top, #000 0%, #000 30%, transparent 86%\)/s,
+  );
+});
+
 test("design nits: color swatches sit below a vertically aligned price line", async () => {
   const css = await source("playground/styles/design.css");
   const render = await source("playground/components/render.js");
@@ -243,21 +303,29 @@ test("design nits: color swatches sit below a vertically aligned price line", as
   );
 });
 
-test("design nits: USP row icons use a staggered infinite loop", async () => {
+test("design nits: USP row is a compact primary infinite ticker", async () => {
   const css = await source("playground/styles/design.css");
   const render = await source("playground/components/render.js");
   const reducedMotion = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));
 
-  assert.match(render, /design-usp-row__icon-wrap/);
+  assert.match(render, /design-usp-row__track/);
+  assert.match(render, /appendItems\(items, true\)/);
   assert.match(
     css,
-    /body\[data-page="blank"\] \.design-usp-row__icon-wrap\s*\{[^}]*animation:\s*design-usp-row-icon\s+3\.6s\s+ease-in-out\s+infinite/s,
+    /body\[data-page="blank"\] \.design-usp-row\s*\{[^}]*height:\s*56px[^}]*background:\s*var\(--color-primary\)/s,
   );
-  assert.match(css, /design-usp-row__item:nth-child\(2\)[\s\S]*animation-delay:\s*-0\.9s/);
-  assert.match(css, /@keyframes\s+design-usp-row-icon[\s\S]*transform:\s*translateY\(-6px\)\s+scale\(1\.06\)/);
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-usp-row__track\s*\{[^}]*animation:\s*design-usp-row-ticker\s+28s\s+linear\s+infinite/s,
+  );
+  assert.match(css, /@keyframes\s+design-usp-row-ticker[\s\S]*translateX\(-50%\)/);
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-usp-row__label\s*\{[^}]*color:\s*var\(--cream\)/s,
+  );
   assert.match(
     reducedMotion,
-    /body\[data-page="blank"\] \.design-usp-row__icon-wrap\s*\{[^}]*animation:\s*none/s,
+    /body\[data-page="blank"\] \.design-usp-row__track\s*\{[^}]*animation:\s*none/s,
   );
 });
 
@@ -443,7 +511,7 @@ test("design nits: Shop under uses uppercase titles and tightened section bottom
   );
   assert.match(
     css,
-    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-shop-under__tile\s*\{[^}]*min-height:\s*min\(64vw,\s*340px\)/s,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-shop-under__tile\s*\{[^}]*min-height:\s*min\(56vw,\s*260px\)/s,
   );
 });
 
@@ -460,7 +528,7 @@ test("design nits: collection tiles are taller and campaign next arrow is froste
   );
   assert.match(
     css,
-    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__tile:nth-child\(n \+ 3\)\s*\{[^}]*min-height:\s*min\(58vw,\s*280px\)/s,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__tile:nth-child\(n \+ 3\)\s*\{[^}]*min-height:\s*min\(52vw,\s*220px\)/s,
   );
   assert.match(
     css,
@@ -470,6 +538,114 @@ test("design nits: collection tiles are taller and campaign next arrow is froste
     css,
     /body\[data-page="blank"\] #design-ready-to-wear-banner \.design-feature-banner__title\s*\{[^}]*font-size:\s*clamp\(30px,\s*3\.6vw,\s*52px\)/s,
   );
+});
+
+test("design feedback: mobile design sections stay compact and complete at 415px", async () => {
+  const css = await source("playground/styles/design.css");
+
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-shop-under__tile\s*\{[^}]*min-height:\s*min\(56vw,\s*260px\)/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-materials__viewport\s*\{[^}]*width:\s*calc\(100% \+ 32px\)[^}]*margin-inline:\s*-16px[^}]*padding-inline:\s*16px/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-collection-bento__tile:nth-child\(1\),[\s\S]*body\[data-page="blank"\] \.design-collection-bento__tile:nth-child\(n \+ 3\)\s*\{[^}]*grid-column:\s*span 1[^}]*min-height:\s*min\(52vw,\s*220px\)/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 420px\) \{[\s\S]*body\[data-page="blank"\] \.design-new-arrivals__track\s*\{[^}]*grid-template-columns:\s*repeat\(8,\s*calc\(\(100% - 16px\) \/ 2\)\)/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 420px\) \{[\s\S]*body\[data-page="blank"\] \.design-new-arrivals__viewport\s*\{[^}]*height:\s*calc\(\(\(100cqi - 16px\) \/ 2\) \* 4 \/ 3 \+ var\(--product-rail-details\)\)/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 420px\) \{[\s\S]*body\[data-page="blank"\] \.design-new-arrivals__controls\s*\{[^}]*top:\s*calc\(\(100cqw - 16px\) \/ 3\)/s,
+  );
+});
+
+test("design feedback: mobile rails, RTW USPs, clearance, and testimonials use the requested spacing", async () => {
+  const css = await source("playground/styles/design.css");
+
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-new-arrivals__card \.product-card__add-to-cart\s*\{[^}]*font-size:\s*var\(--text-xs\)/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-feature-banner__usps\s*\{[^}]*padding-top:\s*0/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] #design-ready-to-wear-products\.design-new-arrivals\s*\{[^}]*padding-top:\s*0/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] #design-clearance-sale\.design-new-arrivals\s*\{[^}]*padding-top:\s*0/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 900px\) \{[\s\S]*body\[data-page="blank"\] \.design-testimonials__header\s*\{[^}]*align-items:\s*center[^}]*text-align:\s*center/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 900px\) \{[\s\S]*body\[data-page="blank"\] \.design-testimonials__heading\s*\{[^}]*text-align:\s*center/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 900px\) \{[\s\S]*body\[data-page="blank"\] \.design-testimonials__lede\s*\{[^}]*text-align:\s*center/s,
+  );
+});
+
+test("design feedback: mobile collection rhythm and testimonial alignment stay intentional", async () => {
+  const css = await source("playground/styles/design.css");
+
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] #design-shop-by-collection \.design-collection-bento__tile:nth-child\(5\) \.design-collection-bento__label\s*\{[^}]*font-size:\s*22px/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] #design-shop-by-collection\.design-collection-bento\s*\{[^}]*padding:\s*48px 16px 32px/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] #design-new-arrivals\.design-new-arrivals\s*\{[^}]*padding:\s*28px 16px 44px/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] #design-best-sellers\.design-new-arrivals\s*\{[^}]*padding-bottom:\s*48px/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-shop-under\s*\{[^}]*padding:\s*16px 16px 64px/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 900px\) \{[\s\S]*body\[data-page="blank"\] \.design-testimonials\s*\{[^}]*text-align:\s*center/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 900px\) \{[\s\S]*body\[data-page="blank"\] \.design-testimonials__card\s*\{[^}]*text-align:\s*left/s,
+  );
+});
+
+test("design feedback: New Arrivals Shop All renders below the product rail", async () => {
+  const render = await source("playground/components/render.js");
+
+  assert.match(render, /const placeViewAllBelowRail = section\.id === "design-new-arrivals"/);
+  assert.match(render, /if \(section\.viewAll && !placeViewAllBelowRail\)/);
+  assert.match(render, /if \(section\.action \|\| \(placeViewAllBelowRail && section\.viewAll\)\)/);
+  assert.match(render, /const action = section\.action \|\| section\.viewAll/);
 });
 
 test("design nits: Ready-to-wear feature banner uses white section frame + primary-100 panel", async () => {

@@ -36,7 +36,15 @@ function uniqueMedia(product) {
     if (seen.has(media.src)) return false;
     seen.add(media.src);
     return true;
-  }).slice(0, 3);
+  }).slice(0, 4);
+}
+
+function discountLabel(product) {
+  if (product.discount) return product.discount;
+  const price = Number(String(product.price || "").replace(/[^0-9.]/g, ""));
+  const compareAt = Number(String(product.compareAt || "").replace(/[^0-9.]/g, ""));
+  if (!price || !compareAt || compareAt <= price) return "";
+  return `${Math.round((1 - price / compareAt) * 100)}% off`;
 }
 
 function renderBreadcrumbs(product) {
@@ -120,7 +128,6 @@ function renderGallery(product) {
         notesEnabled: false,
         className: [
           "product-detail__media",
-          index === 0 ? "product-detail__media--featured" : "",
         ].filter(Boolean).join(" "),
       }),
     );
@@ -139,9 +146,11 @@ function renderPurchasePanel(product) {
   );
 
   const priceLine = element("div", "product-detail__price-line");
-  priceLine.append(element("span", "product-detail__price", product.price));
   if (product.compareAt) priceLine.append(element("span", "product-detail__compare", product.compareAt));
-  if (product.discount) priceLine.append(element("span", "product-detail__discount", product.discount));
+  priceLine.append(element("span", "product-detail__price", product.price));
+  const discount = discountLabel(product);
+  if (discount) priceLine.append(element("span", "product-detail__discount", discount));
+  const taxNote = element("p", "product-detail__tax-note", "Inclusive of all taxes");
 
   const copy = element(
     "p",
@@ -167,6 +176,28 @@ function renderPurchasePanel(product) {
     element("p", "product-detail__shipping-copy", "Dispatches in 2–3 working days. Free shipping on orders over ₹2,500."),
   );
 
+  const offer = element("div", "product-detail__offer");
+  offer.append(
+    element("span", "product-detail__offer-kicker", "Studio assurance"),
+    element("strong", "product-detail__offer-title", "Made for an easy, considered drape"),
+    element("p", "product-detail__offer-copy", "COD across India · Free shipping over ₹2,500"),
+  );
+
+  const deliveryCheck = element("section", "product-detail__delivery-check");
+  deliveryCheck.append(element("h2", "product-detail__delivery-title", "Check delivery details"));
+  const deliveryForm = element("form", "product-detail__delivery-form");
+  deliveryForm.dataset.pdpDelivery = "true";
+  const pincode = element("input", "product-detail__delivery-input");
+  pincode.type = "text";
+  pincode.inputMode = "numeric";
+  pincode.maxLength = 6;
+  pincode.placeholder = "Enter pincode";
+  pincode.setAttribute("aria-label", "Enter pincode");
+  const deliveryButton = element("button", "button product-detail__delivery-button", "Check");
+  deliveryButton.type = "submit";
+  deliveryForm.append(pincode, deliveryButton);
+  deliveryCheck.append(deliveryForm, element("p", "product-detail__delivery-status", "Delivery preview for the prototype"));
+
   const actions = element("div", "product-detail__actions");
   const addButton = element("button", "button button--fill product-detail__add", "Add to bag");
   addButton.type = "button";
@@ -176,10 +207,19 @@ function renderPurchasePanel(product) {
   wishlist.type = "button";
   wishlist.dataset.commerceAction = "wishlist-toggle";
   wishlist.dataset.productName = product.name;
-  wishlist.setAttribute("aria-label", isWishlisted(productIdFrom(product)) ? `Saved ${product.name}` : `Save ${product.name}`);
-  wishlist.setAttribute("aria-pressed", String(isWishlisted(productIdFrom(product))));
-  wishlist.append(icon('<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/>'));
-  actions.append(addButton, wishlist);
+  const wishlisted = isWishlisted(productIdFrom(product));
+  wishlist.setAttribute("aria-label", wishlisted ? `Saved ${product.name}` : `Save ${product.name}`);
+  wishlist.setAttribute("aria-pressed", String(wishlisted));
+  const heart = icon('<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/>');
+  if (wishlisted) heart.setAttribute("fill", "currentColor");
+  wishlist.append(heart);
+  const primaryActions = element("div", "product-detail__primary-actions");
+  primaryActions.append(addButton, wishlist);
+  const buyNow = element("button", "button product-detail__buy-now", "Buy it now");
+  buyNow.type = "button";
+  buyNow.dataset.commerceAction = "buy-now";
+  buyNow.setAttribute("aria-label", `Buy ${product.name} now`);
+  actions.append(primaryActions, buyNow);
 
   const detailsAccordion = renderAccordion(
     "Details",
@@ -191,12 +231,16 @@ function renderPurchasePanel(product) {
   panel.append(
     heading,
     priceLine,
+    taxNote,
     copy,
     colourField,
     sizeField,
     shipping,
+    offer,
+    deliveryCheck,
     actions,
     detailsAccordion,
+    renderAccordion("Fabric & care", `${product.material || "This piece"} is designed for an easy fall. Follow the garment care label for its best life.`),
     renderAccordion("Delivery & returns", "Free shipping over ₹2,500 with easy returns and exchanges across India."),
   );
   return panel;

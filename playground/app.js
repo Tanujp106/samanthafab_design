@@ -1,7 +1,7 @@
 import { pages } from "./pages/index.js";
 import { renderPage, renderProductCard } from "./components/render.js";
 import { renderCollectionPlp } from "./components/collection-plp.js";
-import { renderBagDrawerBody, renderWishlistPage } from "./components/commerce-pages.js";
+import { renderBagDrawerBody, renderBagPage, renderWishlistPage } from "./components/commerce-pages.js";
 import { filterSearchProducts, normalizeSearchQuery } from "./components/search-overlay.js";
 import {
   getCollection,
@@ -741,6 +741,8 @@ function setWishlistButtonState(button, wishlisted) {
   const name = button.dataset.productName || "item";
   button.setAttribute("aria-pressed", wishlisted ? "true" : "false");
   button.setAttribute("aria-label", wishlisted ? `Saved ${name}` : `Save ${name}`);
+  const svg = button.querySelector("svg");
+  if (svg) svg.setAttribute("fill", wishlisted ? "currentColor" : "none");
 }
 
 function refreshBagDrawerContents() {
@@ -762,7 +764,40 @@ function refreshBagDrawerContents() {
   }
 }
 
+function refreshMobileBagPageContents() {
+  const mount = document.querySelector('[data-mobile-commerce-mount="bag"]');
+  if (!mount) return;
+  mount.replaceChildren(
+    renderBagPage({
+      items: readBag(),
+      empty: page.mobile?.bag,
+    }),
+  );
+}
+
+function setMobileTabState(tabId) {
+  const panels = [...document.querySelectorAll("[data-mobile-panel]")];
+  const tabButtons = [...document.querySelectorAll("[data-mobile-bottom-bar] [data-mobile-tab]")];
+  if (!panels.length || !tabButtons.length) return false;
+
+  document.body.dataset.mobileTab = tabId;
+  tabButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.mobileTab === tabId);
+  });
+  panels.forEach((panel) => {
+    panel.hidden = panel.dataset.mobilePanel !== tabId;
+  });
+  if (tabId !== "home") setMobileDrawerOpen(false);
+  window.scrollTo({ top: 0, behavior: "auto" });
+  return true;
+}
+
 function setBagDrawerOpen(open) {
+  if (window.matchMedia("(max-width: 900px)").matches && setMobileTabState(open ? "bag" : "home")) {
+    if (open) refreshMobileBagPageContents();
+    return;
+  }
+
   const drawer = document.querySelector("[data-bag-drawer]");
   if (!drawer) return;
   if (open) refreshBagDrawerContents();
@@ -795,6 +830,10 @@ function refreshCommerceSurfaces() {
         renderProductCard,
       }),
     );
+  }
+
+  if (document.querySelector('[data-mobile-commerce-mount="bag"]')) {
+    refreshMobileBagPageContents();
   }
 
   if (document.body.classList.contains("bag-drawer-open")) {
@@ -859,6 +898,19 @@ function bindCommerceInteractions(root = document) {
       if (!product) return;
       addToBag(product);
       showCommerceToast("Added to bag");
+      refreshCommerceSurfaces();
+      setBagDrawerOpen(true);
+      return;
+    }
+
+    const buyNow = event.target.closest?.("[data-commerce-action='buy-now']");
+    if (buyNow) {
+      event.preventDefault();
+      event.stopPropagation();
+      const product = parseProductPayload(buyNow);
+      if (!product) return;
+      addToBag(product);
+      showCommerceToast("Checkout is a playground prototype");
       refreshCommerceSurfaces();
       setBagDrawerOpen(true);
       return;
@@ -936,6 +988,20 @@ function bindCommerceInteractions(root = document) {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && document.body.classList.contains("bag-drawer-open")) {
       setBagDrawerOpen(false);
+    }
+  });
+
+  document.addEventListener("submit", (event) => {
+    const deliveryForm = event.target.closest?.("[data-pdp-delivery]");
+    if (!deliveryForm) return;
+    event.preventDefault();
+    const input = deliveryForm.querySelector("[aria-label='Enter pincode']");
+    const status = deliveryForm.parentElement?.querySelector("[data-pdp-delivery-status]") ||
+      deliveryForm.nextElementSibling;
+    if (status) {
+      status.textContent = input?.value.trim()
+        ? "Delivery details previewed for this pincode."
+        : "Enter a pincode to preview delivery details.";
     }
   });
 }
@@ -1087,21 +1153,7 @@ document.querySelectorAll("[data-testimonials-ticker]").forEach((section) => {
 
 const mobileBottomBar = document.querySelector("[data-mobile-bottom-bar]");
 if (mobileBottomBar) {
-  const panels = [...document.querySelectorAll("[data-mobile-panel]")];
   const tabButtons = [...mobileBottomBar.querySelectorAll("[data-mobile-tab]")];
-
-  const setMobileTab = (tabId) => {
-    document.body.dataset.mobileTab = tabId;
-    tabButtons.forEach((button) => {
-      button.classList.toggle("is-active", button.dataset.mobileTab === tabId);
-    });
-    panels.forEach((panel) => {
-      const isActive = panel.dataset.mobilePanel === tabId;
-      panel.hidden = !isActive;
-    });
-    if (tabId !== "home") setMobileDrawerOpen(false);
-    window.scrollTo({ top: 0, behavior: "auto" });
-  };
 
   tabButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -1110,14 +1162,14 @@ if (mobileBottomBar) {
         return;
       }
       if (button.dataset.mobileTab === "bag") {
-        setBagDrawerOpen(true);
+        setMobileTabState("bag");
         return;
       }
-      setMobileTab(button.dataset.mobileTab);
+      setMobileTabState(button.dataset.mobileTab);
     });
   });
 
-  setMobileTab("home");
+  setMobileTabState(document.body.dataset.mobileTab === "bag" ? "bag" : "home");
 }
 
 const mobileSearchInput = document.querySelector("[data-mobile-search-input]");

@@ -183,7 +183,7 @@ test("mobile shell: blank page ships mobile config + bestseller products", () =>
   assert.ok(bestSellers?.products?.length >= 4);
 });
 
-test("mobile shell: renderPage builds bottom bar, drawer, explore, empty panels", async () => {
+test("mobile shell: renderPage builds bottom bar, drawer, explore, and bag page", async () => {
   installMinimalDom();
   const { renderPage } = await import("../playground/components/render.js");
   const tree = renderPage(blank, { notesEnabled: false });
@@ -223,8 +223,9 @@ test("mobile shell: renderPage builds bottom bar, drawer, explore, empty panels"
   );
 
   assert.ok(tree.querySelector("[data-mobile-panel=wishlist]"));
+  assert.ok(tree.querySelector("[data-mobile-panel=bag]"));
+  assert.ok(tree.querySelector("[data-mobile-commerce-mount=bag]"));
   assert.ok(tree.querySelector("[data-bag-drawer]"));
-  assert.equal(tree.querySelector("[data-mobile-panel=bag]"), null);
 
   const header = tree.querySelector(".design-reference-nav__top") || tree.querySelectorAll(".design-reference-nav")[0];
   assert.ok(tree.querySelector("[data-mobile-drawer-trigger]") || tree.querySelector(".nav-menu-toggle"));

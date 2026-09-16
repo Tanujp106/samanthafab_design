@@ -55,7 +55,11 @@ test("design search opens a product-rich overlay from the reference nav", async 
   assert.match(css, /\.search-overlay\s*\{[^}]*font-family:\s*var\(--font-body\)/s);
   assert.match(css, /\.search-overlay__suggestion\s*\{[^}]*font-family:\s*var\(--font-body\)/s);
   assert.match(css, /\.search-overlay__card \.product-name\s*\{[^}]*font-family:\s*var\(--font-body\)/s);
-  assert.match(css, /\.search-overlay__empty-title\s*\{[^}]*font-family:\s*var\(--font-body\)/s);
+  assert.doesNotMatch(search, /Nothing found yet/);
+  assert.doesNotMatch(search, /Try a saree, fabric, or collection name\./);
+  assert.doesNotMatch(css, /search-overlay__empty-title/);
+  assert.doesNotMatch(css, /search-overlay__empty-copy/);
+  assert.match(css, /\.search-overlay__sidebar-clear\s*\{[^}]*text-decoration:\s*none/s);
 });
 
 test("search overlay includes a reduced-motion-safe typing loop and product filtering contract", async () => {

@@ -270,6 +270,29 @@ function renderBagBody({ items = [], empty = {} } = {}) {
   return { body, count, subtotal };
 }
 
+/** Mobile bag page: the same bag content without the desktop drawer chrome. */
+export function renderBagPage({ items = [], empty = {} } = {}) {
+  const root = element("section", "commerce-page commerce-page--bag");
+  root.dataset.commercePage = "bag";
+
+  const header = element("header", "commerce-page__header");
+  const { body, count } = renderBagBody({ items, empty });
+  body.classList.add("bag-page__body");
+  header.append(element("h1", "commerce-page__title", "Shopping bag"));
+  const lede = element(
+    "p",
+    "commerce-page__lede",
+    count
+      ? `${count} ${count === 1 ? "piece" : "pieces"} ready to checkout`
+      : "Add something you love",
+  );
+  lede.dataset.bagPageCount = "true";
+  header.append(lede);
+
+  root.append(header, body);
+  return root;
+}
+
 /** Right-side cart overlay (not a routed page). */
 export function renderBagDrawer({ items = [], empty = {} } = {}) {
   const root = element("div", "bag-drawer");

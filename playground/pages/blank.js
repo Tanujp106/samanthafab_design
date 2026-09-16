@@ -358,7 +358,7 @@ export const blank = {
       name: "USP",
       type: "usp-row",
       hideReviewNotes: true,
-      annotation: "Four quiet assurances — icon above, label below; sits under New Arrivals.",
+      annotation: "Compact primary infinite ticker — icon + cream label; sits under New Arrivals.",
       items: [
         { icon: "banknote", label: "Cash on delivery" },
         { icon: "refresh-cw", label: "Easy returns" },
@@ -1044,6 +1044,13 @@ export const blank = {
         "Close the trust loop with shipping, returns, COD, WhatsApp, care and contact details.",
       brand: "SAMANTHA FAB",
       brandLine: "Modern drapes, expressive prints and everyday ease.",
+      socialsHeading: "Connect with us",
+      socials: [
+        { icon: "instagram", label: "Instagram", href: "https://www.instagram.com/" },
+        { icon: "facebook", label: "Facebook", href: "https://www.facebook.com/" },
+        { icon: "pinterest", label: "Pinterest", href: "https://www.pinterest.com/" },
+        { icon: "youtube", label: "YouTube", href: "https://www.youtube.com/" },
+      ],
       newsletter: {
         label: "Join our newsletter for new drops",
         placeholder: "Email address",
@@ -1082,15 +1089,6 @@ export const blank = {
             { label: "Contact", href: "/?route=contact" },
             { label: "Privacy", href: "/?route=privacy" },
             { label: "Terms", href: "/?route=terms" },
-          ],
-        },
-        {
-          heading: "Stay in touch",
-          links: [
-            { label: "Instagram", href: "/?route=instagram" },
-            { label: "WhatsApp", href: "https://wa.me/" },
-            { label: "Email", href: "mailto:hello@samanthafab.example" },
-            { label: "Newsletter", href: "/?route=newsletter" },
           ],
         },
       ],

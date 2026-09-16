@@ -38,7 +38,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 - Split editorial (media + copy): explicit **32–64px** column gap.
 - Product/occasion tags: `Everyday` / `Work` / `Festive` / `Wedding` / `Ready-to-wear` — never “New”.
 - Primary CTAs (`View all`, `Shop ready-to-wear`): filled primary button.
-- Collection tiles may use one occasion-specific Lucide line icon in a vertically distributed editorial caption; keep it quiet, current-color, and free of enclosing badges or circles. The icon/title leads from the upper-left; a small Explore text action anchors lower-left. No “Starting with…” price sublines.
+- Collection tiles may use one occasion-specific Lucide line icon in a vertically distributed editorial caption; keep it quiet, current-color, and free of enclosing badges or circles. On desktop, the icon/title leads from the upper-left and a small Explore text action anchors lower-left. On mobile, hide Explore, move the title group to the bottom, and use a bottom-up linear scrim. No “Starting with…” price sublines.
 - Color swatches in the **price row** (right-aligned), not on image hover with Add to cart.
 - Product-card details stack tightly (tag → name → price ~6px); do not push price to the bottom with `margin-top: auto` — that opens a large title→price gap on cards without colors. When colors exist, keep swatches beneath the price line.
 - Commerce product cards crossfade to an alternate archive image on desktop hover / focus-within when a hover pair exists (`media--primary` + `media--hover`); fine-pointer only; reduced motion keeps the swap instant (no zoom fight with the hover layer).
@@ -46,7 +46,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 - Annotations / review chrome: only with `?notes=1`. Keep default `/design` clean.
 - Editorial geometry: hairline gaps, restrained radius, varied section rhythm, real or replaceable photos.
 - Material cards use direct textile imagery and editorial copy, not symbolic iconography.
-- Search overlay uses a 100% width search form and Karrik body/UI type throughout; omit Clear search controls and helper status copy such as “Showing top products.”
+- Search overlay uses a 100% width search form and Karrik body/UI type throughout; omit Clear search controls and helper status copy such as “Showing top products.” Keep the hidden empty-results shell behavior-only, without “Nothing found yet” or prompt copy, and style “Clear recent searches” as an un-underlined text control.
 - Account login overlay uses a centered whisper-cream panel with OTP-first email login, Google fallback, a dimmed scrim, and close behavior that restores focus to the account trigger. Its typography and controls inherit the normal `/design` scale: Karrik UI text, an 18px title, 15px input text, 13px buttons, and 52px controls—never poster-scale login chrome.
 
 ## Never
@@ -64,19 +64,19 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 | Section | Defaults |
 | --- | --- |
 | Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); left-aligned desktop copy with a localized translucent blur veil and a darker, smaller repeating paisley motif constrained to the left 60%; centered mobile fallback; centered prev/next arrows; Lora title with optional palette-native accent word (`highlight`) via `skewX(-12deg)` |
-| Shop by collection | Centered title + light lede → gap → taller 2+3 bento; vertically distributed icon/title/Explore captions (no “Starting with…” price lines); soft **left** linear scrim; top-align portraits; borderless tiles |
-| New Arrivals | Light cream surface; Lora/primary-800 uppercase titles; centered header + Shop All; left-aligned product cards; Shop All primary button 13px; fixed-height horizontal rail; section pad bottom 72px (mobile 64px); product details `--product-rail-details: 7.75rem` (fits badge + swatches); price line shows “24% off” badge |
-| USP row | After New Arrivals / before Best sellers; 4 static items; Lucide line icons (banknote / refresh-cw / truck / message-circle) above labels; no section title; **primary-50** wash; 4-col desktop / 2-col mobile |
+| Shop by collection | Centered title + light lede → gap → taller 2+3 bento; vertically distributed icon/title/Explore captions (no “Starting with…” price lines); soft **left** linear scrim; top-align portraits; borderless tiles; mobile fallback is a compact 2×2 grid with a slightly smaller Ready-to-wear title |
+| New Arrivals | Match Ready-to-wear panel chrome: cream section frame (`36px 24px` / mobile `28px 16px 44px`), inset **primary-100** container, **16px** radius, RTW-matching inner pad; Lora/primary-800 uppercase titles; centered header with Shop All below the rail; left-aligned product cards; Shop All primary button 13px; fixed-height horizontal rail; two product cards visible at a time on mobile across every product rail; product details `--product-rail-details: 7.75rem`; “24% off” badge; Save heart fills solid when wishlisted |
+| USP row | After New Arrivals / before Best sellers; compact **56px** primary ticker; cream Lucide icons + uppercase labels; infinite horizontal marquee (duplicated track); reduced-motion freezes |
 | Best sellers | Same product-carousel as New Arrivals; after USP row / before RTW banner; Shop All CTA → `/design?route=collection&slug=bestsellers` |
 | Collection PLP | Reusable template for all collections via `?route=collection&slug=…` (aliases like `?route=bestsellers` also resolve). Desktop: sticky left filters + 3-col grid. Mobile: Filters + Sort as separate bottom sheets. Facets: Availability, Price, Category, Collections, Size, Color. Reuse commerce `renderProductCard`. Shared catalog in `playground/data/`. |
 | Ready-to-wear banner | Light cream section + 36px/24px frame; primary-100 inner radius 16px; collage right; title sentence case; CTA primary 13px; three compact icon+label USPs beneath the CTA |
-| RTW product rail | Headerless; CTA “Shop All” 13px; brand primary |
-| Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `48px 24px 88px` (mobile `16px 16px 80px`); three image price tiles clamp(280px, 34vw, 420px) |
-| Shop by Material | After Shop under / before Clearance; light cream; padding 48/24/72; centered uppercase header; shaped fabric tiles in an infinite circular center-mode 5-up carousel on desktop (100% active / 80% adjacent / 60% distance-2; 3-up mobile fallback); depth blur on side cards; keyboard + arrow controls; blur+dark scrim; no Explore CTA |
-| Clearance sale | After Material / before Voices; overlay banner (cream story image, primary-900, lighter scrim, sentence-case title, Upto 50% off badge); headerless rail; bottom pad 48/40 |
+| RTW product rail | Headerless; **no top padding**; CTA “Shop All” 13px; brand primary |
+| Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `48px 24px 88px` (mobile `16px 16px 64px`); three image price tiles clamp(280px, 34vw, 420px), with a shorter `min(56vw, 260px)` mobile height |
+| Shop by Material | After Shop under / before Clearance; light cream; padding 48/24/72; centered uppercase header; shaped fabric tiles in an infinite circular center-mode 5-up carousel on desktop (100% active / 80% adjacent / 60% distance-2; 3-up mobile fallback); mobile viewport runs edge-to-edge with a 16px internal inset so side cards are not clipped by the section gutter; depth blur on side cards; keyboard + arrow controls; blur+dark scrim; no Explore CTA |
+| Clearance sale | After Material / before Voices; overlay banner (cream story image, primary-900, lighter scrim, sentence-case title, Upto 50% off badge); headerless rail; **no top padding**; bottom pad 48/40 |
 | Account login overlay | Compact centered max-width panel over a dimmed page; Samantha Fab wordmark, Login with OTP form, Google fallback, terms copy; use the same Karrik UI scale as `/design`; Escape, backdrop, and close button dismiss |
-| Voices feature | After Clearance; centered header; infinite ticker cards; playbackRate hover 0.2; padding 56/0/80 |
-| Footer | Plum; brand + newsletter (“Join our newsletter for new drops” / Subscribe); denser columns + trust strip; no payment logos |
+| Voices feature | After Clearance; centered section surface and header; left-aligned card content; infinite ticker cards; playbackRate hover 0.2; padding 56/0/80 |
+| Footer | Plum; brand + Connect with us Phosphor social icons above newsletter; **3** link columns (Shop / Help / About); trust strip; no payment logos |
 
 Micro measurements live in [nits.md](nits.md). When unsure, match New Arrivals / Collection hierarchy already on `/design`.
 
@@ -101,12 +101,25 @@ One-off experiments (“try X once”) do not get written until the user confirm
 - Bottom bar (fixed): Home · Explore · WhatsApp (external link) · Wishlist · Bag — icon + label; active tab filled/darker.
 - Hamburger opens a **left drawer** with promo strip, category links (from Shop mega menu), and chevrons.
 - **Explore** tab: pill search bar (client-side filter only — prototype), trending chips, 2-up product grid reusing Best sellers catalog.
-- **Wishlist** / **Bag**: Wishlist stays a page at `/design?route=wishlist` using the same commerce product cards at New Arrivals scale (4-up; × cancel removes). Bag is a **right-side overlay drawer** (nav bag / mobile Bag / Add to cart) — not a routed page; `?route=bag` opens the drawer on the current surface. Prototype persistence via localStorage. Empty wishlist and bag use familiar heart/bag icons in soft circular fields, sentence-case titles and copy, and one clear action each (Shop best sellers / Continue shopping); no helper tips or secondary links. Filled bag: × on media, Save for later, sticky order summary with quiet trust line.
+- **Wishlist** / **Bag**: Wishlist stays a page at `/design?route=wishlist` using the same commerce product cards at New Arrivals scale (4-up; × cancel removes). Bag is a **right-side overlay drawer on desktop** (desktop nav bag / Add to cart), while mobile Bag opens a full-width page panel inside the mobile shell with no backdrop or fixed drawer. `?route=bag` opens the appropriate surface for the viewport. Prototype persistence via localStorage. Empty wishlist and bag use familiar heart/bag icons in soft circular fields, sentence-case titles and copy, and one clear action each (Shop best sellers / Continue shopping); no helper tips or secondary links. Filled bag: × on media, Save for later, sticky order summary with quiet trust line.
 - Wishlist routes omit the search overlay and its trigger so the saved-items surface stays focused.
 - Tab panels swap in place of `.site-main` + footer; homepage sections unchanged on Home.
 
 ## Changelog
 
+- 2026-09-16 — Mobile Bag now opens as a full-width page panel with no backdrop or fixed drawer; desktop keeps the right-side bag drawer.
+- 2026-09-16 — Search overlay cleanup: removed empty-state helper copy, kept the empty shell hidden until needed, and changed Clear recent searches to an un-underlined text control.
+- 2026-09-16 — New Arrivals `Shop All` now sits below its product rail; Voices keeps the section heading centered while testimonial cards stay left-aligned on mobile.
+- 2026-09-16 — Mobile `/design` rhythm pass: reduced the Ready-to-wear collection title to 22px; tightened Collection, Best Sellers, and Shop under bottoms; added 16px after New Arrivals; centered the Voices section while keeping its mobile content left-aligned.
+- 2026-09-16 — Mobile `/design` feedback: Add to cart labels use `--text-xs`; RTW banner USPs and RTW/Clearance rails lose top padding; Voices header copy is left-aligned.
+- 2026-09-16 — Softened the mobile collection-card bottom scrim to keep the pale printed-saree imagery visible while retaining title contrast.
+- 2026-09-16 — Mobile collection tiles now hide Explore, anchor the title group at the bottom, and use a bottom-up linear scrim for clearer 2×2 cards.
+- 2026-09-16 — Mobile `/design` feedback: Shop under tiles reduced to `min(56vw, 260px)`; all product rails stay two-up at 415px; Shop by Material is edge-to-edge with an inset; Shop by Collection is a 2×2 grid.
+- 2026-09-16 — USP row became a 56px primary infinite ticker with cream icons/labels (replacing the static primary-50 grid).
+- 2026-09-16 — New Arrivals panel chrome matched to Ready-to-wear (16px radius, primary-100, shared outer/inner padding); footer socials use Phosphor logos; removed Stay in touch column.
+- 2026-09-16 — New Arrivals containerized: cream 24px outer gutters with an inset primary-100 panel (matching other section side frames).
+- 2026-09-16 — New Arrivals highlight wash stepped to primary-100 with uniform 24px padding.
+- 2026-09-16 — New Arrivals gets a primary-50 highlight wash; Save hearts fill solid when wishlisted; RTW and Clearance rails drop top padding; footer brand adds Connect with us social icon buttons above the newsletter.
 - 2026-09-14 — Account overlay typography, logo, controls, and spacing reduced to the standard `/design` UI scale instead of the oversized reference-image scale.
 - 2026-09-14 — Added a Samantha Fab account login overlay with OTP-first email entry, Google fallback, dimmed scrim, and focus-safe dismissal.
 - 2026-09-14 — Removed the search overlay and search trigger from the wishlist route so `/design?route=wishlist` stays focused on saved items.

@@ -426,8 +426,12 @@ test("design page places a ready-to-wear promo banner after new arrivals", async
   assert.match(renderer, /renderUspRow/);
   assert.match(renderer, /uspLucideIconPaths/);
   assert.match(renderer, /renderUspLucideIcon/);
-  assert.match(designStyles, /design-usp-row__list/);
-  assert.match(designStyles, /design-usp-row__item\s*\{[\s\S]*flex-direction:\s*column/);
+  assert.match(designStyles, /design-usp-row__track/);
+  assert.match(designStyles, /design-usp-row__item\s*\{[\s\S]*flex-direction:\s*row/);
+  assert.match(
+    designStyles,
+    /design-usp-row\s*\{[\s\S]*height:\s*56px[\s\S]*background:\s*var\(--color-primary\)/,
+  );
   assert.match(designStyles, /\.design-feature-banner/);
   assert.match(designStyles, /design-feature-banner__collage/);
   assert.match(
@@ -461,7 +465,8 @@ test("design page places a headerless ready-to-wear product rail after the banne
   );
   assert.equal(blank.sections[bannerIndex + 2].id, "design-shop-under");
   assert.equal(blank.sections.at(-1).id, "footer");
-  assert.match(renderer, /const showHeader = Boolean\(title \|\| section\.eyebrow \|\| section\.copy \|\| section\.viewAll\)/);
+  assert.match(renderer, /const placeViewAllBelowRail = section\.id === "design-new-arrivals"/);
+  assert.match(renderer, /if \(section\.action \|\| \(placeViewAllBelowRail && section\.viewAll\)\)/);
   assert.match(designStyles, /design-new-arrivals--rail-only/);
 });
 
@@ -591,11 +596,11 @@ test("design page ends with the standard footer navigation", async () => {
   assert.equal(footer.type, "footer");
   assert.deepEqual(
     footer.columns.map((column) => column.heading),
-    ["Shop", "Help", "About", "Stay in touch"],
+    ["Shop", "Help", "About"],
   );
   assert.equal(
     footer.columns.reduce((count, column) => count + column.links.length, 0),
-    23,
+    19,
   );
   assert.equal(footer.trust.length, 4);
   assert.deepEqual(
@@ -617,8 +622,20 @@ test("footer brand includes a newsletter email capture", async () => {
 
   assert.equal(footer.newsletter?.label, "Join our newsletter for new drops");
   assert.equal(footer.newsletter?.cta, "Subscribe");
+  assert.equal(footer.socialsHeading, "Connect with us");
+  assert.equal(footer.socials?.length, 4);
+  assert.deepEqual(
+    footer.socials.map((item) => item.label),
+    ["Instagram", "Facebook", "Pinterest", "YouTube"],
+  );
   assert.match(renderer, /data-footer-newsletter/);
-  assert.match(styles, /\.footer-newsletter\s*\{[^}]*margin-top:\s*36px/s);
+  assert.match(renderer, /footer-socials/);
+  assert.match(renderer, /footerSocialIcon/);
+  assert.match(renderer, /Phosphor Icons/);
+  assert.match(renderer, /viewBox="0 0 256 256"/);
+  assert.match(styles, /\.footer-newsletter\s*\{[^}]*margin-top:\s*28px/s);
+  assert.match(styles, /\.footer-socials__link\s*\{[^}]*width:\s*40px/s);
+  assert.match(styles, /\.footer-columns\s*\{[^}]*grid-template-columns:\s*repeat\(3,/s);
 });
 
 test("footer brand uses the supplied Samantha logo asset", async () => {

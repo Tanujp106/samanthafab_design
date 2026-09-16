@@ -1,6 +1,6 @@
 import { renderMedia } from "./media.js";
 import { renderCollectionPlp, renderContentPage } from "./collection-plp.js";
-import { renderBagDrawer, renderWishlistPage } from "./commerce-pages.js";
+import { renderBagDrawer, renderBagPage, renderWishlistPage } from "./commerce-pages.js";
 import { renderSearchOverlay } from "./search-overlay.js";
 import { renderAccountOverlay } from "./account-overlay.js";
 import { renderProductPage } from "./product-page.js";
@@ -857,9 +857,12 @@ export function renderProductCard(product, ctx, options = {}) {
     } else {
       const wishlistBtn = productActionButton("wishlist", `Save ${product.name}`);
       wishlistBtn.dataset.productName = product.name;
-      wishlistBtn.setAttribute("aria-pressed", isWishlisted(productId) ? "true" : "false");
-      if (isWishlisted(productId)) {
+      const wishlisted = isWishlisted(productId);
+      wishlistBtn.setAttribute("aria-pressed", wishlisted ? "true" : "false");
+      if (wishlisted) {
         wishlistBtn.setAttribute("aria-label", `Saved ${product.name}`);
+        const svg = wishlistBtn.querySelector("svg");
+        if (svg) svg.setAttribute("fill", "currentColor");
       }
       mediaStage.append(mediaLink, wishlistBtn, mediaActions);
     }
@@ -915,7 +918,8 @@ function productCarouselArrow(direction, labelBase = "products") {
 
 function renderProductCarousel(section, ctx) {
   const title = section.title;
-  const showHeader = Boolean(title || section.eyebrow || section.copy || section.viewAll);
+  const placeViewAllBelowRail = section.id === "design-new-arrivals";
+  const showHeader = Boolean(title || section.eyebrow || section.copy || (section.viewAll && !placeViewAllBelowRail));
   const titleId = `${section.id}-title`;
   const labelBase = (title || section.name || "products").toLowerCase();
   const root = element(
@@ -944,7 +948,7 @@ function renderProductCarousel(section, ctx) {
     if (section.copy) intro.append(element("p", "design-new-arrivals__copy", section.copy));
 
     const actions = element("div", "design-new-arrivals__actions");
-    if (section.viewAll) {
+    if (section.viewAll && !placeViewAllBelowRail) {
       const viewAll = button(
         section.viewAll.label,
         section.viewAll.href,
@@ -977,9 +981,10 @@ function renderProductCarousel(section, ctx) {
   controls.append(productCarouselArrow("previous", labelBase), productCarouselArrow("next", labelBase));
   stage.append(viewport, controls);
   inner.append(stage);
-  if (section.action) {
+  if (section.action || (placeViewAllBelowRail && section.viewAll)) {
+    const action = section.action || section.viewAll;
     const railCta = element("div", "design-new-arrivals__rail-cta");
-    railCta.append(button(section.action.label, section.action.href, "button button--fill"));
+    railCta.append(button(action.label, action.href, "button button--fill design-new-arrivals__view-all"));
     inner.append(railCta);
   }
   root.append(inner);
@@ -1240,22 +1245,30 @@ function renderUspRow(section) {
   root.dataset.section = section.number;
   root.setAttribute("aria-label", section.name || "Why shop with us");
 
-  const inner = element("div", "design-usp-row__inner");
-  const list = element("ul", "design-usp-row__list");
-  (section.items || []).forEach((item) => {
-    const usp = element("li", "design-usp-row__item");
-    const icon = renderUspLucideIcon(item.icon);
-    if (icon) {
-      const iconWrap = element("span", "design-usp-row__icon-wrap");
-      iconWrap.setAttribute("aria-hidden", "true");
-      iconWrap.append(icon);
-      usp.append(iconWrap);
-    }
-    usp.append(element("span", "design-usp-row__label", item.label));
-    list.append(usp);
-  });
-  inner.append(list);
-  root.append(inner);
+  const viewport = element("div", "design-usp-row__viewport");
+  const track = element("ul", "design-usp-row__track");
+  const items = section.items || [];
+
+  const appendItems = (list, hidden) => {
+    list.forEach((item) => {
+      const usp = element("li", "design-usp-row__item");
+      if (hidden) usp.setAttribute("aria-hidden", "true");
+      const icon = renderUspLucideIcon(item.icon);
+      if (icon) {
+        const iconWrap = element("span", "design-usp-row__icon-wrap");
+        iconWrap.setAttribute("aria-hidden", "true");
+        iconWrap.append(icon);
+        usp.append(iconWrap);
+      }
+      usp.append(element("span", "design-usp-row__label", item.label));
+      track.append(usp);
+    });
+  };
+
+  appendItems(items, false);
+  appendItems(items, true);
+  viewport.append(track);
+  root.append(viewport);
   return root;
 }
 
@@ -1368,6 +1381,17 @@ function footerTrustIcon(name) {
   return icons[name] || "";
 }
 
+function footerSocialIcon(name) {
+  /* Phosphor Icons regular logos — https://phosphoricons.com/ */
+  const icons = {
+    instagram: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160ZM176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24Zm40,152a40,40,0,0,1-40,40H80a40,40,0,0,1-40-40V80A40,40,0,0,1,80,40h96a40,40,0,0,1,40,40ZM192,76a12,12,0,1,1-12-12A12,12,0,0,1,192,76Z"/></svg>`,
+    facebook: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z"/></svg>`,
+    pinterest: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M224,112c0,22.57-7.9,43.2-22.23,58.11C188.39,184,170.25,192,152,192c-17.88,0-29.82-5.86-37.43-12l-10.78,45.82A8,8,0,0,1,96,232a8.24,8.24,0,0,1-1.84-.21,8,8,0,0,1-6-9.62l32-136a8,8,0,0,1,15.58,3.66l-16.9,71.8C122,166,131.3,176,152,176c27.53,0,56-23.94,56-64A72,72,0,1,0,73.63,148a8,8,0,0,1-13.85,8A88,88,0,1,1,224,112Z"/></svg>`,
+    youtube: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M164.44,121.34l-48-32A8,8,0,0,0,104,96v64a8,8,0,0,0,12.44,6.66l48-32a8,8,0,0,0,0-13.32ZM120,145.05V111l25.58,17ZM234.33,69.52a24,24,0,0,0-14.49-16.4C185.56,39.88,131,40,128,40s-57.56-.12-91.84,13.12a24,24,0,0,0-14.49,16.4C19.08,79.5,16,97.74,16,128s3.08,48.5,5.67,58.48a24,24,0,0,0,14.49,16.41C69,215.56,120.4,216,127.34,216h1.32c6.94,0,58.37-.44,91.18-13.11a24,24,0,0,0,14.49-16.41c2.59-10,5.67-28.22,5.67-58.48S236.92,79.5,234.33,69.52Zm-15.49,113a8,8,0,0,1-4.77,5.49c-31.65,12.22-85.48,12-86,12H128c-.54,0-54.33.2-86-12a8,8,0,0,1-4.77-5.49C34.8,173.39,32,156.57,32,128s2.8-45.39,5.16-54.47A8,8,0,0,1,41.93,68c30.52-11.79,81.66-12,85.85-12h.27c.54,0,54.38-.18,86,12a8,8,0,0,1,4.77,5.49C221.2,82.61,224,99.43,224,128S221.2,173.39,218.84,182.47Z"/></svg>`,
+  };
+  return icons[name] || "";
+}
+
 function renderFooter(section) {
   const footer = element("footer", "site-footer section section--footer section--flush");
   footer.id = section.id;
@@ -1386,6 +1410,33 @@ function renderFooter(section) {
     brandLink,
     element("p", "footer-brand-copy", section.brandLine),
   );
+
+  if (section.socials?.length) {
+    const socials = element("div", "footer-socials");
+    socials.append(
+      element("p", "footer-socials__label", section.socialsHeading || "Connect with us"),
+    );
+    const list = element("ul", "footer-socials__list");
+    list.setAttribute("aria-label", section.socialsHeading || "Connect with us");
+    section.socials.forEach((item) => {
+      const li = element("li", "footer-socials__item");
+      const link = element("a", "footer-socials__link");
+      link.href = item.href;
+      link.setAttribute("aria-label", item.label);
+      if (/^https?:/i.test(item.href)) {
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+      }
+      const iconWrap = element("span", "footer-socials__icon");
+      iconWrap.setAttribute("aria-hidden", "true");
+      iconWrap.innerHTML = footerSocialIcon(item.icon);
+      link.append(iconWrap);
+      li.append(link);
+      list.append(li);
+    });
+    socials.append(list);
+    brand.append(socials);
+  }
 
   if (section.newsletter) {
     const form = element("form", "footer-newsletter");
@@ -1630,6 +1681,23 @@ function renderMobileEmptyPanel(panelId, config, iconName) {
   return panel;
 }
 
+function renderMobileBagPanel(page) {
+  const panel = element("section", "mobile-panel mobile-panel--bag");
+  panel.dataset.mobilePanel = "bag";
+  panel.hidden = true;
+
+  const mount = element("div", "mobile-commerce-mount");
+  mount.dataset.mobileCommerceMount = "bag";
+  mount.append(
+    renderBagPage({
+      items: readBag(),
+      empty: page.mobile?.bag,
+    }),
+  );
+  panel.append(mount);
+  return panel;
+}
+
 function renderMobileBottomBar(page) {
   const nav = element("nav", "mobile-bottom-bar");
   nav.setAttribute("aria-label", "Mobile navigation");
@@ -1762,6 +1830,7 @@ export function renderPage(page, options = {}) {
     root.append(
       renderMobileExplore(page, ctx),
       renderMobileEmptyPanel("wishlist", page.mobile.wishlist, "heart"),
+      renderMobileBagPanel(page),
       renderMobileBottomBar(page),
     );
     const { overlay, drawer } = renderMobileDrawer(page, headerSection);

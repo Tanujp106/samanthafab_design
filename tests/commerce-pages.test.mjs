@@ -104,10 +104,14 @@ test("design wires hover media, commerce pages, and nav routes", async () => {
   assert.match(render, /commerceView/);
   assert.match(render, /renderWishlistPage/);
   assert.match(render, /renderBagDrawer/);
+  assert.match(render, /renderMobileBagPanel/);
   assert.match(app, /resolveCommerceKind/);
   assert.match(app, /bindCommerceInteractions/);
   assert.match(app, /showCommerceToast/);
   assert.match(app, /setBagDrawerOpen/);
+  assert.match(app, /setMobileTabState/);
+  assert.match(app, /max-width: 900px/);
+  assert.match(app, /setMobileTabState\(document\.body\.dataset\.mobileTab === "bag" \? "bag" : "home"\)/);
   assert.match(app, /data-bag-open/);
   assert.match(blank, /commerceUrl\("wishlist"\)/);
   assert.match(css, /media--hover/);
@@ -119,6 +123,7 @@ test("design wires hover media, commerce pages, and nav routes", async () => {
   assert.match(commercePages, /Wishlist/);
   assert.match(commercePages, /renderProductCard/);
   assert.match(commercePages, /bag-drawer/);
+  assert.match(commercePages, /renderBagPage/);
   assert.match(commercePages, /commerce-empty--wishlist/);
   assert.match(commercePages, /commerce-empty--bag/);
   assert.match(commercePages, /wishlistEmptyIllustration/);
@@ -135,6 +140,7 @@ test("design wires hover media, commerce pages, and nav routes", async () => {
   assert.match(css, /commerce-empty__visual--icon/);
   assert.match(css, /commerce-bag-line__media-wrap/);
   assert.match(css, /bag-drawer__footer/);
+  assert.match(css, /@media \(max-width: 900px\)[\s\S]*\.bag-drawer\s*\{[^}]*display:\s*none/s);
 });
 
 test("empty bag and wishlist states stay concise and use familiar iconography", async () => {

@@ -190,10 +190,6 @@ export function renderSearchOverlay({
   const empty = element("div", "search-overlay__empty");
   empty.dataset.searchEmpty = "true";
   empty.hidden = true;
-  empty.append(
-    element("h2", "search-overlay__empty-title", "Nothing found yet"),
-    element("p", "search-overlay__empty-copy", "Try a saree, fabric, or collection name."),
-  );
 
   productsSection.append(productsHeader, grid, empty);
   body.append(sidebar, productsSection);
