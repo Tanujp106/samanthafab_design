@@ -30,7 +30,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 ## Always
 
 - Reuse `playground/styles/tokens.css` + `--font-display` / `--font-body`. No duplicate `@font-face` names or isolated color ramps in section CSS.
-- Page / light section surfaces use whisper cream `--color-white` / `--color-paper` (`#fcfaf7`) — not stark `#fff`, not a heavy cream wash.
+- Page / light section surfaces use a **very light beige hint** `--color-beige-100` via `--color-white` / `--color-paper` (`#faf7f4`) — barely warm, not yellowish. Beige ramp: `--color-beige-50` → `--color-beige-300`; deeper wells use `--color-paper-deep` (`beige-200`). Keep `--color-cream` for text on dark.
 - **Lora** for section/product titles through `--font-display`; restore **Karrik** for body copy and UI through `--font-body` so supporting text keeps its original voice. Use each loaded family’s weight range instead of switching families. Highlighted title words use the existing plum palette, not an unrelated accent ramp; campaign hero accents use the deeper `--color-primary-400` on dark imagery.
 - Light-surface section titles: `--color-primary-800`, **uppercase** (`text-transform: uppercase`), centered with their ledes across `/design` section headers. Lede/body: muted Karrik, weight 400 — not heavy.
 - Side gutters **24px** so the light cream page frame shows; align nav to that width.
@@ -70,7 +70,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 | USP row | After New Arrivals / before Best sellers; compact **56px** primary ticker; cream Lucide icons + uppercase labels; faster **18s** infinite horizontal marquee with generous spacing and a duplicated track; reduced-motion freezes |
 | Best sellers | Same product-carousel as New Arrivals; after USP row / before RTW banner; Shop All CTA → `/design?route=collection&slug=bestsellers` |
 | Collection PLP | Reusable template for all collections via `?route=collection&slug=…` (aliases like `?route=bestsellers` also resolve). Desktop: sticky left filters + 3-col grid. Mobile: Filters + Sort as separate bottom sheets. Facets: Availability, Price, Category, Collections, Size, Color. Reuse commerce `renderProductCard`. Shared catalog in `playground/data/`. |
-| Product detail (PDP) | Shared `/design?route=product&slug=…`. Desktop **sticky left gallery** (`top: 112px`) beside a scrolling purchase column; 2-col gallery (**≥4** curated images, up to 6) with uniform **3/4** tiles; layout `column-gap: clamp(40px, 5vw, 72px)`. Purchase order: occasion tag → title/share → **material under title** → always-visible short description → Regular/RTW blouse cards → SKU → price/tax → coupons → shimmering Add to cart + wishlist + WhatsApp → Buy it now → Product Description / Shipping & Return accordions → 4 trust badges → Recommended for you (3 cards). No colour “Options available”, collapsible description summary, pincode check, shipping callout, or offer card. |
+| Product detail (PDP) | Shared `/design?route=product&slug=…`. Desktop sticky gallery (`top: 112px`) + scrolling purchase; **24px side gutters** so gallery left edge aligns with the nav wordmark (never flush past the logo). **2×2** gallery, **12px** gaps, uniform **3/4** on-product frames, `--radius-media`; tap tile opens FLIP-morph lightbox; tap image toggles one zoom level, cursor-follow pan when zoomed, outside tap resets then closes. Split gap `clamp(32px, 4vw, 64px)`. Purchase: title (Karrik) → SKU → badges → description → Regular/RTW → price + tax (**12px** before CTAs) → shimmer ATC → Buy it now → plum gift banner → **2×2 trust** (34px icons / 15px) → Shipping → Recommended (3). WhatsApp uses Phosphor filled logo (`playground/lib/icons.mjs`, `viewBox 0 0 256 256`). |
 | Ready-to-wear banner | Light cream section + 36px/24px frame; primary-100 inner radius 16px; collage right; title sentence case; CTA primary 13px; three compact icon+label USPs beneath the CTA |
 | RTW product rail | Headerless; **no top padding**; CTA “Shop All” 13px; brand primary |
 | Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `48px 24px 88px` (mobile `16px 16px 64px`); three image price tiles clamp(280px, 34vw, 420px), with a shorter `min(56vw, 260px)` mobile height |
@@ -109,6 +109,21 @@ One-off experiments (“try X once”) do not get written until the user confirm
 
 ## Changelog
 
+- 2026-09-29 — Page canvas beige softened to a very light hint (`#faf7f4` / `beige-100`); less yellow than prior `#f3ebe3`.
+- 2026-09-29 — Page canvas: muted beige palette (`--color-beige-50…300`); `--color-white` / `--color-paper` → `#f3ebe3` (`beige-100`) site-wide; `--color-cream` kept for text on dark.
+- 2026-09-29 — PDP: tax note (“Inclusive of all taxes”) → Add to cart row gap **12px** (`.product-detail__tax-note` margin-bottom).
+- 2026-09-29 — WhatsApp mark: Phosphor filled logo (`viewBox 0 0 256 256`) shared via `playground/lib/icons.mjs` — PDP CTA/trust, footer trust, mobile bottom bar, USP strips.
+- 2026-09-29 — PDP polish: title Karrik (not Lora); SKU under title; more space under description; gift banner uses brand plum bokeh (not gold) + 4px top pad; trust icons 34px / labels 15px, flex-centered.
+- 2026-09-29 — PDP: replace coupons row with complimentary-gift bokeh banner (blurred photo + SVG radials, gift icon, Lora copy) below Buy it now.
+- 2026-09-29 — PDP lightbox: single toggle zoom on image tap (in/out); no multi-step zoom ladder.
+- 2026-09-29 — PDP: coupons row sits below Buy it now (above trust badges).
+- 2026-09-29 — PDP lightbox: click/tap image steps zoom toward pointer; cursor-follow pan when zoomed; outside/Escape resets zoom then closes.
+- 2026-09-29 — PDP gallery lightbox: tap tile FLIP-morphs open (transform/opacity only), wheel/pinch zoom 1–4×, Escape/scrim close; WhatsApp CTA reuses footer trust SVG mark.
+- 2026-09-29 — PDP: trust badges 2×2 (larger) above Shipping / below Buy it now; +16px layout top pad.
+- 2026-09-29 — PDP aligned to system: gallery left edge matches nav wordmark (24px gutters); split gap 32–64px; `--radius-media`; dropped flush-left negative margin.
+- 2026-09-29 — PDP gallery: kill figure margins / intrinsic-height stretch so row gap stays a hard 12px.
+- 2026-09-29 — PDP nits: gallery gap 12px, flush left, no gallery scrollbar; Everyday + material badges under title; full-width description; larger variant surcharge; coupons no longer a summary toggle.
+- 2026-09-29 — PDP rework: sticky gallery shell + wider column gap (56–96px); on-product crop gallery (no mixed catalog shots); always-visible description only (drop Product Description accordion); quieter material under title.
 - 2026-09-28 — PDP layout: sticky gallery (112px) + scrolling purchase column; wider column gap clamp(40px, 5vw, 72px); uniform 3/4 gallery tiles with cover frames.
 - 2026-09-28 — Shop mega-menu link hover: no underline/border, scale 1.06 with springier easing (overrides homepage `.nav-links a` hairline).
 - 2026-09-28 — PDP feedback: gallery ≥4 curated images; remove Options available + collapsible Description; material under title; Add to cart shimmer.

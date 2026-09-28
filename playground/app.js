@@ -3,6 +3,7 @@ import { renderPage, renderProductCard } from "./components/render.js";
 import { renderCollectionPlp } from "./components/collection-plp.js";
 import { renderBagDrawerBody, renderBagPage, renderWishlistPage } from "./components/commerce-pages.js";
 import { filterSearchProducts, normalizeSearchQuery } from "./components/search-overlay.js";
+import { bindProductLightbox } from "./components/product-lightbox.js";
 import {
   getCollection,
   getCollectionProducts,
@@ -129,6 +130,7 @@ app.replaceChildren(
 // Bind wishlist / bag early so later carousel setup errors can't leave hearts inert.
 bindCommerceInteractions(document);
 syncNavCommerceCounts();
+bindProductLightbox(document);
 
 const menuToggle = document.querySelector(".nav-menu-toggle");
 const navLinks = document.querySelector(".nav-links");

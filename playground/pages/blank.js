@@ -17,7 +17,7 @@ export const blank = {
       items: [
         { icon: "truck", label: "COD across India" },
         { icon: "refresh", label: "Easy returns & exchange" },
-        { icon: "chat", label: "WhatsApp assistance" },
+        { icon: "whatsapp", label: "WhatsApp assistance" },
       ],
     },
     {
@@ -378,7 +378,7 @@ export const blank = {
         { icon: "banknote", label: "Cash on delivery" },
         { icon: "refresh-cw", label: "Easy returns" },
         { icon: "truck", label: "Pan-India shipping" },
-        { icon: "message-circle", label: "WhatsApp support" },
+        { icon: "whatsapp", label: "WhatsApp support" },
       ],
     },
     {

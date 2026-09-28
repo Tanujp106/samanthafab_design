@@ -1,6 +1,7 @@
 import { renderMedia } from "./media.js";
 import { resolveProductGallery } from "../data/product-gallery.js";
 import { isWishlisted, productIdFrom, snapshotProduct } from "../lib/commerce-store.mjs";
+import { whatsappIconSvg } from "../lib/icons.mjs";
 
 const RTW_SURCHARGE = 70;
 
@@ -80,29 +81,44 @@ function renderTrustRow() {
     { label: "COD across India", path: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 15h2"/>' },
     { label: "Easy returns", path: '<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>' },
     { label: "Secure checkout", path: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>' },
-    { label: "WhatsApp help", path: '<path d="M21 11.5a8.4 8.4 0 0 1-9.4 8.3L5 21l1.3-3.8A8.4 8.4 0 1 1 21 11.5Z"/>' },
   ].forEach((item) => {
     const li = element("li", "product-detail__trust-item");
     li.append(icon(item.path, "product-detail__trust-icon"), element("span", "product-detail__trust-label", item.label));
     list.append(li);
   });
+
+  const whatsappItem = element("li", "product-detail__trust-item");
+  const whatsappIcon = element("span", "product-detail__trust-icon product-detail__trust-icon--whatsapp");
+  whatsappIcon.innerHTML = whatsappIconSvg({ size: 34 });
+  whatsappItem.append(whatsappIcon, element("span", "product-detail__trust-label", "WhatsApp help"));
+  list.append(whatsappItem);
   return list;
 }
 
+const WHATSAPP_ICON = whatsappIconSvg({ size: 24 });
+
 function renderGallery(product) {
+  const shell = element("div", "product-detail__gallery-shell");
   const gallery = element("div", "product-detail__gallery");
+  gallery.dataset.productGallery = "true";
   gallery.setAttribute("aria-label", "Product images");
-  resolveProductGallery(product, { minCount: 4, maxCount: 6 }).forEach((media, index) => {
-    gallery.append(
+  resolveProductGallery(product, { minCount: 4, maxCount: 4 }).forEach((media, index) => {
+    const thumb = element("button", "product-detail__thumb");
+    thumb.type = "button";
+    thumb.dataset.pdpLightbox = String(index);
+    thumb.setAttribute("aria-label", `View image ${index + 1} larger`);
+    thumb.append(
       renderMedia(media, {
-        ratio: "portrait",
+        ratio: null,
         eager: index === 0,
         notesEnabled: false,
         className: "product-detail__media",
       }),
     );
+    gallery.append(thumb);
   });
-  return gallery;
+  shell.append(gallery);
+  return shell;
 }
 
 function renderVariantOptions(product) {
@@ -168,9 +184,6 @@ function renderPurchasePanel(product) {
   panel.dataset.pdpBasePrice = String(basePrice);
   panel.dataset.pdpCompareAt = String(compareAt || "");
 
-  const tags = element("div", "product-detail__tags");
-  if (product.tag) tags.append(element("span", "product-detail__tag", product.tag));
-
   const heading = element("div", "product-detail__heading");
   const titleRow = element("div", "product-detail__title-row");
   titleRow.append(element("h1", "product-detail__title", product.name));
@@ -182,17 +195,20 @@ function renderPurchasePanel(product) {
   titleRow.append(share);
   heading.append(titleRow);
 
-  if (product.material) {
-    heading.append(element("p", "product-detail__material", product.material));
-  }
+  const sku = element("p", "product-detail__sku", `SKU: ${productSku(product)}`);
+  heading.append(sku);
+
+  const tags = element("div", "product-detail__tags");
+  if (product.tag) tags.append(element("span", "product-detail__tag", product.tag));
+  if (product.material) tags.append(element("span", "product-detail__tag", product.material));
+  heading.append(tags);
 
   const description = element(
     "p",
     "product-detail__description",
     `${product.material || "Thoughtfully made fabric"} with a fluid fall and an easy rhythm for everyday dressing.`,
   );
-
-  const sku = element("p", "product-detail__sku", `SKU: ${productSku(product)}`);
+  description.id = "product-details";
 
   const priceLine = element("div", "product-detail__price-line");
   priceLine.append(element("span", "product-detail__price", product.price));
@@ -201,16 +217,29 @@ function renderPurchasePanel(product) {
   if (discount) priceLine.append(element("span", "product-detail__discount", discount));
   const taxNote = element("p", "product-detail__tax-note", "Inclusive of all taxes");
 
-  const coupons = element("details", "product-detail__coupons");
-  const couponsSummary = element("summary", "product-detail__coupons-summary");
-  couponsSummary.append(
-    element("span", "product-detail__coupons-label", "Coupons"),
-    element("span", "product-detail__coupons-hint", "View offers"),
-  );
-  coupons.append(
-    couponsSummary,
-    element("p", "product-detail__coupons-copy", "SAVE10 — Extra 10% off on prepaid orders. Prototype coupon for the playground."),
-  );
+  const giftOffer = element("aside", "product-detail__gift-offer");
+  giftOffer.setAttribute("aria-label", "A complimentary gift included with your order");
+  giftOffer.innerHTML = `
+    <span class="product-detail__gift-offer-bg" aria-hidden="true"></span>
+    <span class="product-detail__gift-offer-content">
+      <svg class="product-detail__gift-offer-icon" viewBox="0 0 48 48" width="44" height="44" fill="none" aria-hidden="true">
+        <rect x="10" y="20" width="28" height="20" rx="1.5" fill="var(--color-white)" stroke="var(--color-primary-800)" stroke-width="1.4"/>
+        <path d="M10 28.5h28" stroke="var(--color-primary-800)" stroke-width="1.4"/>
+        <path d="M24 20v20" stroke="var(--color-primary-400)" stroke-width="3.2"/>
+        <path d="M10 20h28" stroke="var(--color-primary-800)" stroke-width="1.4"/>
+        <path d="M24 20c-3.2-6.5-9.5-7.2-11.2-3.8-1.4 2.8 1.6 5.6 5.4 6.4 2 .4 4 .6 5.8 1.2Z" fill="var(--color-primary-300)" stroke="var(--color-primary-800)" stroke-width="1.1" stroke-linejoin="round"/>
+        <path d="M24 20c3.2-6.5 9.5-7.2 11.2-3.8 1.4 2.8-1.6 5.6-5.4 6.4-2 .4-4 .6-5.8 1.2Z" fill="var(--color-primary-200)" stroke="var(--color-primary-800)" stroke-width="1.1" stroke-linejoin="round"/>
+        <circle cx="14" cy="14" r="1.1" fill="var(--color-primary-400)"/>
+        <circle cx="34" cy="12" r="0.9" fill="var(--color-primary-300)"/>
+        <circle cx="38" cy="18" r="0.8" fill="var(--color-primary-400)"/>
+        <circle cx="11" cy="19" r="0.7" fill="var(--color-primary-200)"/>
+      </svg>
+      <span class="product-detail__gift-offer-copy">
+        <span class="product-detail__gift-offer-line">A complimentary Gift</span>
+        <span class="product-detail__gift-offer-line">included with your order</span>
+      </span>
+    </span>
+  `;
 
   const actions = element("div", "product-detail__actions");
   const addButton = element("button", "button button--fill product-detail__add");
@@ -239,7 +268,7 @@ function renderPurchasePanel(product) {
   whatsapp.target = "_blank";
   whatsapp.rel = "noopener noreferrer";
   whatsapp.setAttribute("aria-label", `Ask about ${product.name} on WhatsApp`);
-  whatsapp.append(icon('<path d="M21 11.5a8.4 8.4 0 0 1-9.4 8.3L5 21l1.3-3.8A8.4 8.4 0 1 1 21 11.5Z"/><path d="M9.5 9.8c.2-.4.4-.4.6-.4h.4c.2 0 .3.1.4.4l.3.9c.1.2 0 .3-.1.4l-.3.3c.2.4.6.8 1 1.1.3.2.6.3.9.4l.4-.3c.2-.1.3-.1.4 0l.9.4c.2.1.3.3.3.4v.4c0 .2 0 .4-.3.6-.4.3-.9.4-1.4.3-1.3-.3-2.7-1.2-3.6-2.3-.9-1-1.6-2.3-1.8-3.6-.1-.5 0-1 .3-1.4.1-.2.3-.3.5-.3Z"/>'));
+  whatsapp.innerHTML = WHATSAPP_ICON;
 
   const primaryActions = element("div", "product-detail__primary-actions");
   primaryActions.append(addButton, wishlist, whatsapp);
@@ -250,29 +279,21 @@ function renderPurchasePanel(product) {
   buyNow.setAttribute("aria-label", `Buy ${product.name} now`);
   actions.append(primaryActions, buyNow);
 
-  const descriptionAccordion = renderAccordion(
-    "Product Description",
-    `${product.material || "This piece"} is designed for an easy fall and considered everyday wear. Follow the garment care label for its best life.`,
-    true,
+  const shippingAccordion = renderAccordion(
+    "Shipping & Return policy",
+    "Free shipping over ₹2,500. Easy returns and exchanges across India. Dispatches in 2–3 working days.",
   );
-  descriptionAccordion.id = "product-details";
 
   panel.append(
-    tags,
     heading,
     description,
     renderVariantOptions(product),
-    sku,
     priceLine,
     taxNote,
-    coupons,
     actions,
-    descriptionAccordion,
-    renderAccordion(
-      "Shipping & Return policy",
-      "Free shipping over ₹2,500. Easy returns and exchanges across India. Dispatches in 2–3 working days.",
-    ),
+    giftOffer,
     renderTrustRow(),
+    shippingAccordion,
   );
   return panel;
 }

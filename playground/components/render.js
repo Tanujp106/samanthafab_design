@@ -7,6 +7,7 @@ import { renderProductPage } from "./product-page.js";
 import { resolveHoverMedia } from "../data/hover-media.js";
 import { productUrl } from "../data/collections.js";
 import { isWishlisted, productIdFrom, readBag, readWishlist, snapshotProduct } from "../lib/commerce-store.mjs";
+import { whatsappIconSvg, WHATSAPP_PATH } from "../lib/icons.mjs";
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -115,8 +116,7 @@ const mobileIconPaths = {
   close: '<path d="M6 6l12 12M18 6 6 18"/>',
   home: '<path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/>',
   explore: '<circle cx="12" cy="12" r="9"/><path d="m16 16-3.5-3.5"/><path d="M12 8v4l2.5 2.5"/>',
-  whatsapp:
-    '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8.2 9.8c.6-1.2 1.8-1.9 3-1.9 1.8 0 3.1 1.2 3.1 3 0 1.8-1.3 3.1-3.1 3.1"/><path d="M14.4 14.2c.6-.4 1.5-.6 2.3-.4"/>',
+  whatsapp: WHATSAPP_PATH,
   heart: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/>',
   chevron: '<path d="m9 6 6 6-6 6"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
@@ -129,9 +129,17 @@ function renderMobileIcon(name, className = "mobile-icon") {
 
   const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   icon.classList.add(className);
-  icon.setAttribute("viewBox", "0 0 24 24");
   icon.setAttribute("aria-hidden", "true");
   icon.setAttribute("focusable", "false");
+
+  if (name === "whatsapp") {
+    icon.setAttribute("viewBox", "0 0 256 256");
+    icon.setAttribute("fill", "currentColor");
+    icon.innerHTML = `<path d="${pathMarkup}"/>`;
+    return icon;
+  }
+
+  icon.setAttribute("viewBox", "0 0 24 24");
   icon.setAttribute("fill", "none");
   icon.setAttribute("stroke", "currentColor");
   icon.setAttribute("stroke-width", "1.6");
@@ -334,14 +342,23 @@ const uspIconPaths = {
   refresh:
     '<path d="M20 11a8 8 0 0 0-14.7-4L3 9"/><path d="M3 4v5h5"/><path d="M4 13a8 8 0 0 0 14.7 4L21 15"/><path d="M21 20v-5h-5"/>',
   chat: '<path d="M4 5.5h16v10H9l-5 3v-13z"/>',
+  whatsapp: WHATSAPP_PATH,
 };
 
 function renderIcon(name) {
   const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   icon.classList.add("design-usp-strip__icon");
-  icon.setAttribute("viewBox", "0 0 24 24");
   icon.setAttribute("aria-hidden", "true");
   icon.setAttribute("focusable", "false");
+
+  if (name === "whatsapp") {
+    icon.setAttribute("viewBox", "0 0 256 256");
+    icon.setAttribute("fill", "currentColor");
+    icon.innerHTML = `<path d="${WHATSAPP_PATH}"/>`;
+    return icon;
+  }
+
+  icon.setAttribute("viewBox", "0 0 24 24");
   icon.setAttribute("fill", "none");
   icon.setAttribute("stroke", "currentColor");
   icon.setAttribute("stroke-width", "1.5");
@@ -397,6 +414,7 @@ const uspLucideIconPaths = {
   truck:
     '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
   "message-circle": '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+  whatsapp: WHATSAPP_PATH,
 };
 
 function renderLucideIcon(name, className, pathMap) {
@@ -405,9 +423,17 @@ function renderLucideIcon(name, className, pathMap) {
 
   const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   icon.classList.add(className);
-  icon.setAttribute("viewBox", "0 0 24 24");
   icon.setAttribute("aria-hidden", "true");
   icon.setAttribute("focusable", "false");
+
+  if (name === "whatsapp") {
+    icon.setAttribute("viewBox", "0 0 256 256");
+    icon.setAttribute("fill", "currentColor");
+    icon.innerHTML = `<path d="${pathMarkup}"/>`;
+    return icon;
+  }
+
+  icon.setAttribute("viewBox", "0 0 24 24");
   icon.setAttribute("fill", "none");
   icon.setAttribute("stroke", "currentColor");
   icon.setAttribute("stroke-width", "2");
@@ -1379,7 +1405,7 @@ function footerTrustIcon(name) {
     cod: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><path d="M2.5 8.5h15"/><text x="10" y="14.2" text-anchor="middle" fill="currentColor" stroke="none" font-size="6.5" font-family="system-ui,sans-serif">₹</text></svg>`,
     returns: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 7.5A6 6 0 1 0 16 12"/><path d="M15.5 4v3.5H12"/></svg>`,
     shipping: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5h9.5v9H3z"/><path d="M12.5 9h3.2l1.8 2.4v4.1h-5V9z"/><circle cx="6.2" cy="15.5" r="1.2"/><circle cx="14.8" cy="15.5" r="1.2"/></svg>`,
-    whatsapp: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 14.5 3.5 17l2.7-1.1A6.8 6.8 0 1 0 4.5 14.5Z"/><path d="M7.2 8.8c.2-.4.5-.4.7-.4h.5c.2 0 .4.1.5.4l.4 1c.1.2 0 .4-.1.5l-.4.4c.2.4.6.8 1 1.1.3.2.6.3.9.4l.5-.4c.2-.1.4-.1.5 0l1 .5c.3.1.4.3.4.5v.5c0 .2 0 .5-.4.7-.4.3-1 .4-1.6.3-1.5-.3-3-1.3-4.1-2.5-1-1.1-1.8-2.5-2-4-.1-.6 0-1.2.3-1.6.2-.3.5-.4.7-.4Z"/></svg>`,
+    whatsapp: whatsappIconSvg({ size: 32 }),
   };
   return icons[name] || "";
 }

@@ -63,25 +63,28 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Route | `/design?route=product&slug=…` |
-| Gallery | 2-col grid, `gap: 10px`; **minimum 4** unique images via `resolveProductGallery` (curated sets + pool); max 6; each tile forced **3/4** (`aspect-ratio`) with absolute cover frames (`object-position: center top`) |
-| Layout gap | `column-gap: clamp(40px, 5vw, 72px)` between gallery and purchase |
-| Gallery stickiness | `position: sticky; top: 112px` desktop; gallery `position: static` on ≤760px |
+| Gallery | Sticky shell; 2×2; **12px** row + column gap; figure `margin: 0`; tiles **3/4** absolute cover; `--radius-media`; each tile is a button (`[data-pdp-lightbox]`) |
+| Lightbox | FLIP morph open/close (~420ms ease-out); composite-only `transform`/`opacity`; click/tap image toggles one zoom level (~2.5×) toward pointer; fine-pointer cursor-follow pan when zoomed; touch drag/pinch still work; outside/scrim/Escape resets zoom then closes; reduced-motion snaps |
+| Page gutters | Same **24px** as nav / logo (desktop); **16px** mobile — gallery must align with wordmark, never negative-margin flush |
+| Layout gap | `column-gap: clamp(32px, 4vw, 64px)` (split-editorial range); layout `padding-top: 16px` |
+| Gallery stickiness | `.product-detail__gallery-shell`: `position: sticky; top: 112px`; static on ≤760px |
 | Purchase column | `position: relative` (scrolls with page; not sticky) |
-| Title | Lora `clamp(28px, 3.4vw, 44px)`; share control 44px |
-| Material | Below title; Karrik uppercase 13px / 0.08em; primary colour — not a pill tag |
-| Description | Always visible Karrik 15px lede; never a collapsed summary |
-| Variants | Two equal cards; Regular +₹0 / Ready-to-wear +₹70; selected primary-50 fill |
-| Price | Sale `28px` Karrik; compare-at strikethrough `15px` |
-| CTA row | Add to cart flex with cream shimmer sweep (~2.4s, reduced-motion off) + wishlist 52px + WhatsApp 52px; Buy it now full width below |
-| Trust | 4 icon+label badges in purchase column |
-| Related | “Recommended for you”; 3-col desktop / 2-col mobile; max 3 cards |
-| Dropped | Colour “Options available”, collapsible Description summary, size selector, pincode delivery check, shipping callout card, offer card |
+| Title | Karrik (`--font-body`) `clamp(28px, 3.4vw, 42px)`; share 44px; SKU directly under title; badges **6px** under SKU |
+| Badges | Occasion + material pills below SKU |
+| Description | Always visible; full width; Karrik 15px / weight 400; extra space below (~20px) before variants |
+| Variants | Two cards; Regular +₹0 / RTW +₹70; surcharge **16px** |
+| Gift offer | Below Buy it now / above trust; brand plum bokeh (`primary-50/100/200` radials, no gold photo); gift icon in primary tones + Lora copy; `padding-top: 4px`; soft primary border |
+| Price | Sale `28px` Karrik; compare-at `15px` strikethrough; tax note → CTA gap **12px** |
+| CTA row | Shimmer Add to cart + wishlist 52px + WhatsApp 52px (Phosphor WhatsApp logo from `playground/lib/icons.mjs`, 24px); Buy it now full width |
+| Trust | **2×2** grid below gift offer / above Shipping; flex row vertically centered; icon **34px** + **15px** label |
+| Related | “Recommended for you”; 3-col / 2-col mobile; max 3 |
+| Dropped | Flush-left gallery hack, Options available, Product Description accordion, coupons row/summary, size, pincode, offer cards |
 
 ## Surface
 
 | Item | Value |
 | --- | --- |
-| Page / light section fill | `--color-white` / `--color-paper` = `#fcfaf7` (very light cream, not `#fff`, not heavy beige) |
+| Page / light section fill | `--color-white` / `--color-paper` = `--color-beige-100` `#faf7f4` (very light beige hint, not yellow); ramp `--color-beige-50` `#fcfaf8` → `--color-beige-300` `#e4ddd6`; `--color-paper-deep` = `beige-200` |
 | Text on dark (footer/CTAs) | `--color-cream` = `#fffdf9` |
 
 ## Navigation
@@ -179,7 +182,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 
 | Item | Value |
 | --- | --- |
-| Section background | `var(--white)` / `#fcfaf7` |
+| Section background | `var(--white)` / `#faf7f4` (very light beige hint) |
 | Section padding | `48px 24px 72px` (mobile `40px 16px 64px`) |
 | Mobile viewport | `width: calc(100% + 32px)` + `margin-inline: -16px` + `padding-inline: 16px`; `box-sizing: border-box` keeps the material carousel from clipping against the section gutter |
 | Header | Centered like other `/design` section headers |
