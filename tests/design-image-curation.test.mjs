@@ -22,7 +22,7 @@ test("design page uses the curated archive images by section role", async () => 
   const rail = byId("design-ready-to-wear-products");
 
   const expected = [
-    "/assets/design-campaign-hero-green.jpg",
+    "/assets/design-campaign-hero-maroon.jpg",
     "/assets/design-story-cream.jpg",
     "/assets/design-campaign-hero-red.jpg",
     "/assets/design-collection-everyday.jpg",
@@ -35,6 +35,7 @@ test("design page uses the curated archive images by section role", async () => 
     "/assets/design-product-marigold.jpg",
     "/assets/design-product-black.jpg",
     "/assets/design-ready-to-wear-detail.jpg",
+    "/assets/design-campaign-hero-green.jpg",
   ];
 
   assert.deepEqual(
@@ -54,7 +55,7 @@ test("design page uses the curated archive images by section role", async () => 
     [
       expected[7],
       expected[12],
-      expected[0],
+      expected[13],
       expected[1],
     ],
   );

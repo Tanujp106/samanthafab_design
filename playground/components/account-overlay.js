@@ -55,11 +55,19 @@ export function renderAccountOverlay({ brandSrc = "/assets/samantha-logo.png", b
   close.setAttribute("aria-label", "Close account login");
   close.append(closeIcon());
 
+  const content = element("div", "account-overlay__content");
+
   const brand = element("img", "account-overlay__brand");
   brand.src = brandSrc;
   brand.alt = brandAlt;
   brand.loading = "eager";
   brand.decoding = "async";
+
+  const image = element("img", "account-overlay__image");
+  image.src = "/assets/design-story-cream.jpg";
+  image.alt = "Indian woman in a cream floral saree holding flowers in a warm lived-in interior";
+  image.loading = "eager";
+  image.decoding = "async";
 
   const titleRow = element("div", "account-overlay__title-row");
   titleRow.append(
@@ -107,7 +115,8 @@ export function renderAccountOverlay({ brandSrc = "/assets/samantha-logo.png", b
     })(),
   );
 
-  panel.append(close, brand, titleRow, form, newUser, divider, google, terms);
+  content.append(brand, titleRow, form, newUser, divider, google, terms);
+  panel.append(close, content, image);
   root.append(backdrop, panel);
   return root;
 }

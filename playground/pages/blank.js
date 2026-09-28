@@ -119,11 +119,11 @@ export const blank = {
           copy: "Statement sarees for evenings that deserve to be remembered.",
           primaryAction: { label: "Shop Now", href: "/?route=new-edit" },
           media: {
-            src: "/assets/design-campaign-hero-green.jpg",
-            alt: "Indian woman in a dark teal saree with a flying sheer pallu in a warm peach arch",
-            tone: "moss",
-            position: "center center",
-            note: "Curated archive image from SAVE.zip — selected as the campaign anchor for movement, contrast, and warm architecture.",
+            src: "/assets/design-campaign-hero-maroon.jpg",
+            alt: "Indian woman in a maroon Banarasi saree with gold zari, seated amid rose petals in a warm peach haveli arch",
+            tone: "rust",
+            position: "72% center",
+            note: "Uploaded campaign hero — scaled toward the right so the seated figure clears left copy.",
           },
         },
         {

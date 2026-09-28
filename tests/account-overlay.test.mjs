@@ -20,6 +20,9 @@ test("account login overlay renders the requested login surface", async () => {
   assert.match(account, /Terms & Conditions/);
   assert.match(account, /accountClose/);
   assert.match(account, /accountBackdrop/);
+  assert.match(account, /account-overlay__content/);
+  assert.match(account, /account-overlay__image/);
+  assert.match(account, /design-story-cream\.jpg/);
 });
 
 test("account login overlay is mounted from the reference account action", async () => {
@@ -33,11 +36,18 @@ test("account login overlay is mounted from the reference account action", async
   assert.match(app, /data-account-close/);
   assert.match(app, /account-overlay-open/);
   assert.match(css, /\.account-overlay\s*\{/);
-  assert.match(css, /\.account-overlay__panel\s*\{[^}]*width:\s*min\(calc\(100%\s*-\s*32px\),\s*480px\)/s);
+  assert.match(css, /\.account-overlay__panel\s*\{[^}]*display:\s*grid/s);
+  assert.match(css, /\.account-overlay__panel\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.08fr\)\s+minmax\(300px,\s*0\.92fr\)/s);
+  assert.match(css, /\.account-overlay__panel\s*\{[^}]*width:\s*min\(calc\(100%\s*-\s*48px\),\s*960px\)/s);
   assert.match(css, /\.account-overlay__panel\s*\{[^}]*border-radius:\s*4px/s);
+  assert.match(css, /\.account-overlay__content\s*\{[^}]*grid-column:\s*1/s);
+  assert.match(css, /\.account-overlay__image\s*\{[^}]*grid-column:\s*2/s);
+  assert.match(css, /\.account-overlay__close\s*\{[^}]*width:\s*40px[^}]*height:\s*40px/s);
+  assert.match(css, /\.account-overlay__close-icon\s*\{[^}]*width:\s*20px[^}]*height:\s*20px/s);
   assert.match(css, /\.account-overlay__input\s*\{[^}]*min-height:\s*52px/s);
   assert.match(css, /\.account-overlay__submit\s*\{[^}]*min-height:\s*52px/s);
   assert.match(css, /\.account-overlay__google\s*\{[^}]*min-height:\s*52px/s);
   assert.match(css, /@media \(max-width: 900px\)[\s\S]*\.account-overlay__panel/);
+  assert.match(css, /@media \(max-width: 900px\)[\s\S]*\.account-overlay__image\s*\{[^}]*display:\s*none/s);
   assert.match(css, /prefers-reduced-motion/);
 });

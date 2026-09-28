@@ -34,29 +34,29 @@ test("design nits: campaign copy sits left on desktop and centers on mobile", as
   );
 });
 
-test("design nits: campaign veil gives left copy a blurred patterned backdrop", async () => {
+test("design nits: campaign veil keeps a left blur without paisley pattern", async () => {
   const css = await source("playground/styles/design.css");
+  const blank = await source("playground/pages/blank.js");
 
   assert.match(
     css,
-    /body\[data-page="blank"\] \.campaign-slide__veil\s*\{[^}]*background:\s*linear-gradient\([\s\S]*?to right[\s\S]*?\)[^}]*backdrop-filter:\s*blur\(2\.5px\)[^}]*mask-image:\s*linear-gradient\(to right/s,
+    /body\[data-page="blank"\] \.campaign-slide__veil\s*\{[^}]*background:\s*linear-gradient\([\s\S]*?to right[\s\S]*?transparent 62%[^}]*backdrop-filter:\s*none/s,
   );
+  assert.doesNotMatch(css, /design-campaign-paisley\.png/);
+  assert.doesNotMatch(css, /\.campaign-slide__veil::before/);
   assert.match(
     css,
-    /body\[data-page="blank"\] \.campaign-slide__veil::before\s*\{[^}]*background-image:\s*[\s\S]*?design-campaign-paisley\.png[^}]*mask-image:\s*linear-gradient\(to right/s,
+    /campaign-slide\[data-index="0"\][\s\S]*transform:\s*scale\(1\.22\)/,
   );
+  assert.match(blank, /position:\s*"72% center"/);
 });
 
-test("design nits: campaign veil uses a darker, smaller left-side paisley repeat", async () => {
+test("design nits: campaign Shop Now CTA uses larger type", async () => {
   const css = await source("playground/styles/design.css");
 
   assert.match(
     css,
-    /body\[data-page="blank"\] \.campaign-slide__veil::before\s*\{[^}]*background-image:\s*[\s\S]*?linear-gradient\(\s*to right[\s\S]*?\),\s*[\s\S]*?url\(["']?\.\.\/assets\/design-campaign-paisley\.png["']?\)[^}]*background-repeat:\s*no-repeat,\s*repeat-x/s,
-  );
-  assert.match(
-    css,
-    /body\[data-page="blank"\] \.campaign-slide__veil::before\s*\{[^}]*inset:\s*0\s*auto\s*0\s*0[^}]*width:\s*min\(60%,\s*720px\)[^}]*background-size:\s*100%\s*100%,\s*280px\s*auto[^}]*opacity:\s*0\.44[^}]*mask-image:\s*linear-gradient\(to right,\s*#000 0%,\s*#000 68%,\s*transparent 100%\)/s,
+    /body\[data-page="blank"\] \.campaign-slide__cta\s*\{[^}]*font-size:\s*14px/s,
   );
 });
 
@@ -316,7 +316,7 @@ test("design nits: USP row is a compact primary infinite ticker", async () => {
   );
   assert.match(
     css,
-    /body\[data-page="blank"\] \.design-usp-row__track\s*\{[^}]*animation:\s*design-usp-row-ticker\s+28s\s+linear\s+infinite/s,
+    /body\[data-page="blank"\] \.design-usp-row__track\s*\{[^}]*gap:\s*clamp\(48px,\s*5vw,\s*72px\)[^}]*animation:\s*design-usp-row-ticker\s+18s\s+linear\s+infinite/s,
   );
   assert.match(css, /@keyframes\s+design-usp-row-ticker[\s\S]*translateX\(-50%\)/);
   assert.match(

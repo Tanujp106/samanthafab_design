@@ -47,7 +47,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 - Editorial geometry: hairline gaps, restrained radius, varied section rhythm, real or replaceable photos.
 - Material cards use direct textile imagery and editorial copy, not symbolic iconography.
 - Search overlay uses a 100% width search form and Karrik body/UI type throughout; omit Clear search controls and helper status copy such as “Showing top products.” Keep the hidden empty-results shell behavior-only, without “Nothing found yet” or prompt copy, and style “Clear recent searches” as an un-underlined text control.
-- Account login overlay uses a centered whisper-cream panel with OTP-first email login, Google fallback, a dimmed scrim, and close behavior that restores focus to the account trigger. Its typography and controls inherit the normal `/design` scale: Karrik UI text, an 18px title, 15px input text, 13px buttons, and 52px controls—never poster-scale login chrome.
+- Account login overlay uses a horizontal whisper-cream panel on desktop: OTP-first email login and Google fallback sit on the left, with one editorial saree image on the right, over a dimmed scrim; close behavior restores focus to the account trigger. Mobile keeps the full-screen form sheet and hides the image. Typography and controls inherit the normal `/design` scale: Karrik UI text, an 18px title, 15px input text, 13px buttons, and 52px controls—never poster-scale login chrome.
 
 ## Never
 
@@ -63,10 +63,10 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 
 | Section | Defaults |
 | --- | --- |
-| Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); left-aligned desktop copy with a localized translucent blur veil and a darker, smaller repeating paisley motif constrained to the left 60%; centered mobile fallback; centered prev/next arrows; Lora title with optional palette-native accent word (`highlight`) via `skewX(-12deg)` |
+| Campaign hero | 24px side padding on the section; full-bleed `cover` media; RTL slide (not fade); left-aligned desktop copy with a left dark linear gradient for type legibility (no blur/paisley); first slide zooms right (`72%` / scale 1.22); centered mobile fallback; centered prev/next arrows; Shop Now CTA at **14px**; Lora title with optional palette-native accent word (`highlight`) via `skewX(-12deg)` |
 | Shop by collection | Centered title + light lede → gap → taller 2+3 bento; vertically distributed icon/title/Explore captions (no “Starting with…” price lines); soft **left** linear scrim; top-align portraits; borderless tiles; mobile fallback is a compact 2×2 grid with a slightly smaller Ready-to-wear title |
 | New Arrivals | Match Ready-to-wear panel chrome: cream section frame (`36px 24px` / mobile `28px 16px 44px`), inset **primary-100** container, **16px** radius, RTW-matching inner pad; Lora/primary-800 uppercase titles; centered header with Shop All below the rail; left-aligned product cards; Shop All primary button 13px; fixed-height horizontal rail; two product cards visible at a time on mobile across every product rail; product details `--product-rail-details: 7.75rem`; “24% off” badge; Save heart fills solid when wishlisted |
-| USP row | After New Arrivals / before Best sellers; compact **56px** primary ticker; cream Lucide icons + uppercase labels; infinite horizontal marquee (duplicated track); reduced-motion freezes |
+| USP row | After New Arrivals / before Best sellers; compact **56px** primary ticker; cream Lucide icons + uppercase labels; faster **18s** infinite horizontal marquee with generous spacing and a duplicated track; reduced-motion freezes |
 | Best sellers | Same product-carousel as New Arrivals; after USP row / before RTW banner; Shop All CTA → `/design?route=collection&slug=bestsellers` |
 | Collection PLP | Reusable template for all collections via `?route=collection&slug=…` (aliases like `?route=bestsellers` also resolve). Desktop: sticky left filters + 3-col grid. Mobile: Filters + Sort as separate bottom sheets. Facets: Availability, Price, Category, Collections, Size, Color. Reuse commerce `renderProductCard`. Shared catalog in `playground/data/`. |
 | Ready-to-wear banner | Light cream section + 36px/24px frame; primary-100 inner radius 16px; collage right; title sentence case; CTA primary 13px; three compact icon+label USPs beneath the CTA |
@@ -74,7 +74,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 | Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `48px 24px 88px` (mobile `16px 16px 64px`); three image price tiles clamp(280px, 34vw, 420px), with a shorter `min(56vw, 260px)` mobile height |
 | Shop by Material | After Shop under / before Clearance; light cream; padding 48/24/72; centered uppercase header; shaped fabric tiles in an infinite circular center-mode 5-up carousel on desktop (100% active / 80% adjacent / 60% distance-2; 3-up mobile fallback); mobile viewport runs edge-to-edge with a 16px internal inset so side cards are not clipped by the section gutter; depth blur on side cards; keyboard + arrow controls; blur+dark scrim; no Explore CTA |
 | Clearance sale | After Material / before Voices; overlay banner (cream story image, primary-900, lighter scrim, sentence-case title, Upto 50% off badge); headerless rail; **no top padding**; bottom pad 48/40 |
-| Account login overlay | Compact centered max-width panel over a dimmed page; Samantha Fab wordmark, Login with OTP form, Google fallback, terms copy; use the same Karrik UI scale as `/design`; Escape, backdrop, and close button dismiss |
+| Account login overlay | Desktop horizontal split panel over a dimmed page: Samantha Fab wordmark, Login with OTP form, Google fallback, and terms copy on the left; one editorial saree image on the right. Mobile returns to the full-screen form sheet with the image hidden; same Karrik UI scale as `/design`; Escape, backdrop, and close button dismiss |
 | Voices feature | After Clearance; centered section surface and header; left-aligned card content; infinite ticker cards; playbackRate hover 0.2; padding 56/0/80 |
 | Footer | Plum; brand + Connect with us Phosphor social icons above newsletter; **3** link columns (Shop / Help / About); trust strip; no payment logos |
 
@@ -107,6 +107,12 @@ One-off experiments (“try X once”) do not get written until the user confirm
 
 ## Changelog
 
+- 2026-09-21 — Campaign slide 1 zooms right (scale 1.22 / 72% origin) and gains a stronger left linear gradient so cream type stays legible on the light wall.
+- 2026-09-21 — Campaign hero veil shortened and lightened (~52% fade-out, 1.25px blur) so the image reads more clearly.
+- 2026-09-21 — Campaign hero slide 1 image replaced with maroon Banarasi haveli portrait (`design-campaign-hero-maroon.jpg`).
+- 2026-09-21 — Campaign Shop Now CTA bumped to 14px; removed the paisley pattern layer from the hero veil (blur gradient remains).
+- 2026-09-16 — Account login overlay now uses a desktop horizontal split with the OTP form on the left and one editorial saree image on the right; mobile keeps the compact full-screen form sheet.
+- 2026-09-16 — Account close control tightened to a 40px circle with a 20px icon; the mid-page USP ticker now uses 48–72px desktop gaps, 40px mobile gaps, and a faster 18s infinite loop.
 - 2026-09-16 — Mobile Bag now opens as a full-width page panel with no backdrop or fixed drawer; desktop keeps the right-side bag drawer.
 - 2026-09-16 — Search overlay cleanup: removed empty-state helper copy, kept the empty shell hidden until needed, and changed Clear recent searches to an un-underlined text control.
 - 2026-09-16 — New Arrivals `Shop All` now sits below its product rail; Voices keeps the section heading centered while testimonial cards stay left-aligned on mobile.

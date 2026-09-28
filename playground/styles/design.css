@@ -164,12 +164,12 @@ body[data-page="blank"] .design-usp-row__viewport {
 body[data-page="blank"] .design-usp-row__track {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: clamp(48px, 5vw, 72px);
   width: max-content;
   margin: 0;
   padding: 0 20px;
   list-style: none;
-  animation: design-usp-row-ticker 28s linear infinite;
+  animation: design-usp-row-ticker 18s linear infinite;
 }
 
 @keyframes design-usp-row-ticker {
@@ -627,42 +627,25 @@ body[data-page="blank"] .campaign-slide__media .media__frame {
   object-position: center center;
 }
 
+/* First campaign slide: zoom in and bias right so the figure clears left copy. */
+body[data-page="blank"] .campaign-slide[data-index="0"] .campaign-slide__media .media__frame {
+  transform: scale(1.22);
+  transform-origin: 72% center;
+}
+
 body[data-page="blank"] .campaign-slide__veil {
   z-index: 1;
   background: linear-gradient(
     to right,
-    rgba(18, 10, 12, 0.76) 0%,
-    rgba(18, 10, 12, 0.62) 28%,
-    rgba(18, 10, 12, 0.36) 56%,
-    rgba(18, 10, 12, 0.14) 72%,
-    transparent 100%
+    rgba(18, 10, 12, 0.68) 0%,
+    rgba(18, 10, 12, 0.42) 24%,
+    rgba(18, 10, 12, 0.16) 46%,
+    transparent 62%
   );
-  backdrop-filter: blur(2.5px);
-  -webkit-backdrop-filter: blur(2.5px);
-  mask-image: linear-gradient(to right, #000 0%, #000 52%, rgba(0, 0, 0, 0.78) 70%, transparent 88%);
-  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 52%, rgba(0, 0, 0, 0.78) 70%, transparent 88%);
-}
-
-body[data-page="blank"] .campaign-slide__veil::before {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: min(60%, 720px);
-  background-image:
-    linear-gradient(
-      to right,
-      rgba(18, 10, 12, 0.16) 0%,
-      rgba(18, 10, 12, 0.08) 46%,
-      transparent 100%
-    ),
-    url("../assets/design-campaign-paisley.png");
-  background-position: left center, left center;
-  background-repeat: no-repeat, repeat-x;
-  background-size: 100% 100%, 280px auto;
-  content: "";
-  opacity: 0.44;
-  pointer-events: none;
-  mask-image: linear-gradient(to right, #000 0%, #000 68%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 68%, transparent 100%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  mask-image: none;
+  -webkit-mask-image: none;
 }
 
 body[data-page="blank"] .campaign-slide__content {
@@ -733,7 +716,7 @@ body[data-page="blank"] .campaign-slide__cta {
   min-width: 124px;
   min-height: 44px;
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 14px;
   letter-spacing: 0.08em;
   background: var(--white);
   border-color: var(--white);
@@ -3315,15 +3298,14 @@ body[data-page="blank"] .design-testimonials__body {
   }
 
   body[data-page="blank"] .campaign-slide__veil {
-    background: rgba(18, 10, 12, 0.42);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    mask-image: none;
-    -webkit-mask-image: none;
-  }
-
-  body[data-page="blank"] .campaign-slide__veil::before {
-    opacity: 0.2;
+    background: linear-gradient(
+      to bottom,
+      rgba(18, 10, 12, 0.28) 0%,
+      rgba(18, 10, 12, 0.46) 55%,
+      rgba(18, 10, 12, 0.52) 100%
+    );
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     mask-image: none;
     -webkit-mask-image: none;
   }
@@ -3464,7 +3446,7 @@ body[data-page="blank"] .design-testimonials__body {
   }
 
   body[data-page="blank"] .design-usp-row__track {
-    gap: 32px;
+    gap: 40px;
   }
 
   body[data-page="blank"] #design-clearance-sale.design-new-arrivals {
@@ -5572,7 +5554,7 @@ body[data-page="blank"] .commerce-toast.is-visible {
   }
 }
 
-/* —— Account overlay: centered OTP login surface —— */
+/* —— Account overlay: horizontal OTP surface with editorial image —— */
 
 body[data-page="blank"].account-overlay-open {
   overflow: hidden;
@@ -5613,18 +5595,39 @@ body[data-page="blank"] .account-overlay__backdrop {
 body[data-page="blank"] .account-overlay__panel {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: min(calc(100% - 32px), 480px);
-  height: auto;
-  max-height: calc(100% - 32px);
-  overflow-y: auto;
-  padding: 44px 40px 36px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+  width: min(calc(100% - 48px), 960px);
+  height: min(640px, calc(100% - 48px));
+  max-height: calc(100% - 48px);
+  overflow: hidden;
   border-radius: 4px;
   background: var(--color-white);
   color: var(--color-ink);
   box-shadow: 0 22px 60px rgba(18, 10, 12, 0.2);
+}
+
+body[data-page="blank"] .account-overlay__content {
+  grid-column: 1;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  padding: 56px 48px 40px;
+  background: var(--color-white);
+}
+
+body[data-page="blank"] .account-overlay__image {
+  grid-column: 2;
+  grid-row: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  object-fit: cover;
+  object-position: center center;
+  background: var(--color-paper-deep);
 }
 
 body[data-page="blank"] .account-overlay__close {
@@ -5633,12 +5636,16 @@ body[data-page="blank"] .account-overlay__close {
   right: 20px;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   border: 0;
-  background: transparent;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-white) 84%, transparent);
   color: var(--color-ink);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: 2;
 }
 
 body[data-page="blank"] .account-overlay__close:hover,
@@ -5647,8 +5654,8 @@ body[data-page="blank"] .account-overlay__close:focus-visible {
 }
 
 body[data-page="blank"] .account-overlay__close-icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 body[data-page="blank"] .account-overlay__brand {
@@ -6175,10 +6182,21 @@ body[data-page="blank"] .search-overlay__empty {
 
 @media (max-width: 900px) {
   body[data-page="blank"] .account-overlay__panel {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
     border-radius: 0;
     padding: 56px 20px 28px;
+  }
+
+  body[data-page="blank"] .account-overlay__content {
+    width: 100%;
+    padding: 0;
+  }
+
+  body[data-page="blank"] .account-overlay__image {
+    display: none;
   }
 
   body[data-page="blank"] .account-overlay__close {

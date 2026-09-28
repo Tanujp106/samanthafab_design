@@ -34,9 +34,10 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Scrim | Full viewport `rgba(18, 10, 12, 0.38)` with a centered panel |
-| Panel | `min(calc(100% - 32px), 480px)` wide; content-height; whisper cream; `4px` desktop radius; full-screen mobile sheet |
-| Panel gutters | `40px` desktop; `20px` mobile |
-| Close control | 44px hit target; top/right `18px/20px` desktop; 10px mobile |
+| Panel | Desktop `min(calc(100% - 48px), 960px)` wide × `min(640px, calc(100% - 48px))`; horizontal split `1.08fr / minmax(300px, 0.92fr)`; whisper cream; `4px` radius; full-screen mobile sheet |
+| Panel content | OTP form + logo on the left; one cover editorial saree image on the right using `/assets/design-story-cream.jpg`; image hidden on mobile |
+| Panel gutters | `48px` desktop content; `20px` mobile |
+| Close control | 40px compact target with 20px icon; top/right `18px/20px` desktop; 10px mobile |
 | Typography | Karrik throughout: title `18px`; input `15px`; supporting text `14px`; buttons `13px`; terms `12px` |
 | Form fields | Full-width email field + filled OTP CTA, both `52px` high desktop and mobile |
 | Google fallback | Full-width outlined button `52px` high desktop and mobile; 24px Google mark |
@@ -94,6 +95,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | USP row height | `56px` desktop / `52px` mobile (within 50–60px) |
 | USP row surface | `var(--color-primary)` with cream type/icons |
 | USP row layout | Infinite horizontal ticker; icon + label in a row; duplicated track for seamless loop |
+| USP row track | `clamp(48px, 5vw, 72px)` gap desktop; `40px` mobile; `18s` linear infinite cycle |
 | USP row icons | Lucide banknote / refresh-cw / truck / message-circle; stroke 2; cream; 18px |
 | RTW / Clearance rail-only top padding | `0` on desktop and mobile; explicit IDs `#design-ready-to-wear-products` and `#design-clearance-sale` |
 | Rail footer CTA top margin | 16px |
@@ -228,8 +230,9 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | --- | --- |
 | Slide transition | Right-to-left (not fade) |
 | Copy alignment | Left-aligned on desktop; centered on mobile |
-| Desktop copy veil | Left linear dark fade with 2.5px backdrop blur, masked before the right edge |
-| Desktop veil pattern | Supplied transparent paisley motif, repeated left-to-right on 280px tiles at `0.44` opacity inside the left 60% of the stage, fading out before the center |
+| Desktop copy veil | Clean left dark linear gradient (~0.68 → transparent by ~62%) for cream type on light walls; no blur, no paisley |
+| First slide crop | Maroon hero: `object-position: 72% center` + `scale(1.22)` from `72%` so the seated figure sits further right |
+| Campaign CTA | Shop Now `.campaign-slide__cta` at **14px** Karrik |
 | Controls | Centered side arrows (~48px) + dots |
 | Side frame | 24px padding on `.section--campaign-hero` (stage is direct child — no `.campaign-hero__inner`) |
 | Campaign media | Full stage fill; wrapper `margin: 0`; image `object-fit: cover` |
