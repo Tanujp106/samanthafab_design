@@ -71,22 +71,28 @@ test("design page uses the live Samantha reference navbar structure", async () =
   assert.equal(header.variant, "reference");
   assert.deepEqual(
     header.nav.map((item) => item.label),
-    ["Shop", "Best sellers", "Surmaye Sisterhood", "Contact"],
+    ["Shop", "New Arrival", "Best sellers", "About", "Sale"],
   );
   assert.equal(header.nav[0].menu, "shop");
   assert.deepEqual(
     header.nav.filter((item) => item.href).map((item) => item.href),
     [
+      "/design?route=collection&slug=new-arrival",
       "/design?route=collection&slug=bestsellers",
-      "/design?route=page&slug=star-in-our-spotlight",
-      "/design?route=page&slug=contact",
+      "/design?route=page&slug=about",
+      "/design?route=collection&slug=sale",
     ],
   );
   assert.deepEqual(
     header.actions.map((item) => item.icon),
     ["search", "heart", "user", "bag"],
   );
-  assert.equal(header.megaMenu.groups.length, 4);
+  assert.equal(header.megaMenu.groups.length, 5);
+  assert.deepEqual(
+    header.megaMenu.groups.map((group) => group.heading),
+    ["By craft", "By design language", "By textiles", "By colours", "By occasions"],
+  );
+  assert.equal(header.megaMenu.featured, undefined);
   assert.ok(
     header.megaMenu.groups
       .flatMap((group) => group.links)

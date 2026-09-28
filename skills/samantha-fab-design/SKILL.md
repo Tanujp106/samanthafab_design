@@ -35,6 +35,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 - Light-surface section titles: `--color-primary-800`, **uppercase** (`text-transform: uppercase`), centered with their ledes across `/design` section headers. Lede/body: muted Karrik, weight 400 — not heavy.
 - Side gutters **24px** so the light cream page frame shows; align nav to that width.
 - Reference navigation on desktop stays one three-column row: brand left, primary links centered, utility actions right; the wordmark is the sole Home affordance and links to `/design`, so do not repeat Home in the primary links; keep search, wishlist, account, and bag in the utility cluster while the mobile shell uses its dedicated controls.
+- Primary nav labels: **Shop** (mega menu) · **New Arrival** · **Best sellers** · **About** · **Sale**. Shop mega menu is five taxonomy columns only (By craft / By design language / By textiles / By colours / By occasions) with no featured image panel; every link resolves in-playground.
 - Split editorial (media + copy): explicit **32–64px** column gap.
 - Product/occasion tags: `Everyday` / `Work` / `Festive` / `Wedding` / `Ready-to-wear` — never “New”.
 - Primary CTAs (`View all`, `Shop ready-to-wear`): filled primary button.
@@ -69,6 +70,7 @@ This repo is the frontend design source of truth (not Shopify). `/design`
 | USP row | After New Arrivals / before Best sellers; compact **56px** primary ticker; cream Lucide icons + uppercase labels; faster **18s** infinite horizontal marquee with generous spacing and a duplicated track; reduced-motion freezes |
 | Best sellers | Same product-carousel as New Arrivals; after USP row / before RTW banner; Shop All CTA → `/design?route=collection&slug=bestsellers` |
 | Collection PLP | Reusable template for all collections via `?route=collection&slug=…` (aliases like `?route=bestsellers` also resolve). Desktop: sticky left filters + 3-col grid. Mobile: Filters + Sort as separate bottom sheets. Facets: Availability, Price, Category, Collections, Size, Color. Reuse commerce `renderProductCard`. Shared catalog in `playground/data/`. |
+| Product detail (PDP) | Shared `/design?route=product&slug=…`. Desktop **sticky left gallery** (`top: 112px`) beside a scrolling purchase column; 2-col gallery (**≥4** curated images, up to 6) with uniform **3/4** tiles; layout `column-gap: clamp(40px, 5vw, 72px)`. Purchase order: occasion tag → title/share → **material under title** → always-visible short description → Regular/RTW blouse cards → SKU → price/tax → coupons → shimmering Add to cart + wishlist + WhatsApp → Buy it now → Product Description / Shipping & Return accordions → 4 trust badges → Recommended for you (3 cards). No colour “Options available”, collapsible description summary, pincode check, shipping callout, or offer card. |
 | Ready-to-wear banner | Light cream section + 36px/24px frame; primary-100 inner radius 16px; collage right; title sentence case; CTA primary 13px; three compact icon+label USPs beneath the CTA |
 | RTW product rail | Headerless; **no top padding**; CTA “Shop All” 13px; brand primary |
 | Shop under | Centered uppercase heading; title→cards gap 40px (mobile 32px); section pad `48px 24px 88px` (mobile `16px 16px 64px`); three image price tiles clamp(280px, 34vw, 420px), with a shorter `min(56vw, 260px)` mobile height |
@@ -107,6 +109,11 @@ One-off experiments (“try X once”) do not get written until the user confirm
 
 ## Changelog
 
+- 2026-09-28 — PDP layout: sticky gallery (112px) + scrolling purchase column; wider column gap clamp(40px, 5vw, 72px); uniform 3/4 gallery tiles with cover frames.
+- 2026-09-28 — Shop mega-menu link hover: no underline/border, scale 1.06 with springier easing (overrides homepage `.nav-links a` hairline).
+- 2026-09-28 — PDP feedback: gallery ≥4 curated images; remove Options available + collapsible Description; material under title; Add to cart shimmer.
+- 2026-09-28 — Product detail rebuilt to sketch IA: Regular/RTW blouse variants replace size; coupons + share/WhatsApp; dropped pincode/shipping/offer chrome; Recommended for you (3).
+- 2026-09-28 — Primary nav: Shop · New Arrival · Best sellers · About · Sale; Shop mega menu is five taxonomy columns (craft / design language / textiles / colours / occasions) with no featured panel; About content page restored.
 - 2026-09-21 — Campaign slide 1 zooms right (scale 1.22 / 72% origin) and gains a stronger left linear gradient so cream type stays legible on the light wall.
 - 2026-09-21 — Campaign hero veil shortened and lightened (~52% fade-out, 1.25px blur) so the image reads more clearly.
 - 2026-09-21 — Campaign hero slide 1 image replaced with maroon Banarasi haveli portrait (`design-campaign-hero-maroon.jpg`).

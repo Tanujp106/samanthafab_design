@@ -198,19 +198,22 @@ function renderMegaMenu(menu) {
   });
 
   const featured = menu.featured;
-  const featuredLink = element("a", "design-mega-menu__featured");
-  if (featured?.href) featuredLink.href = featured.href;
-  if (featured?.media) {
-    const image = element("img", "design-mega-menu__image");
-    image.src = featured.media.src;
-    image.alt = featured.media.alt || "";
-    image.loading = "lazy";
-    image.decoding = "async";
-    featuredLink.append(image);
+  if (featured) {
+    const featuredLink = element("a", "design-mega-menu__featured");
+    if (featured.href) featuredLink.href = featured.href;
+    if (featured.media) {
+      const image = element("img", "design-mega-menu__image");
+      image.src = featured.media.src;
+      image.alt = featured.media.alt || "";
+      image.loading = "lazy";
+      image.decoding = "async";
+      featuredLink.append(image);
+    }
+    if (featured.label) featuredLink.append(element("span", "design-mega-menu__featured-label", featured.label));
+    root.append(groups, featuredLink);
+  } else {
+    root.append(groups);
   }
-  if (featured?.label) featuredLink.append(element("span", "design-mega-menu__featured-label", featured.label));
-
-  root.append(groups, featuredLink);
   return root;
 }
 
@@ -1584,13 +1587,11 @@ function renderMobileDrawer(page, headerSection) {
   const list = element("ul", "mobile-drawer__list");
   const megaMenu = headerSection?.megaMenu;
   const links = (megaMenu?.groups || []).flatMap((group) => group.links || []);
-  const featuredLabel = "Ready To Wear Sarees";
   links.forEach((item) => {
     const row = element("li", "mobile-drawer__item");
     const link = element("a", "mobile-drawer__link", item.label);
     link.href = item.href;
     link.append(renderMobileIcon("chevron", "mobile-drawer__chevron"));
-    if (item.label === featuredLabel) link.classList.add("mobile-drawer__link--featured");
     row.append(link);
     list.append(row);
   });

@@ -85,11 +85,15 @@ test("design nits: mega-menu links scale with a restrained hover treatment", asy
 
   assert.match(
     css,
-    /body\[data-page="blank"\] \.design-mega-menu__link\s*\{[^}]*transform-origin:\s*left center[^}]*transition:\s*color 160ms ease,\s*transform 160ms ease/s,
+    /body\[data-page="blank"\] \.design-mega-menu__link\s*\{[^}]*transform-origin:\s*left center[^}]*border-bottom:\s*0[^}]*text-decoration:\s*none/s,
   );
   assert.match(
     css,
-    /body\[data-page="blank"\] \.design-mega-menu__link:hover,[\s\S]*?transform:\s*scale\(1\.03\)/,
+    /body\[data-page="blank"\] \.design-mega-menu__link:hover,[\s\S]*?transform:\s*scale\(1\.06\)/,
+  );
+  assert.match(
+    css,
+    /body\[data-page="blank"\] \.design-mega-menu__link:hover,[\s\S]*?border-bottom:\s*0/,
   );
   assert.doesNotMatch(
     css,

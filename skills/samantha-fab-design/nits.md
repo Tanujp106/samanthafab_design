@@ -58,6 +58,25 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Filter chrome | Custom 4px plum checkboxes (not native); soft primary-50 search/price wells (8px radius); counts right-aligned muted; rotating SVG chevrons; no harsh grey input boxes |
 | Scroll | Sidebar sticky under nav (`top` ~104px), `max-height` viewport remainder, own overflow + thin plum scrollbar; product grid scrolls with the page; no nested facet-list scroll |
 
+## Product detail (PDP)
+
+| Item | Value |
+| --- | --- |
+| Route | `/design?route=product&slug=…` |
+| Gallery | 2-col grid, `gap: 10px`; **minimum 4** unique images via `resolveProductGallery` (curated sets + pool); max 6; each tile forced **3/4** (`aspect-ratio`) with absolute cover frames (`object-position: center top`) |
+| Layout gap | `column-gap: clamp(40px, 5vw, 72px)` between gallery and purchase |
+| Gallery stickiness | `position: sticky; top: 112px` desktop; gallery `position: static` on ≤760px |
+| Purchase column | `position: relative` (scrolls with page; not sticky) |
+| Title | Lora `clamp(28px, 3.4vw, 44px)`; share control 44px |
+| Material | Below title; Karrik uppercase 13px / 0.08em; primary colour — not a pill tag |
+| Description | Always visible Karrik 15px lede; never a collapsed summary |
+| Variants | Two equal cards; Regular +₹0 / Ready-to-wear +₹70; selected primary-50 fill |
+| Price | Sale `28px` Karrik; compare-at strikethrough `15px` |
+| CTA row | Add to cart flex with cream shimmer sweep (~2.4s, reduced-motion off) + wishlist 52px + WhatsApp 52px; Buy it now full width below |
+| Trust | 4 icon+label badges in purchase column |
+| Related | “Recommended for you”; 3-col desktop / 2-col mobile; max 3 cards |
+| Dropped | Colour “Options available”, collapsible Description summary, size selector, pincode delivery check, shipping callout card, offer card |
+
 ## Surface
 
 | Item | Value |
@@ -70,7 +89,10 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Home affordance | Omit Home from the centered primary links; the Samantha Fab wordmark links to `/design` |
-| Mega-menu link hover | `scale(1.03)` only; no lateral translation |
+| Primary links | Shop (mega) · New Arrival · Best sellers · About · Sale |
+| Shop mega menu | 5 taxonomy columns (craft / design language / textiles / colours / occasions); no featured image panel |
+| Mega-menu groups grid | `repeat(5, minmax(0, 1fr))` desktop; 3-up ≤1200px; 2-up ≤900px; 1-up ≤640px |
+| Mega-menu link hover | `scale(1.06)` + primary color only; no underline / border-bottom (overrides homepage `.nav-links a` hairline) |
 
 ## Spacing
 

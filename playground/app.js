@@ -916,15 +916,42 @@ function bindCommerceInteractions(root = document) {
       return;
     }
 
-    const pdpSize = event.target.closest?.("[data-pdp-size]");
-    if (pdpSize) {
+    const pdpVariant = event.target.closest?.("[data-pdp-variant]");
+    if (pdpVariant) {
       event.preventDefault();
-      const group = pdpSize.closest("[data-product-page]");
-      group?.querySelectorAll("[data-pdp-size]").forEach((size) => {
-        const selected = size === pdpSize;
-        size.classList.toggle("is-selected", selected);
-        size.setAttribute("aria-pressed", String(selected));
+      const panel = pdpVariant.closest(".product-detail__purchase");
+      const group = pdpVariant.closest("[data-pdp-variants]");
+      group?.querySelectorAll("[data-pdp-variant]").forEach((variant) => {
+        const selected = variant === pdpVariant;
+        variant.classList.toggle("is-selected", selected);
+        variant.setAttribute("aria-pressed", String(selected));
       });
+      if (panel) {
+        const basePrice = Number(panel.dataset.pdpBasePrice || 0);
+        const compareAt = Number(panel.dataset.pdpCompareAt || 0);
+        const surcharge = Number(pdpVariant.dataset.pdpSurcharge || 0);
+        const nextPrice = basePrice + surcharge;
+        const priceNode = panel.querySelector(".product-detail__price");
+        if (priceNode) {
+          priceNode.textContent = `₹${Math.round(nextPrice).toLocaleString("en-IN")}`;
+        }
+        const compareNode = panel.querySelector(".product-detail__compare");
+        if (compareNode && compareAt) {
+          compareNode.textContent = `₹${Math.round(compareAt + surcharge).toLocaleString("en-IN")}`;
+        }
+        try {
+          const payload = JSON.parse(panel.dataset.productPayload || "{}");
+          payload.variant = pdpVariant.dataset.pdpVariant;
+          payload.surcharge = surcharge;
+          payload.price = `₹${Math.round(nextPrice).toLocaleString("en-IN")}`;
+          if (compareAt) {
+            payload.compareAt = `₹${Math.round(compareAt + surcharge).toLocaleString("en-IN")}`;
+          }
+          panel.dataset.productPayload = JSON.stringify(payload);
+        } catch {
+          /* ignore malformed prototype payloads */
+        }
+      }
       return;
     }
 
@@ -935,6 +962,21 @@ function bindCommerceInteractions(root = document) {
       group?.querySelectorAll("[data-pdp-swatch]").forEach((swatch) => {
         swatch.setAttribute("aria-pressed", String(swatch === pdpSwatch));
       });
+      return;
+    }
+
+    const pdpShare = event.target.closest?.("[data-pdp-share]");
+    if (pdpShare) {
+      event.preventDefault();
+      const shareUrl = window.location.href;
+      const title = document.title || "Samantha Fab";
+      if (navigator.share) {
+        navigator.share({ title, url: shareUrl }).catch(() => {});
+      } else if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          showCommerceToast("Link copied");
+        }).catch(() => {});
+      }
       return;
     }
 
@@ -991,19 +1033,6 @@ function bindCommerceInteractions(root = document) {
     }
   });
 
-  document.addEventListener("submit", (event) => {
-    const deliveryForm = event.target.closest?.("[data-pdp-delivery]");
-    if (!deliveryForm) return;
-    event.preventDefault();
-    const input = deliveryForm.querySelector("[aria-label='Enter pincode']");
-    const status = deliveryForm.parentElement?.querySelector("[data-pdp-delivery-status]") ||
-      deliveryForm.nextElementSibling;
-    if (status) {
-      status.textContent = input?.value.trim()
-        ? "Delivery details previewed for this pincode."
-        : "Enter a pincode to preview delivery details.";
-    }
-  });
 }
 
 if (openBagOnLoad) {

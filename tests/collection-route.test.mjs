@@ -30,9 +30,11 @@ test("app and blank wire collection PLP routes", async () => {
   assert.match(render, /renderCollectionPlp/);
   assert.match(render, /renderContentPage/);
   assert.match(blank, /collectionUrl\("bestsellers"\)/);
-  assert.match(blank, /MEGA_MENU_LINKS\.sarees/);
-  assert.match(blank, /MEGA_MENU_LINKS\["arani-silk"\]/);
-  assert.match(blank, /MEGA_MENU_LINKS\["style-guide"\]/);
+  assert.match(blank, /collectionUrl\("new-arrival"\)/);
+  assert.match(blank, /contentUrl\("about"\)/);
+  assert.match(blank, /MEGA_MENU_LINKS\["embroidery-work"\]/);
+  assert.match(blank, /MEGA_MENU_LINKS\.organza/);
+  assert.match(blank, /MEGA_MENU_LINKS\["festive-wear"\]/);
   assert.doesNotMatch(blank, /https:\/\/www\.samanthafab\.com\/collections\//);
 });
 

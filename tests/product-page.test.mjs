@@ -48,16 +48,38 @@ test("product page wiring uses one reusable PDP surface and existing commerce ac
   assert.match(css, /\.product-detail__purchase/);
 });
 
-test("product page uses a dense gallery and structured reference-inspired purchase panel", async () => {
+test("product page follows sketch-aligned purchase panel without delivery chrome", async () => {
   const app = await source("playground/app.js");
   const productPage = await source("playground/components/product-page.js");
+  const gallery = await source("playground/data/product-gallery.js");
   const css = await source("playground/styles/design.css");
 
   assert.match(productPage, /product-detail__tax-note/);
-  assert.match(productPage, /product-detail__delivery-check/);
   assert.match(productPage, /product-detail__buy-now/);
-  assert.match(app, /data-pdp-delivery/);
+  assert.match(productPage, /product-detail__variants/);
+  assert.match(productPage, /product-detail__coupons/);
+  assert.match(productPage, /product-detail__whatsapp/);
+  assert.match(productPage, /product-detail__material/);
+  assert.match(productPage, /product-detail__description/);
+  assert.match(productPage, /product-detail__add-shimmer/);
+  assert.match(productPage, /Recommended for you/);
+  assert.match(productPage, /Ready-to-wear/);
+  assert.match(productPage, /resolveProductGallery/);
+  assert.doesNotMatch(productPage, /Options available/);
+  assert.doesNotMatch(productPage, /product-detail__summary/);
+  assert.doesNotMatch(productPage, /product-detail__delivery-check/);
+  assert.doesNotMatch(productPage, /product-detail__sizes/);
+  assert.match(gallery, /minCount = 4/);
+  assert.match(gallery, /design-product-sage\.jpg/);
+  assert.match(app, /data-pdp-variant/);
   assert.match(app, /buy-now/);
+  assert.doesNotMatch(app, /data-pdp-delivery/);
   assert.match(css, /\.product-detail__gallery[\s\S]*grid-template-columns:\s*repeat\(2/);
-  assert.match(css, /\.product-detail__delivery-check/);
+  assert.match(css, /column-gap:\s*clamp\(40px,\s*5vw,\s*72px\)/);
+  assert.match(css, /\.product-detail__gallery[\s\S]*position:\s*sticky/);
+  assert.match(css, /\.product-detail__gallery[\s\S]*top:\s*112px/);
+  assert.match(css, /\.product-detail__purchase[\s\S]*position:\s*relative/);
+  assert.match(css, /\.product-detail__variants/);
+  assert.match(css, /product-detail-add-shimmer/);
+  assert.match(css, /\.product-detail__related-rail[\s\S]*repeat\(3/);
 });
