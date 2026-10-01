@@ -170,12 +170,8 @@ export function bindProductLightbox(root = document) {
     close.setAttribute("aria-label", "Close");
     close.innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>`;
 
-    const hint = document.createElement("p");
-    hint.className = "product-lightbox__hint";
-    hint.textContent = "Click image to zoom · move to pan · outside to close";
-
     stage.append(stageImg);
-    overlay.append(scrim, stage, close, hint);
+    overlay.append(scrim, stage, close);
     document.body.append(overlay);
 
     scrim.addEventListener("click", (event) => {

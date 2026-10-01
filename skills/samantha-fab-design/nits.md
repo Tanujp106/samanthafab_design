@@ -7,7 +7,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Top bar height | 64px min-height; 10px vertical padding; 16px side gutters |
-| Bottom bar height | ~72px + safe-area; 5 equal tabs; icon 22px; label 10px Karrik |
+| Bottom bar height | `--mobile-bottom-bar-height`: `62px + safe-area` (8 + 44 + 10 + inset); 5 equal tabs; icon 22px; label 10px Karrik |
 | Drawer width | min(88vw, 360px); slides from left; overlay rgba(18,10,12,0.42) |
 | Explore search | 48px pill; 999px radius; whisper cream fill |
 | Explore trending | 5 chips: Bestsellers (all), Ready-to-wear, Everyday, Wedding, Festive — client filter by tag/name |
@@ -22,10 +22,15 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Wishlist route | `/design?route=wishlist` — centered title + **4-col** grid (3 ≤1100 / 2 mobile) of shared commerce product cards at New Arrivals card scale; **× cancel** removes (not heart) |
 | Bag UI | Desktop: right overlay drawer (`min(100vw, 420px)`); mobile: full-width page panel inside the mobile shell with no backdrop or fixed drawer; desktop nav bag / Add to cart open the drawer, mobile Bag / mobile Add to cart open the page; `?route=bag` opens the appropriate surface then strips the query |
 | Persistence | localStorage keys `sf-design-wishlist` / `sf-design-bag` (playground prototype) |
-| Bag contents | Line items (88px portrait, × on media) + sticky footer summary (subtotal / shipping / total / Checkout / trust); qty ±; Save for later |
+| Bag contents | Line items (88px portrait; uppercase title; sale + strikethrough compare-at + % off; trash\|qty\|+; Save for later) → 4-col icon USP strip → sticky Total → soft offer strip (“Offers available at checkout”) → Checkout |
 | Empty CTAs | Wishlist → single “Shop best sellers”; Bag → single “Continue shopping” action that returns to Home |
 | Wishlist empty | Soft primary-50 panel; familiar filled heart icon in a soft circular field; sentence-case “Nothing saved yet”; readable copy; no tip |
-| Bag empty | Soft primary-50 panel; familiar outlined bag icon in a soft circular field; sentence-case “Your bag is empty”; one clear CTA; no secondary link or helper tip |
+| Bag empty | Transparent empty block (no heavy wash); uppercase empty title; copy “No pieces yet — let’s fix that.”; one CTA; then **Our bestsellers** rail with circular prev/next arrows |
+| Bag header | `Bag(n)` uppercase title with inline count; no subtitle/lede under the title |
+| Bag line pricing | Sale price on top; compare-at strikethrough + `% off` badge beneath (use product `discount` or compute from compareAt) |
+| Bag offer strip | Soft primary-50 wash + primary-800 type (not primary fill); quiet shimmer highlight; info icon + uppercase “Offers available at checkout” above Checkout |
+| Bag checkout | Primary filled CTA with PDP-style cream shimmer; hover steps to primary-800; reduced-motion freezes shimmer |
+| Bag USPs (filled) | 4 equal columns under line items; Lucide line icons 22px; uppercase 9px labels; hairline top/bottom + column dividers; Free shipping / Easy returns & exchange / 2–3 day dispatch / COD across India |
 | Wishlist search | Do not mount the search overlay or Search trigger on `/design?route=wishlist` |
 | Wishlist page pad | `20px 24px 88px` desktop; header margin `4px 0 32px` |
 
@@ -63,22 +68,25 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Route | `/design?route=product&slug=…` |
-| Gallery | Sticky shell; 2×2; **12px** row + column gap; figure `margin: 0`; tiles **3/4** absolute cover; `--radius-media`; each tile is a button (`[data-pdp-lightbox]`) |
-| Lightbox | FLIP morph open/close (~420ms ease-out); composite-only `transform`/`opacity`; click/tap image toggles one zoom level (~2.5×) toward pointer; fine-pointer cursor-follow pan when zoomed; touch drag/pinch still work; outside/scrim/Escape resets zoom then closes; reduced-motion snaps |
-| Page gutters | Same **24px** as nav / logo (desktop); **16px** mobile — gallery must align with wordmark, never negative-margin flush |
-| Layout gap | `column-gap: clamp(32px, 4vw, 64px)` (split-editorial range); layout `padding-top: 16px` |
-| Gallery stickiness | `.product-detail__gallery-shell`: `position: sticky; top: 112px`; static on ≤760px |
-| Purchase column | `position: relative` (scrolls with page; not sticky) |
-| Title | Karrik (`--font-body`) `clamp(28px, 3.4vw, 42px)`; share 44px; SKU directly under title; badges **6px** under SKU |
+| Gallery | Desktop sticky shell; 2×2; **12px** gaps; figure `margin: 0`; tiles **3/4** absolute cover; `--radius-media`; tiles are lightbox buttons. **Mobile ≤760px:** one-up loop swipe carousel inside the **16px** page gutters (not full-bleed), rounded media, **thin strip** indicators under media (row `min(52%, 168px)`, equal flex strips, height 2px — not dots) |
+| Lightbox | FLIP morph open/close (~420ms ease-out); composite-only `transform`/`opacity`; click/tap image toggles one zoom level (~2.5×) toward pointer; fine-pointer cursor-follow pan when zoomed; touch drag/pinch still work; outside/scrim/Escape resets zoom then closes; reduced-motion snaps; **no on-screen usage hint copy** |
+| Page gutters | Same **24px** as nav / logo (desktop); **16px** mobile — keep breadcrumb, gallery, purchase, and related on the same left/right edges |
+| Layout gap | `column-gap: clamp(32px, 4vw, 64px)`; layout `padding-top: 32px` desktop / **0** mobile (tight under breadcrumbs); no purchase bottom pad; related supplies page bottom (`72px` / `56px` mobile) |
+| Gallery stickiness | `.product-detail__gallery-shell`: `position: sticky; top: 112px`; static on ≤760px; mobile shell `overflow: hidden`, no negative margins |
+| Purchase column | `position: relative` (scrolls with page; not sticky); no bottom padding; mobile `padding-top: 20px`; share same 16px right edge as gallery |
+| Title | Karrik (`--font-body`) `clamp(26px, 3.1vw, 38px)` desktop; mobile `clamp(24px, 7vw, 30px)`; **full width** of title row (no `ch` cap / no `text-wrap: balance`); share **36px** circle; SKU directly under title; badges **6px** under SKU |
+| Breadcrumbs | Karrik **13px**; top pad `36px` desktop / `16px` mobile; bottom pad `20px` desktop / **4px** mobile |
 | Badges | Occasion + material pills below SKU |
 | Description | Always visible; full width; Karrik 15px / weight 400; extra space below (~20px) before variants |
-| Variants | Two cards; Regular +₹0 / RTW +₹70; surcharge **16px** |
+| Variants | Two equal cards side-by-side (horizontal) on all breakpoints; left-aligned title/detail/surcharge; Regular +₹0 / RTW +₹70; surcharge **20px** |
 | Gift offer | Below Buy it now / above trust; brand plum bokeh (`primary-50/100/200` radials, no gold photo); gift icon in primary tones + Lora copy; `padding-top: 4px`; soft primary border |
-| Price | Sale `28px` Karrik; compare-at `15px` strikethrough; tax note → CTA gap **12px** |
+| Price | Sale `28px` Karrik; compare-at `15px` strikethrough; price row `align-items: center` so compare sits mid-aligned to sale; tax note `13px`, `margin-top: 2px`, `padding-bottom: 4px`; actions `margin-top: 12px` |
 | CTA row | Shimmer Add to cart + wishlist 52px + WhatsApp 52px (Phosphor WhatsApp logo from `playground/lib/icons.mjs`, 24px); Buy it now full width |
 | Trust | **2×2** grid below gift offer / above Shipping; flex row vertically centered; icon **34px** + **15px** label |
-| Related | “Recommended for you”; 3-col / 2-col mobile; max 3 |
-| Dropped | Flush-left gallery hack, Options available, Product Description accordion, coupons row/summary, size, pincode, offer cards |
+| Related | “Recommended for you”; homepage-height product carousel (4-up desktop / 3 / 2 mobile) with prev/next arrows; up to **10** products; reuses New Arrivals rail chrome |
+| Shipping accordion | Summary label **15px** Karrik |
+| Mobile sticky bar | ≤760px only; slides in after inline Add to cart scrolls past; **hides when `.site-footer` enters the viewport** and while the gallery lightbox is open; flush above tab bar (`bottom: var(--mobile-bottom-bar-height)` = `62px + safe-area`); meta row (uppercase truncated name + price/MRP + tax) + equal Add to cart (outline) / Buy now (primary fill) |
+| Dropped | Options available, Product Description accordion, coupons row/summary, size, pincode, offer cards |
 
 ## Surface
 

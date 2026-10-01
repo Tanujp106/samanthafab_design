@@ -85,8 +85,7 @@ function bagEmptyState(empty = {}) {
     element(
       "p",
       "commerce-empty__copy",
-      empty.copy ||
-        "Add a piece you love and it will appear here.",
+      empty.copy || "No pieces yet — let’s fix that.",
     ),
   );
 
@@ -101,6 +100,132 @@ function bagEmptyState(empty = {}) {
   actions.append(primary);
   root.append(actions);
   return root;
+}
+
+const BAG_USP_ITEMS = [
+  {
+    label: "Free shipping",
+    path: '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  },
+  {
+    label: "Easy returns & exchange",
+    path: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  },
+  {
+    label: "2–3 day dispatch",
+    path: '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/><path d="m7.5 4.27 9 5.15"/>',
+  },
+  {
+    label: "COD across India",
+    path: '<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+  },
+];
+
+function bagUspIcon(pathMarkup) {
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.classList.add("commerce-bag-usps__icon");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.7");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = pathMarkup;
+  return icon;
+}
+
+function bagUspStrip() {
+  const list = element("ul", "commerce-bag-usps");
+  list.setAttribute("aria-label", "Shopping assurances");
+  BAG_USP_ITEMS.forEach((item) => {
+    const li = element("li", "commerce-bag-usps__item");
+    li.append(bagUspIcon(item.path), element("span", "commerce-bag-usps__label", item.label));
+    list.append(li);
+  });
+  return list;
+}
+
+function bagRailArrow(direction) {
+  const isPrevious = direction === "previous";
+  const arrow = element(
+    "button",
+    `bag-bestsellers__arrow bag-bestsellers__arrow--${direction}`,
+  );
+  arrow.type = "button";
+  arrow.dataset.bagBestsellersDir = isPrevious ? "-1" : "1";
+  arrow.setAttribute("aria-label", isPrevious ? "Previous bestsellers" : "Next bestsellers");
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.7");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = isPrevious
+    ? '<path d="M15 6l-6 6 6 6"/>'
+    : '<path d="M9 6l6 6-6 6"/>';
+  arrow.append(icon);
+  return arrow;
+}
+
+function bagBestsellersRail({ products = [], ctx = {}, renderProductCard } = {}) {
+  if (!products.length || typeof renderProductCard !== "function") return null;
+
+  const section = element("section", "bag-bestsellers");
+  section.dataset.bagBestsellers = "true";
+  section.setAttribute("aria-labelledby", "bag-bestsellers-title");
+
+  const header = element("div", "bag-bestsellers__header");
+  const heading = element("h3", "bag-bestsellers__title", "Our bestsellers");
+  heading.id = "bag-bestsellers-title";
+  const controls = element("div", "bag-bestsellers__controls");
+  controls.append(bagRailArrow("previous"), bagRailArrow("next"));
+  header.append(heading, controls);
+
+  const viewport = element("div", "bag-bestsellers__viewport");
+  viewport.dataset.bagBestsellersViewport = "true";
+  const track = element("div", "bag-bestsellers__track");
+  products.forEach((product) => {
+    track.append(
+      renderProductCard(product, ctx, {
+        className: "design-new-arrivals__card bag-bestsellers__card",
+        commerce: true,
+      }),
+    );
+  });
+  viewport.append(track);
+  section.append(header, viewport);
+  return section;
+}
+
+function bagTitleCount(count) {
+  const title = element("h2", "bag-drawer__title");
+  title.id = "bag-drawer-title";
+  title.append(document.createTextNode("Bag"));
+  const countNode = element("span", "bag-drawer__count", `(${count})`);
+  countNode.dataset.bagDrawerCount = "true";
+  title.append(countNode);
+  return title;
+}
+
+function bagQtyTrashIcon() {
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.7");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML =
+    '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/>';
+  return icon;
 }
 
 /** Wishlist page: same commerce product cards; × removes from list. */
@@ -152,46 +277,85 @@ export function renderWishlistPage({
   return root;
 }
 
+function bagDiscountLabel(item = {}) {
+  if (item.discount) return item.discount;
+  const price = parsePriceValue(item.price);
+  const compare = parsePriceValue(item.compareAt);
+  if (!price || !compare || compare <= price) return "";
+  const percent = Math.round(((compare - price) / compare) * 100);
+  return percent > 0 ? `${percent}% off` : "";
+}
+
+function bagPricing(item = {}) {
+  const wrap = element("div", "commerce-bag-line__pricing");
+  wrap.append(element("span", "commerce-bag-line__price", item.price));
+
+  const discount = bagDiscountLabel(item);
+  if (item.compareAt || discount) {
+    const meta = element("div", "commerce-bag-line__price-meta");
+    if (item.compareAt) meta.append(element("span", "commerce-bag-line__compare", item.compareAt));
+    if (discount) meta.append(element("span", "commerce-bag-line__discount", discount));
+    wrap.append(meta);
+  }
+  return wrap;
+}
+
+function bagOfferStrip() {
+  const strip = element("div", "commerce-bag-offer");
+  strip.setAttribute("role", "note");
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.classList.add("commerce-bag-offer__icon");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.7");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = '<circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/>';
+
+  strip.append(
+    element("span", "commerce-bag-offer__shimmer"),
+    icon,
+    element("span", "commerce-bag-offer__copy", "Offers available at checkout"),
+  );
+  return strip;
+}
+
 function bagLine(item) {
   const row = element("article", "commerce-bag-line");
   row.dataset.productId = item.id;
 
-  const mediaWrap = element("div", "commerce-bag-line__media-wrap");
   const mediaLink = element("a", "commerce-bag-line__media");
   mediaLink.href = productHref(item);
   mediaLink.setAttribute("aria-label", item.name);
   mediaLink.append(renderMedia(item.media, { ratio: "portrait", notesEnabled: false }));
 
-  const remove = element("button", "commerce-bag-line__remove");
-  remove.type = "button";
-  remove.dataset.bagRemove = item.id;
-  remove.setAttribute("aria-label", `Remove ${item.name}`);
-  remove.textContent = "×";
-  mediaWrap.append(mediaLink, remove);
-
   const body = element("div", "commerce-bag-line__body");
-  if (item.tag) body.append(element("span", "product-tag", item.tag));
 
+  const top = element("div", "commerce-bag-line__top");
+  const identity = element("div", "commerce-bag-line__identity");
   const title = element("a", "commerce-bag-line__title", item.name);
   title.href = productHref(item);
-  body.append(title);
-
-  const priceLine = element("div", "product-price-line");
-  priceLine.append(element("span", "product-price", item.price));
-  if (item.compareAt) priceLine.append(element("span", "product-compare", item.compareAt));
-  if (item.discount) priceLine.append(element("span", "product-discount", item.discount));
-  body.append(priceLine);
+  identity.append(title);
+  if (item.tag) identity.append(element("span", "commerce-bag-line__tag", item.tag));
+  top.append(identity, bagPricing(item));
+  body.append(top);
 
   const meta = element("div", "commerce-bag-line__meta");
   const qty = element("div", "commerce-bag-line__qty");
   qty.setAttribute("role", "group");
   qty.setAttribute("aria-label", "Quantity");
-  const minus = element("button", "commerce-bag-line__qty-btn");
-  minus.type = "button";
-  minus.dataset.bagQty = item.id;
-  minus.dataset.bagQtyDelta = "-1";
-  minus.setAttribute("aria-label", "Decrease quantity");
-  minus.textContent = "−";
+
+  const trash = element("button", "commerce-bag-line__qty-btn commerce-bag-line__qty-btn--trash");
+  trash.type = "button";
+  trash.dataset.bagQty = item.id;
+  trash.dataset.bagQtyDelta = "-1";
+  trash.setAttribute("aria-label", "Decrease quantity");
+  trash.append(bagQtyTrashIcon());
+
   const value = element("span", "commerce-bag-line__qty-value", String(item.quantity || 1));
   const plus = element("button", "commerce-bag-line__qty-btn");
   plus.type = "button";
@@ -199,7 +363,7 @@ function bagLine(item) {
   plus.dataset.bagQtyDelta = "1";
   plus.setAttribute("aria-label", "Increase quantity");
   plus.textContent = "+";
-  qty.append(minus, value, plus);
+  qty.append(trash, value, plus);
   meta.append(qty);
 
   const move = element("button", "commerce-bag-line__move");
@@ -209,11 +373,17 @@ function bagLine(item) {
   meta.append(move);
   body.append(meta);
 
-  row.append(mediaWrap, body);
+  row.append(mediaLink, body);
   return row;
 }
 
-function renderBagBody({ items = [], empty = {} } = {}) {
+function renderBagBody({
+  items = [],
+  empty = {},
+  bestsellers = [],
+  ctx = {},
+  renderProductCard,
+} = {}) {
   const body = element("div", "bag-drawer__body");
   body.dataset.bagDrawerBody = "true";
 
@@ -222,6 +392,8 @@ function renderBagBody({ items = [], empty = {} } = {}) {
   if (!items.length) {
     body.classList.add("bag-drawer__body--empty");
     body.append(bagEmptyState(empty));
+    const rail = bagBestsellersRail({ products: bestsellers, ctx, renderProductCard });
+    if (rail) body.append(rail);
     return { body, count, subtotal: 0 };
   }
 
@@ -230,6 +402,7 @@ function renderBagBody({ items = [], empty = {} } = {}) {
   const list = element("div", "commerce-bag-list");
   items.forEach((item) => list.append(bagLine(item)));
   body.append(list);
+  body.append(bagUspStrip());
 
   const subtotal = items.reduce(
     (sum, item) => sum + parsePriceValue(item.price) * (item.quantity || 1),
@@ -238,31 +411,21 @@ function renderBagBody({ items = [], empty = {} } = {}) {
 
   const footer = element("div", "bag-drawer__footer");
   const summary = element("div", "commerce-bag-summary commerce-bag-summary--drawer");
-  summary.append(element("h2", "commerce-bag-summary__title", "Order summary"));
-  const rows = element("dl", "commerce-bag-summary__rows");
-  rows.append(element("dt", "", "Subtotal"), element("dd", "", formatRupee(subtotal)));
-  rows.append(element("dt", "", "Shipping"), element("dd", "", "Calculated at checkout"));
-  summary.append(rows);
 
   const total = element("div", "commerce-bag-summary__total");
   total.append(element("span", "", "Total"));
   total.append(element("strong", "", formatRupee(subtotal)));
   summary.append(total);
+  summary.append(bagOfferStrip());
 
   const checkout = element("button", "button button--fill commerce-bag-summary__checkout");
   checkout.type = "button";
   checkout.dataset.bagCheckout = "true";
-  checkout.textContent = "Checkout";
-  summary.append(checkout);
-
-  const trust = element("ul", "commerce-bag-summary__trust");
-  ["Cash on delivery", "Easy returns", "Pan-India shipping"].forEach((label) => {
-    trust.append(element("li", "commerce-bag-summary__trust-item", label));
-  });
-  summary.append(trust);
-  summary.append(
-    element("p", "commerce-bag-summary__note", "Playground prototype — checkout is not connected yet."),
+  checkout.append(
+    element("span", "commerce-bag-summary__checkout-shimmer"),
+    element("span", "commerce-bag-summary__checkout-label", "Checkout"),
   );
+  summary.append(checkout);
 
   footer.append(summary);
   body.append(footer);
@@ -271,30 +434,44 @@ function renderBagBody({ items = [], empty = {} } = {}) {
 }
 
 /** Mobile bag page: the same bag content without the desktop drawer chrome. */
-export function renderBagPage({ items = [], empty = {} } = {}) {
+export function renderBagPage({
+  items = [],
+  empty = {},
+  bestsellers = [],
+  ctx = {},
+  renderProductCard,
+} = {}) {
   const root = element("section", "commerce-page commerce-page--bag");
   root.dataset.commercePage = "bag";
 
   const header = element("header", "commerce-page__header");
-  const { body, count } = renderBagBody({ items, empty });
+  const { body, count } = renderBagBody({
+    items,
+    empty,
+    bestsellers,
+    ctx,
+    renderProductCard,
+  });
   body.classList.add("bag-page__body");
-  header.append(element("h1", "commerce-page__title", "Shopping bag"));
-  const lede = element(
-    "p",
-    "commerce-page__lede",
-    count
-      ? `${count} ${count === 1 ? "piece" : "pieces"} ready to checkout`
-      : "Add something you love",
-  );
-  lede.dataset.bagPageCount = "true";
-  header.append(lede);
+  const title = element("h1", "commerce-page__title");
+  title.append(document.createTextNode("Bag"));
+  const countNode = element("span", "bag-drawer__count", `(${count})`);
+  countNode.dataset.bagPageCount = "true";
+  title.append(countNode);
+  header.append(title);
 
   root.append(header, body);
   return root;
 }
 
 /** Right-side cart overlay (not a routed page). */
-export function renderBagDrawer({ items = [], empty = {} } = {}) {
+export function renderBagDrawer({
+  items = [],
+  empty = {},
+  bestsellers = [],
+  ctx = {},
+  renderProductCard,
+} = {}) {
   const root = element("div", "bag-drawer");
   root.dataset.bagDrawer = "true";
   root.setAttribute("aria-hidden", "true");
@@ -311,19 +488,14 @@ export function renderBagDrawer({ items = [], empty = {} } = {}) {
   panel.dataset.bagDrawerPanel = "true";
 
   const header = element("header", "bag-drawer__header");
-  const titleWrap = element("div", "bag-drawer__title-wrap");
-  const title = element("h2", "bag-drawer__title", "Shopping bag");
-  title.id = "bag-drawer-title";
-  const { body, count } = renderBagBody({ items, empty });
-  const lede = element(
-    "p",
-    "bag-drawer__lede",
-    count
-      ? `${count} ${count === 1 ? "piece" : "pieces"} ready to checkout`
-      : "Add something you love",
-  );
-  lede.dataset.bagDrawerCount = "true";
-  titleWrap.append(title, lede);
+  const { body, count } = renderBagBody({
+    items,
+    empty,
+    bestsellers,
+    ctx,
+    renderProductCard,
+  });
+  const title = bagTitleCount(count);
 
   const close = element("button", "bag-drawer__close");
   close.type = "button";
@@ -331,12 +503,18 @@ export function renderBagDrawer({ items = [], empty = {} } = {}) {
   close.setAttribute("aria-label", "Close bag");
   close.textContent = "×";
 
-  header.append(titleWrap, close);
+  header.append(title, close);
   panel.append(header, body);
   root.append(overlay, panel);
   return root;
 }
 
-export function renderBagDrawerBody({ items = [], empty = {} } = {}) {
-  return renderBagBody({ items, empty });
+export function renderBagDrawerBody({
+  items = [],
+  empty = {},
+  bestsellers = [],
+  ctx = {},
+  renderProductCard,
+} = {}) {
+  return renderBagBody({ items, empty, bestsellers, ctx, renderProductCard });
 }

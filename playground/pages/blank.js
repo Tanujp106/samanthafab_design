@@ -1136,7 +1136,7 @@ export const blank = {
     },
     bag: {
       title: "Your bag is empty",
-      copy: "Add a piece you love and it will appear here.",
+      copy: "No pieces yet — let’s fix that.",
     },
   },
 };

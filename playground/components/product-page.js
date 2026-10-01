@@ -99,10 +99,17 @@ const WHATSAPP_ICON = whatsappIconSvg({ size: 24 });
 
 function renderGallery(product) {
   const shell = element("div", "product-detail__gallery-shell");
+  shell.dataset.pdpGalleryShell = "true";
+
+  const viewport = element("div", "product-detail__gallery-viewport");
+  viewport.dataset.pdpGalleryViewport = "true";
+
   const gallery = element("div", "product-detail__gallery");
   gallery.dataset.productGallery = "true";
   gallery.setAttribute("aria-label", "Product images");
-  resolveProductGallery(product, { minCount: 4, maxCount: 4 }).forEach((media, index) => {
+
+  const frames = resolveProductGallery(product, { minCount: 4, maxCount: 4 });
+  frames.forEach((media, index) => {
     const thumb = element("button", "product-detail__thumb");
     thumb.type = "button";
     thumb.dataset.pdpLightbox = String(index);
@@ -117,7 +124,22 @@ function renderGallery(product) {
     );
     gallery.append(thumb);
   });
-  shell.append(gallery);
+
+  viewport.append(gallery);
+  shell.append(viewport);
+
+  if (frames.length > 1) {
+    const dots = element("div", "product-detail__gallery-dots");
+    dots.dataset.pdpGalleryDots = "true";
+    dots.setAttribute("aria-hidden", "true");
+    frames.forEach((_, index) => {
+      const dot = element("span", "product-detail__gallery-dot");
+      if (index === 0) dot.classList.add("is-active");
+      dots.append(dot);
+    });
+    shell.append(dots);
+  }
+
   return shell;
 }
 
@@ -245,6 +267,7 @@ function renderPurchasePanel(product) {
   const addButton = element("button", "button button--fill product-detail__add");
   addButton.type = "button";
   addButton.dataset.commerceAction = "add-to-bag";
+  addButton.dataset.pdpAddAnchor = "true";
   addButton.setAttribute("aria-label", `Add ${product.name} to bag`);
   addButton.append(
     element("span", "product-detail__add-shimmer"),
@@ -294,8 +317,42 @@ function renderPurchasePanel(product) {
     giftOffer,
     renderTrustRow(),
     shippingAccordion,
+    renderStickyBar(product),
   );
   return panel;
+}
+
+function renderStickyBar(product) {
+  const sticky = element("aside", "product-detail__sticky-bar");
+  sticky.dataset.pdpStickyBar = "true";
+  sticky.setAttribute("aria-label", "Quick purchase");
+  sticky.setAttribute("aria-hidden", "true");
+
+  const meta = element("div", "product-detail__sticky-bar-meta");
+  meta.append(element("p", "product-detail__sticky-bar-title", product.name));
+
+  const pricing = element("div", "product-detail__sticky-bar-pricing");
+  const priceRow = element("div", "product-detail__sticky-bar-price-row");
+  const price = element("span", "product-detail__sticky-bar-price", product.price);
+  price.dataset.pdpStickyPrice = "true";
+  priceRow.append(price, element("span", "product-detail__sticky-bar-mrp", "MRP"));
+  pricing.append(priceRow, element("p", "product-detail__sticky-bar-tax", "inclusive of all taxes"));
+  meta.append(pricing);
+
+  const stickyActions = element("div", "product-detail__sticky-bar-actions");
+  const stickyAdd = element("button", "product-detail__sticky-bar-add", "Add to cart");
+  stickyAdd.type = "button";
+  stickyAdd.dataset.commerceAction = "add-to-bag";
+  stickyAdd.setAttribute("aria-label", `Add ${product.name} to bag`);
+
+  const stickyBuy = element("button", "product-detail__sticky-bar-buy", "Buy now");
+  stickyBuy.type = "button";
+  stickyBuy.dataset.commerceAction = "buy-now";
+  stickyBuy.setAttribute("aria-label", `Buy ${product.name} now`);
+
+  stickyActions.append(stickyAdd, stickyBuy);
+  sticky.append(meta, stickyActions);
+  return sticky;
 }
 
 export function renderProductPage({ product, relatedProducts = [], ctx = {}, renderProductCard }) {
@@ -308,21 +365,73 @@ export function renderProductPage({ product, relatedProducts = [], ctx = {}, ren
   layout.append(renderGallery(product), renderPurchasePanel(product));
   root.append(layout);
 
-  const relatedItems = relatedProducts.slice(0, 3);
+  const relatedItems = relatedProducts.slice(0, 10);
   if (relatedItems.length && renderProductCard) {
-    const related = element("section", "product-detail__related");
+    const related = element("section", "product-detail__related design-new-arrivals");
+    related.dataset.newArrivalsCarousel = "true";
     related.setAttribute("aria-labelledby", "product-detail-related-title");
+
     const header = element("header", "product-detail__related-header");
     const title = element("h2", "product-detail__related-title", "Recommended for you");
     title.id = "product-detail-related-title";
     header.append(title);
-    const rail = element("div", "product-detail__related-rail");
+
+    const stage = element("div", "design-new-arrivals__stage product-detail__related-stage");
+    const viewport = element("div", "design-new-arrivals__viewport product-detail__related-viewport");
+    viewport.dataset.newArrivalsViewport = "true";
+    viewport.tabIndex = 0;
+    viewport.setAttribute("aria-label", "Recommended products");
+
+    const track = element("div", "design-new-arrivals__track product-detail__related-track");
     relatedItems.forEach((item) =>
-      rail.append(renderProductCard(item, ctx, { commerce: true, className: "design-new-arrivals__card" })),
+      track.append(
+        renderProductCard(item, ctx, {
+          commerce: true,
+          className: "design-new-arrivals__card",
+        }),
+      ),
     );
-    related.append(header, rail);
+    viewport.append(track);
+
+    const controls = element("div", "design-new-arrivals__controls");
+    controls.setAttribute("aria-label", "Browse recommended products");
+    controls.append(
+      relatedRailArrow("previous"),
+      relatedRailArrow("next"),
+    );
+    stage.append(viewport, controls);
+    related.append(header, stage);
     root.append(related);
   }
 
   return root;
+}
+
+function relatedRailArrow(direction) {
+  const isPrevious = direction === "previous";
+  const arrow = element(
+    "button",
+    `design-new-arrivals__arrow design-new-arrivals__arrow--${direction}`,
+  );
+  arrow.type = "button";
+  arrow.dataset.newArrivalsDir = isPrevious ? "-1" : "1";
+  arrow.setAttribute(
+    "aria-label",
+    isPrevious ? "Previous recommended products" : "Next recommended products",
+  );
+
+  const iconNode = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  iconNode.setAttribute("viewBox", "0 0 24 24");
+  iconNode.setAttribute("aria-hidden", "true");
+  iconNode.setAttribute("focusable", "false");
+  iconNode.setAttribute("fill", "none");
+  iconNode.setAttribute("stroke", "currentColor");
+  iconNode.setAttribute("stroke-width", "1.6");
+  iconNode.setAttribute("stroke-linecap", "round");
+  iconNode.setAttribute("stroke-linejoin", "round");
+  iconNode.innerHTML = isPrevious
+    ? '<path d="M15 6l-6 6 6 6"/>'
+    : '<path d="M9 6l6 6-6 6"/>';
+  arrow.append(iconNode);
+  return arrow;
 }

@@ -1708,17 +1708,21 @@ function renderMobileEmptyPanel(panelId, config, iconName) {
   return panel;
 }
 
-function renderMobileBagPanel(page) {
+function renderMobileBagPanel(page, ctx = {}) {
   const panel = element("section", "mobile-panel mobile-panel--bag");
   panel.dataset.mobilePanel = "bag";
   panel.hidden = true;
 
+  const bestSellers = page.sections.find((section) => section.id === "design-best-sellers");
   const mount = element("div", "mobile-commerce-mount");
   mount.dataset.mobileCommerceMount = "bag";
   mount.append(
     renderBagPage({
       items: readBag(),
       empty: page.mobile?.bag,
+      bestsellers: bestSellers?.products || [],
+      ctx,
+      renderProductCard,
     }),
   );
   panel.append(mount);
@@ -1857,7 +1861,7 @@ export function renderPage(page, options = {}) {
     root.append(
       renderMobileExplore(page, ctx),
       renderMobileEmptyPanel("wishlist", page.mobile.wishlist, "heart"),
-      renderMobileBagPanel(page),
+      renderMobileBagPanel(page, ctx),
       renderMobileBottomBar(page),
     );
     const { overlay, drawer } = renderMobileDrawer(page, headerSection);
@@ -1866,6 +1870,9 @@ export function renderPage(page, options = {}) {
       renderBagDrawer({
         items: readBag(),
         empty: page.mobile.bag,
+        bestsellers: bestSellers?.products || [],
+        ctx,
+        renderProductCard,
       }),
     );
     if (commerceView?.kind !== "wishlist") {

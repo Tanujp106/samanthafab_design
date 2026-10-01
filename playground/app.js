@@ -4,6 +4,8 @@ import { renderCollectionPlp } from "./components/collection-plp.js";
 import { renderBagDrawerBody, renderBagPage, renderWishlistPage } from "./components/commerce-pages.js";
 import { filterSearchProducts, normalizeSearchQuery } from "./components/search-overlay.js";
 import { bindProductLightbox } from "./components/product-lightbox.js";
+import { bindProductGalleryCarousel } from "./components/product-gallery-carousel.js";
+import { bindProductStickyBar } from "./components/product-sticky-bar.js";
 import {
   getCollection,
   getCollectionProducts,
@@ -55,7 +57,7 @@ const productSlug =
 const productView = productSlug
   ? {
       product: getCatalogProduct(productSlug) || getCatalogProduct("sage-handblock"),
-      relatedProducts: catalogProducts.filter((product) => product.id !== productSlug).slice(0, 4),
+      relatedProducts: catalogProducts.filter((product) => product.id !== productSlug).slice(0, 10),
     }
   : null;
 const wishlistView = commerceKind === "wishlist" ? "wishlist" : null;
@@ -131,6 +133,9 @@ app.replaceChildren(
 bindCommerceInteractions(document);
 syncNavCommerceCounts();
 bindProductLightbox(document);
+bindProductGalleryCarousel(document);
+bindProductStickyBar(document);
+bindBagBestsellersRails(document);
 
 const menuToggle = document.querySelector(".nav-menu-toggle");
 const navLinks = document.querySelector(".nav-links");
@@ -747,6 +752,10 @@ function setWishlistButtonState(button, wishlisted) {
   if (svg) svg.setAttribute("fill", wishlisted ? "currentColor" : "none");
 }
 
+function bagBestsellersProducts() {
+  return page.sections.find((section) => section.id === "design-best-sellers")?.products || [];
+}
+
 function refreshBagDrawerContents() {
   const drawer = document.querySelector("[data-bag-drawer]");
   const panel = drawer?.querySelector("[data-bag-drawer-panel]");
@@ -754,16 +763,16 @@ function refreshBagDrawerContents() {
   const { body, count } = renderBagDrawerBody({
     items: readBag(),
     empty: page.mobile?.bag,
+    bestsellers: bagBestsellersProducts(),
+    ctx: { notesEnabled },
+    renderProductCard,
   });
   const existing = panel.querySelector("[data-bag-drawer-body]");
   if (existing) existing.replaceWith(body);
   else panel.append(body);
   const countNode = panel.querySelector("[data-bag-drawer-count]");
-  if (countNode) {
-    countNode.textContent = count
-      ? `${count} ${count === 1 ? "piece" : "pieces"} ready to checkout`
-      : "Add something you love";
-  }
+  if (countNode) countNode.textContent = `(${count})`;
+  bindBagBestsellersRails(panel);
 }
 
 function refreshMobileBagPageContents() {
@@ -773,8 +782,50 @@ function refreshMobileBagPageContents() {
     renderBagPage({
       items: readBag(),
       empty: page.mobile?.bag,
+      bestsellers: bagBestsellersProducts(),
+      ctx: { notesEnabled },
+      renderProductCard,
     }),
   );
+  bindBagBestsellersRails(mount);
+}
+
+function bindBagBestsellersRails(root = document) {
+  root.querySelectorAll("[data-bag-bestsellers]").forEach((section) => {
+    if (section.dataset.bagBestsellersBound === "1") return;
+    section.dataset.bagBestsellersBound = "1";
+
+    const viewport = section.querySelector("[data-bag-bestsellers-viewport]");
+    const previous = section.querySelector('[data-bag-bestsellers-dir="-1"]');
+    const next = section.querySelector('[data-bag-bestsellers-dir="1"]');
+    if (!viewport || !previous || !next) return;
+
+    const firstCard = section.querySelector(".bag-bestsellers__card");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const syncControls = () => {
+      const maxScroll = viewport.scrollWidth - viewport.clientWidth - 1;
+      previous.disabled = viewport.scrollLeft <= 1;
+      next.disabled = viewport.scrollLeft >= maxScroll;
+    };
+
+    const moveRail = (direction) => {
+      const cardWidth = firstCard?.getBoundingClientRect().width || viewport.clientWidth * 0.42;
+      const gap =
+        Number.parseFloat(getComputedStyle(viewport.querySelector(".bag-bestsellers__track")).columnGap) ||
+        12;
+      viewport.scrollBy({
+        left: direction * (cardWidth + gap),
+        behavior: reducedMotion ? "auto" : "smooth",
+      });
+    };
+
+    previous.addEventListener("click", () => moveRail(-1));
+    next.addEventListener("click", () => moveRail(1));
+    viewport.addEventListener("scroll", syncControls, { passive: true });
+    window.addEventListener("resize", syncControls);
+    syncControls();
+  });
 }
 
 function setMobileTabState(tabId) {
@@ -936,6 +987,10 @@ function bindCommerceInteractions(root = document) {
         const priceNode = panel.querySelector(".product-detail__price");
         if (priceNode) {
           priceNode.textContent = `₹${Math.round(nextPrice).toLocaleString("en-IN")}`;
+        }
+        const stickyPrice = panel.querySelector("[data-pdp-sticky-price]");
+        if (stickyPrice) {
+          stickyPrice.textContent = `₹${Math.round(nextPrice).toLocaleString("en-IN")}`;
         }
         const compareNode = panel.querySelector(".product-detail__compare");
         if (compareNode && compareAt) {
