@@ -183,7 +183,7 @@ test("mobile shell: blank page ships mobile config + bestseller products", () =>
   assert.ok(bestSellers?.products?.length >= 4);
 });
 
-test("mobile shell: renderPage builds bottom bar, drawer, explore, and bag page", async () => {
+test("mobile shell: renderPage builds bottom bar, explore, wishlist, and bag drawer", async () => {
   installMinimalDom();
   const { renderPage } = await import("../playground/components/render.js");
   const tree = renderPage(blank, { notesEnabled: false });
@@ -204,6 +204,14 @@ test("mobile shell: renderPage builds bottom bar, drawer, explore, and bag page"
   assert.match(labels, /WhatsApp/);
   assert.match(labels, /Wishlist/);
   assert.match(labels, /Bag/);
+  const wishlistBadge = bottomBar.querySelector("[data-nav-count=wishlist]");
+  const bagBadge = bottomBar.querySelector("[data-nav-count=bag]");
+  assert.ok(wishlistBadge);
+  assert.ok(bagBadge);
+  assert.equal(wishlistBadge.hidden, true);
+  assert.equal(bagBadge.hidden, true);
+  assert.ok(bottomBar.querySelector("[data-nav-wishlist]"));
+  assert.ok(bottomBar.querySelector("[data-nav-bag]"));
 
   const drawer = tree.querySelector("[data-mobile-drawer]");
   assert.ok(drawer);
@@ -223,9 +231,12 @@ test("mobile shell: renderPage builds bottom bar, drawer, explore, and bag page"
   );
 
   assert.ok(tree.querySelector("[data-mobile-panel=wishlist]"));
-  assert.ok(tree.querySelector("[data-mobile-panel=bag]"));
-  assert.ok(tree.querySelector("[data-mobile-commerce-mount=bag]"));
-  assert.ok(tree.querySelector("[data-bag-drawer]"));
+  assert.equal(tree.querySelector("[data-mobile-panel=bag]"), null);
+  assert.equal(tree.querySelector("[data-mobile-commerce-mount=bag]"), null);
+  const bagDrawer = tree.querySelector("[data-bag-drawer]");
+  assert.ok(bagDrawer);
+  assert.equal(bagDrawer.inert, true);
+  assert.ok(bagDrawer.querySelector("[data-bag-drawer-panel]"));
 
   const header = tree.querySelector(".design-reference-nav__top") || tree.querySelectorAll(".design-reference-nav")[0];
   assert.ok(tree.querySelector("[data-mobile-drawer-trigger]") || tree.querySelector(".nav-menu-toggle"));

@@ -1,6 +1,6 @@
 import { renderMedia } from "./media.js";
 import { renderCollectionPlp, renderContentPage } from "./collection-plp.js";
-import { renderBagDrawer, renderBagPage, renderWishlistPage } from "./commerce-pages.js";
+import { renderBagDrawer, renderWishlistPage } from "./commerce-pages.js";
 import { renderSearchOverlay } from "./search-overlay.js";
 import { renderAccountOverlay } from "./account-overlay.js";
 import { renderProductPage } from "./product-page.js";
@@ -1708,27 +1708,6 @@ function renderMobileEmptyPanel(panelId, config, iconName) {
   return panel;
 }
 
-function renderMobileBagPanel(page, ctx = {}) {
-  const panel = element("section", "mobile-panel mobile-panel--bag");
-  panel.dataset.mobilePanel = "bag";
-  panel.hidden = true;
-
-  const bestSellers = page.sections.find((section) => section.id === "design-best-sellers");
-  const mount = element("div", "mobile-commerce-mount");
-  mount.dataset.mobileCommerceMount = "bag";
-  mount.append(
-    renderBagPage({
-      items: readBag(),
-      empty: page.mobile?.bag,
-      bestsellers: bestSellers?.products || [],
-      ctx,
-      renderProductCard,
-    }),
-  );
-  panel.append(mount);
-  return panel;
-}
-
 function renderMobileBottomBar(page) {
   const nav = element("nav", "mobile-bottom-bar");
   nav.setAttribute("aria-label", "Mobile navigation");
@@ -1752,12 +1731,25 @@ function renderMobileBottomBar(page) {
     } else {
       item.type = "button";
       item.dataset.mobileTab = tab.id;
-      if (tab.id === "bag") item.dataset.bagOpen = "true";
+      if (tab.id === "wishlist") item.dataset.navWishlist = "true";
+      if (tab.id === "bag") {
+        item.dataset.navBag = "true";
+        item.dataset.bagOpen = "true";
+      }
     }
     item.setAttribute("aria-label", tab.label);
+    const iconWrap = element("span", "mobile-bottom-bar__icon-wrap");
     const icon = renderMobileIcon(tab.icon, "mobile-bottom-bar__icon");
     if (icon && tab.id === "home") icon.classList.add("mobile-bottom-bar__icon--filled");
-    item.append(icon, element("span", "mobile-bottom-bar__label", tab.label));
+    if (icon) iconWrap.append(icon);
+    if (tab.id === "wishlist" || tab.id === "bag") {
+      const count = element("span", "mobile-bottom-bar__count", "0");
+      count.dataset.navCount = tab.id;
+      count.setAttribute("aria-hidden", "true");
+      count.hidden = true;
+      iconWrap.append(count);
+    }
+    item.append(iconWrap, element("span", "mobile-bottom-bar__label", tab.label));
     nav.append(item);
   });
 
@@ -1861,7 +1853,6 @@ export function renderPage(page, options = {}) {
     root.append(
       renderMobileExplore(page, ctx),
       renderMobileEmptyPanel("wishlist", page.mobile.wishlist, "heart"),
-      renderMobileBagPanel(page, ctx),
       renderMobileBottomBar(page),
     );
     const { overlay, drawer } = renderMobileDrawer(page, headerSection);

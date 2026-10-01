@@ -433,37 +433,6 @@ function renderBagBody({
   return { body, count, subtotal };
 }
 
-/** Mobile bag page: the same bag content without the desktop drawer chrome. */
-export function renderBagPage({
-  items = [],
-  empty = {},
-  bestsellers = [],
-  ctx = {},
-  renderProductCard,
-} = {}) {
-  const root = element("section", "commerce-page commerce-page--bag");
-  root.dataset.commercePage = "bag";
-
-  const header = element("header", "commerce-page__header");
-  const { body, count } = renderBagBody({
-    items,
-    empty,
-    bestsellers,
-    ctx,
-    renderProductCard,
-  });
-  body.classList.add("bag-page__body");
-  const title = element("h1", "commerce-page__title");
-  title.append(document.createTextNode("Bag"));
-  const countNode = element("span", "bag-drawer__count", `(${count})`);
-  countNode.dataset.bagPageCount = "true";
-  title.append(countNode);
-  header.append(title);
-
-  root.append(header, body);
-  return root;
-}
-
 /** Right-side cart overlay (not a routed page). */
 export function renderBagDrawer({
   items = [],
@@ -475,6 +444,7 @@ export function renderBagDrawer({
   const root = element("div", "bag-drawer");
   root.dataset.bagDrawer = "true";
   root.setAttribute("aria-hidden", "true");
+  root.inert = true;
 
   const overlay = element("button", "bag-drawer__overlay");
   overlay.type = "button";

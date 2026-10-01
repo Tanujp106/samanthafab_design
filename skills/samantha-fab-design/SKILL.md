@@ -100,15 +100,17 @@ One-off experiments (“try X once”) do not get written until the user confirm
 ## Mobile shell (`/design`, ≤900px)
 
 - Top bar: hamburger (left) · centered logo · account icon (right). Search and bag move to the bottom bar on mobile.
-- Bottom bar (fixed): Home · Explore · WhatsApp (external link) · Wishlist · Bag — icon + label; active tab filled/darker.
+- Bottom bar (fixed): Home · Explore · WhatsApp (external link) · Wishlist · Bag — icon + label; active tab filled/darker. Show a small numeric badge on the Wishlist and Bag icons when their count is positive; hide badges at zero and update them as commerce state changes.
 - Hamburger opens a **left drawer** with promo strip, category links (from Shop mega menu), and chevrons.
 - **Explore** tab: pill search bar (client-side filter only — prototype), trending chips, 2-up product grid reusing Best sellers catalog.
-- **Wishlist** / **Bag**: Wishlist stays a page at `/design?route=wishlist` using the same commerce product cards at New Arrivals scale (4-up; × cancel removes). Bag is a **right-side overlay drawer on desktop** (desktop nav bag / Add to cart), while mobile Bag opens a full-width page panel inside the mobile shell with no backdrop or fixed drawer. `?route=bag` opens the appropriate surface for the viewport. Prototype persistence via localStorage. Header reads **Bag(n)** with count inline (no lede under the title). Empty wishlist uses familiar heart icons in soft circular fields, sentence-case titles/copy, and one clear Shop best sellers action (no helper tips or secondary links). Empty bag: bag icon + uppercase empty title + short copy + Continue shopping, then **Our bestsellers** rail with prev/next arrow controls. Filled bag: reference-style line (uppercase title; sale price with compare-at + % off beneath; trash|qty|+; Save for later), 4-col USP strip, sticky Total, primary “Offers available at checkout” strip with shimmer, then primary Checkout with cream shimmer.
+- **Wishlist** / **Bag**: Wishlist stays a page at `/design?route=wishlist` using the same commerce product cards at New Arrivals scale (4-up desktop / 2-up mobile; × cancel removes). Mobile wishlist uses single 16px page gutters without a nested panel inset. Bag opens a **right-side overlay drawer at every viewport width** from the nav, mobile Bag control, Add to cart, and `?route=bag`; keep a visible dimmed strip of the page at the left on mobile. Do not switch the mobile shell to a Bag page. Prototype persistence via localStorage. Header reads **Bag(n)** with count inline (no lede under the title). Empty wishlist uses familiar heart icons in soft circular fields, sentence-case titles/copy, and one clear Shop best sellers action (no helper tips or secondary links). Empty bag: bag icon + uppercase empty title + short copy + Continue shopping, then **Our bestsellers** rail with prev/next arrow controls. Filled bag: reference-style line (uppercase title; sale price with compare-at + % off beneath; trash|qty|+; Save for later), 4-col desktop / 2×2 mobile USP strip, sticky Total, soft “Offers available at checkout” strip with shimmer, then primary Checkout with cream shimmer.
 - Wishlist routes omit the search overlay and its trigger so the saved-items surface stays focused.
 - Tab panels swap in place of `.site-main` + footer; homepage sections unchanged on Home.
 
 ## Changelog
 
+- 2026-10-02 — Mobile Wishlist and Bag controls show live count badges above their icons, hidden when empty.
+- 2026-10-02 — Mobile commerce correction: Bag now slides in from the right over the current page, with a dimmed left edge; removed the mobile Bag page and tightened narrow wishlist, bag line, trust, and checkout layouts.
 - 2026-10-02 — Mobile PDP: gallery media radius 16px; breadcrumbs reorder below image / above title.
 - 2026-10-02 — Mobile PDP sticky bar also hides while the gallery lightbox is open.
 - 2026-10-02 — Mobile PDP sticky bar hides when the site footer scrolls into view.

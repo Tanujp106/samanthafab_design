@@ -8,6 +8,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | --- | --- |
 | Top bar height | 64px min-height; 10px vertical padding; 16px side gutters |
 | Bottom bar height | `--mobile-bottom-bar-height`: `62px + safe-area` (8 + 44 + 10 + inset); 5 equal tabs; icon 22px; label 10px Karrik |
+| Wishlist / Bag tab counts | Live numeric badge at the icon's upper-right; 17px minimum circle, primary fill and cream type; hidden at zero. Wishlist counts saved products, Bag counts total item quantity |
 | Drawer width | min(88vw, 360px); slides from left; overlay rgba(18,10,12,0.42) |
 | Explore search | 48px pill; 999px radius; whisper cream fill |
 | Explore trending | 5 chips: Bestsellers (all), Ready-to-wear, Everyday, Wedding, Festive — client filter by tag/name |
@@ -20,7 +21,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Wishlist route | `/design?route=wishlist` — centered title + **4-col** grid (3 ≤1100 / 2 mobile) of shared commerce product cards at New Arrivals card scale; **× cancel** removes (not heart) |
-| Bag UI | Desktop: right overlay drawer (`min(100vw, 420px)`); mobile: full-width page panel inside the mobile shell with no backdrop or fixed drawer; desktop nav bag / Add to cart open the drawer, mobile Bag / mobile Add to cart open the page; `?route=bag` opens the appropriate surface then strips the query |
+| Bag UI | Right overlay drawer at all widths; desktop `min(100vw, 420px)`, mobile `min(420px, 100vw - 24px)` to leave a dimmed page strip; mobile Bag / Add to cart open it without changing the active tab; `?route=bag` opens it then strips the query. Close button, scrim, and Escape dismiss it; focus returns to the trigger |
 | Persistence | localStorage keys `sf-design-wishlist` / `sf-design-bag` (playground prototype) |
 | Bag contents | Line items (88px portrait; uppercase title; sale + strikethrough compare-at + % off; trash\|qty\|+; Save for later) → 4-col icon USP strip → sticky Total → soft offer strip (“Offers available at checkout”) → Checkout |
 | Empty CTAs | Wishlist → single “Shop best sellers”; Bag → single “Continue shopping” action that returns to Home |
@@ -30,9 +31,11 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Bag line pricing | Sale price on top; compare-at strikethrough + `% off` badge beneath (use product `discount` or compute from compareAt) |
 | Bag offer strip | Soft primary-50 wash + primary-800 type (not primary fill); quiet shimmer highlight; info icon + uppercase “Offers available at checkout” above Checkout |
 | Bag checkout | Primary filled CTA with PDP-style cream shimmer; hover steps to primary-800; reduced-motion freezes shimmer |
-| Bag USPs (filled) | 4 equal columns under line items; Lucide line icons 22px; uppercase 9px labels; hairline top/bottom + column dividers; Free shipping / Easy returns & exchange / 2–3 day dispatch / COD across India |
+| Bag USPs (filled) | 4 equal columns desktop / 2×2 mobile under line items; Lucide line icons 22px; uppercase 9px desktop / 10px mobile labels; hairline dividers; Free shipping / Easy returns & exchange / 2–3 day dispatch / COD across India |
 | Wishlist search | Do not mount the search overlay or Search trigger on `/design?route=wishlist` |
 | Wishlist page pad | `20px 24px 88px` desktop; header margin `4px 0 32px` |
+| Mobile wishlist | Single 16px side gutters, 28px title, 2-column cards with 12px column gap; empty state fills available width and uses 14px copy |
+| Mobile bag contents | 80px line images; title and pricing stack in the remaining width; quantity controls 40px; body scrolls within the viewport and Total/Checkout stay at the bottom |
 
 ## Account login overlay
 
