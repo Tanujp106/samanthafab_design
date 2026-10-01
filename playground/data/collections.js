@@ -1,5 +1,6 @@
 import { catalogProducts } from "./catalog.js";
 import { policyPages } from "./policies.js";
+import { customerCarePages } from "./customer-care.js";
 
 const HOME = { label: "Home", href: "/design" };
 
@@ -127,15 +128,34 @@ export const contentPagesBySlug = {
     slug,
     contentPage(slug, policy.title, policy.intro, policy),
   ])),
+  ...Object.fromEntries(Object.entries(customerCarePages).map(([slug, guide]) => [
+    slug,
+    contentPage(slug, guide.title, guide.intro, guide),
+  ])),
   about: contentPage(
     "about",
     "About",
-    "Samantha Fab is a saree house built around craft, colour, and occasion. This playground page stands in for the full About story.",
+    "Samantha brings traditional and ready-to-wear sarees into everyday life with expressive prints, comfortable fabrics and confident drapes.",
+    {
+      eyebrow: "Our story",
+      sections: [
+        { title: "Why we build Samantha", paragraphs: ["Samantha celebrates Indian saree heritage while making room for modern, easy-to-wear styles. The collection spans statement occasion pieces, office-friendly fabrics and ready-to-wear drapes."] },
+      ],
+    },
   ),
   "style-guide": contentPage(
     "style-guide",
     "Style Guide",
-    "Fabric, drape, and blouse pairing notes to help you choose with confidence. Full guides will live here in the next pass.",
+    "A few starting points for choosing and caring for a saree that feels like you.",
+    {
+      eyebrow: "Wear it your way",
+      source: "https://www.samanthafab.com/pages/faq",
+      sections: [
+        { title: "Choose by occasion", paragraphs: ["Cotton, linen and light georgette are easy options for work and everyday wear. Rich silks and embellished fabrics suit celebrations, while ready-to-wear drapes make getting dressed especially simple."] },
+        { title: "Check the details", paragraphs: ["Look at the fabric, length, blouse information and care notes on the product page. Screen settings and lighting can change how a colour appears, so ask Samantha if a precise shade matters to you."] },
+        { title: "Pair your blouse", paragraphs: ["A simple solid blouse can balance a busy print; a contrast blouse can make a quiet saree more expressive. Check sizing and customization carefully before ordering."] },
+      ],
+    },
   ),
   "star-in-our-spotlight": contentPage(
     "star-in-our-spotlight",
@@ -221,6 +241,15 @@ export const ROUTE_COLLECTION_ALIASES = {
 };
 
 export const ROUTE_CONTENT_ALIASES = {
+  faq: "faq",
+  cod: "cod",
+  "track-order": "track-order",
+  "size-guide": "size-guide",
+  care: "care-guide",
+  "care-guide": "care-guide",
+  story: "about",
+  journal: "style-guide",
+  stores: "contact-information",
   shipping: "shipping-policy",
   returns: "refund-policy",
   refund: "refund-policy",

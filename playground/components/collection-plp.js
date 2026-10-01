@@ -407,6 +407,13 @@ export function renderContentPage({ page }) {
     });
     inner.append(sections);
   }
+  if (page.source) {
+    const sourceLink = element("a", "content-page__source", page.sourceLabel || "View the current information on samanthafab.com ↗");
+    sourceLink.href = page.source;
+    sourceLink.target = "_blank";
+    sourceLink.rel = "noopener noreferrer";
+    inner.append(sourceLink);
+  }
   if (page.cta) {
     const action = element("a", "button button--fill", page.cta.label);
     action.href = page.cta.href;

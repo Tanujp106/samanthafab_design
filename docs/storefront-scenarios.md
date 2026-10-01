@@ -15,6 +15,7 @@ This repository is a static Samantha Fab storefront prototype. Checkout, payment
 | Unknown product link | Unavailable message with a route back to sarees | Source check |
 | Offline after page loads | Visible connection notice; saved local items remain accessible | Source check only; browser QA blocked |
 | Policy navigation | Footer, account terms and PDP shipping/return links resolve to content pages | Route/content test |
+| Footer Help and Shop links | COD, tracking, sizing, care and FAQ use FAQ-backed pages; shop links use collection routes | Footer route/content test |
 
 ## Reference decisions
 
@@ -22,5 +23,6 @@ This repository is a static Samantha Fab storefront prototype. Checkout, payment
 - [Apple empty bag](https://mobbin.com/screens/a60263a6-b6ad-4e62-848c-120788968357) and [Etsy empty bag](https://mobbin.com/screens/da6b79ed-14a9-426d-95a9-770a72a52c76): provide a clear next shopping action and product discovery.
 - [Nykaa Fashion return policy](https://www.nykaafashion.com/lp/shipping-and-return-policy): present eligibility, process, exceptions and refund timing as separate scannable sections.
 - [Samantha refund](https://www.samanthafab.com/policies/refund-policy), [privacy](https://www.samanthafab.com/policies/privacy-policy) and [contact information](https://www.samanthafab.com/policies/contact-information) supplied the specific policy details. Samantha's FAQ says 7 days for returns, while its dedicated refund policy says 3 days; the new page follows the dedicated policy. The terms and shipping pages could not be retrieved through the available read-only source tool, so their copy avoids unverified delivery fees, timing and legal claims and should be checked against the live store before production use.
+- [Samantha FAQ](https://www.samanthafab.com/pages/faq) supplied the COD, tracking, sizing, care and frequently asked questions pages. Policy-specific return details follow the dedicated refund policy when the FAQ differs.
 
 Inventory is mock catalog data. The two-unit example is a test fixture, not live stock. The fallback cap of 99 prevents unchecked quantities for mock products without a stock field. Offline notice applies after the app has loaded; a fresh offline visit is subject to browser caching.

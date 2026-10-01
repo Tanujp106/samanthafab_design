@@ -6,6 +6,7 @@ import { filterSearchProducts, normalizeSearchQuery } from "./components/search-
 import { bindProductLightbox } from "./components/product-lightbox.js";
 import { bindProductGalleryCarousel } from "./components/product-gallery-carousel.js";
 import { bindProductStickyBar } from "./components/product-sticky-bar.js";
+import { mountConnectionNotice } from "./components/connection-notice.js";
 import {
   getCollection,
   getCollectionProducts,
@@ -133,18 +134,7 @@ app.replaceChildren(
   }),
 );
 
-const connectionNotice = document.createElement("aside");
-connectionNotice.className = "connection-notice";
-connectionNotice.setAttribute("role", "status");
-connectionNotice.setAttribute("aria-live", "polite");
-connectionNotice.textContent = "You are offline. Saved items remain available on this device.";
-document.body.append(connectionNotice);
-const syncConnectionNotice = () => {
-  connectionNotice.hidden = navigator.onLine !== false;
-};
-window.addEventListener("online", syncConnectionNotice);
-window.addEventListener("offline", syncConnectionNotice);
-syncConnectionNotice();
+mountConnectionNotice();
 
 // Bind wishlist / bag early so later carousel setup errors can't leave hearts inert.
 bindCommerceInteractions(document);

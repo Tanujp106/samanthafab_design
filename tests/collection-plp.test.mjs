@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { getCollection, getCollectionProducts } from "../playground/data/collections.js";
+import { getCollection, getCollectionProducts, getContentPage } from "../playground/data/collections.js";
 import { DEFAULT_SORT } from "../playground/lib/collection-filters.mjs";
+import { getCatalogProduct } from "../playground/data/catalog.js";
+import { snapshotProduct } from "../playground/lib/commerce-store.mjs";
 
 function installMinimalDom() {
   class FakeNode {
@@ -200,4 +202,67 @@ test("renderCollectionPlp builds sidebar, grid, mobile bar, and sheets", async (
   assert.match(text, /Size/);
   assert.match(text, /Color/);
   assert.match(text, /Bestsellers/);
+});
+
+test("filtered and empty collections offer a useful next action", async () => {
+  installMinimalDom();
+  const { renderCollectionPlp } = await import("../playground/components/collection-plp.js");
+  const collection = getCollection("bestsellers");
+  const allProducts = getCollectionProducts("bestsellers");
+  const base = { collection, products: [], state: { sort: DEFAULT_SORT }, ctx: { notesEnabled: false } };
+
+  const filtered = renderCollectionPlp({ ...base, allProducts });
+  assert.match(collectText(filtered), /No pieces match these filters/);
+  assert.ok(filtered.querySelector("[data-collection-empty-clear]"));
+
+  const noProducts = renderCollectionPlp({ ...base, allProducts: [] });
+  assert.match(collectText(noProducts), /Nothing here yet/);
+  assert.match(collectText(noProducts), /Shop bestsellers/);
+});
+
+test("policy content renders headings, details and a live source link", async () => {
+  installMinimalDom();
+  const { renderContentPage } = await import("../playground/components/collection-plp.js");
+  const page = getContentPage("refund-policy");
+  const tree = renderContentPage({ page });
+  const text = collectText(tree);
+
+  assert.match(text, /Returns & refunds/);
+  assert.match(text, /Return eligibility/);
+  assert.match(text, /3 days/);
+  assert.ok(tree.querySelector(".content-page__source"));
+});
+
+test("product purchase controls reflect sold-out and low-stock states", async () => {
+  installMinimalDom();
+  const { renderProductPage } = await import("../playground/components/product-page.js");
+
+  const soldOut = renderProductPage({ product: getCatalogProduct("workroom-indigo") });
+  assert.equal(soldOut.querySelector(".product-detail__add").disabled, true);
+  assert.equal(soldOut.querySelector(".product-detail__buy-now").disabled, true);
+  assert.match(collectText(soldOut), /Sold out/);
+
+  const lowStock = renderProductPage({ product: getCatalogProduct("indigo-rtw") });
+  assert.equal(lowStock.querySelector(".product-detail__add").disabled, false);
+  assert.match(collectText(lowStock), /Only 2 left/);
+
+  const missing = renderProductPage({ product: null });
+  assert.match(collectText(missing), /This piece is unavailable/);
+  assert.match(collectText(missing), /Explore sarees/);
+});
+
+test("bag drawer renders empty, filled and insufficient-stock states", async () => {
+  installMinimalDom();
+  const { renderBagDrawer } = await import("../playground/components/commerce-pages.js");
+  const empty = renderBagDrawer({ items: [], bestsellers: [] });
+  assert.match(collectText(empty), /Your bag is empty/);
+
+  const product = snapshotProduct(getCatalogProduct("indigo-rtw"));
+  const filled = renderBagDrawer({ items: [{ ...product, quantity: 2 }], bestsellers: [] });
+  assert.match(collectText(filled), /Total/);
+  assert.equal(filled.querySelectorAll(".commerce-bag-line__qty-btn")[1].disabled, true);
+
+  const tooMany = renderBagDrawer({ items: [{ ...product, quantity: 3 }], bestsellers: [] });
+  assert.match(collectText(tooMany), /Only 2 available/);
+  assert.equal(tooMany.querySelector(".commerce-bag-summary__checkout").disabled, true);
 });

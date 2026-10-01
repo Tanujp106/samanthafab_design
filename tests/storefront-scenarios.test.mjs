@@ -11,8 +11,10 @@ import {
   stockLimit,
 } from "../playground/lib/commerce-store.mjs";
 import { getCatalogProduct } from "../playground/data/catalog.js";
-import { contentUrl, getContentPage, resolveContentSlug } from "../playground/data/collections.js";
+import { contentUrl, getCollection, getContentPage, resolveContentSlug } from "../playground/data/collections.js";
 import { applyCollectionFilters } from "../playground/lib/collection-filters.mjs";
+import { blank } from "../playground/pages/blank.js";
+import { mountConnectionNotice } from "../playground/components/connection-notice.js";
 
 const memory = new Map();
 globalThis.localStorage = {
@@ -73,19 +75,52 @@ test("empty filtered collection has no matches while the unfiltered set remains 
 });
 
 test("policy pages and footer destinations resolve to substantive content", () => {
-  for (const slug of ["refund-policy", "privacy-policy", "shipping-policy", "terms-of-service", "contact-information"]) {
+  for (const slug of ["refund-policy", "privacy-policy", "shipping-policy", "terms-of-service", "contact-information", "cod", "track-order", "size-guide", "care-guide", "faq", "about", "style-guide"]) {
     assert.equal(resolveContentSlug("page", slug), slug);
     assert.match(contentUrl(slug), /route=page/);
     assert.ok(getContentPage(slug)?.sections?.length);
   }
   assert.equal(resolveContentSlug("returns"), "refund-policy");
   assert.equal(resolveContentSlug("terms"), "terms-of-service");
+  const footer = blank.sections.find((section) => section.type === "footer");
+  for (const link of footer.columns.find((entry) => entry.heading === "Shop").links) {
+    const target = new URL(link.href, "https://example.test");
+    assert.equal(target.pathname, "/design", `${link.label} should use the design route`);
+    assert.equal(target.searchParams.get("route"), "collection");
+    assert.ok(getCollection(target.searchParams.get("slug")), `${link.label} needs a collection`);
+  }
+  for (const column of footer.columns.filter((entry) => ["Help", "About"].includes(entry.heading))) {
+    for (const link of column.links) {
+      const target = new URL(link.href, "https://example.test");
+      assert.equal(target.pathname, "/design", `${link.label} should use the design route`);
+      assert.equal(target.searchParams.get("route"), "page", `${link.label} should open a content page`);
+      assert.ok(getContentPage(target.searchParams.get("slug")), `${link.label} needs content`);
+    }
+  }
 });
 
-test("offline notice and recovery controls are wired in the storefront source", async () => {
+test("offline notice responds to connection loss and recovery", () => {
+  const listeners = new Map();
+  const nodes = [];
+  const nav = { onLine: true };
+  const doc = {
+    createElement: () => ({ setAttribute() {}, hidden: false }),
+    body: { append: (node) => nodes.push(node) },
+  };
+  const win = { addEventListener: (name, listener) => listeners.set(name, listener) };
+  const notice = mountConnectionNotice({ doc, win, nav });
+  assert.equal(nodes[0], notice);
+  assert.equal(notice.hidden, true);
+  nav.onLine = false;
+  listeners.get("offline")();
+  assert.equal(notice.hidden, false);
+  nav.onLine = true;
+  listeners.get("online")();
+  assert.equal(notice.hidden, true);
+});
+
+test("search and collection recovery states remain wired", async () => {
   const source = await readFile(new URL("../playground/app.js", import.meta.url), "utf8");
-  assert.match(source, /addEventListener\("offline", syncConnectionNotice\)/);
-  assert.match(source, /addEventListener\("online", syncConnectionNotice\)/);
   assert.match(source, /data-collection-empty-clear/);
   assert.match(source, /No results for/);
 });

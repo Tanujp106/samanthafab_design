@@ -5334,6 +5334,13 @@ body[data-page="blank"] .content-page__section > :last-child {
   margin-bottom: 0;
 }
 
+body[data-page="blank"] .content-page__source {
+  margin-top: 20px;
+  color: var(--color-primary-700);
+  font: 400 13px/1.5 var(--font-body);
+  text-underline-offset: 4px;
+}
+
 body[data-page="blank"] .collection-plp__empty-results {
   display: grid;
   justify-items: start;
