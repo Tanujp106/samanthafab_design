@@ -109,6 +109,7 @@ One-off experiments (“try X once”) do not get written until the user confirm
 
 ## Changelog
 
+- 2026-10-02 — Mobile PDP: gallery media radius 16px; breadcrumbs reorder below image / above title.
 - 2026-10-02 — Mobile PDP sticky bar also hides while the gallery lightbox is open.
 - 2026-10-02 — Mobile PDP sticky bar hides when the site footer scrolls into view.
 - 2026-10-02 — Mobile PDP sticky bar sits flush on the tab bar (`--mobile-bottom-bar-height`: 62px + safe-area); no gap strip between them.

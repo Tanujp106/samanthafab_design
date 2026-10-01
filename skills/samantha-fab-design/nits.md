@@ -68,14 +68,14 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Item | Value |
 | --- | --- |
 | Route | `/design?route=product&slug=…` |
-| Gallery | Desktop sticky shell; 2×2; **12px** gaps; figure `margin: 0`; tiles **3/4** absolute cover; `--radius-media`; tiles are lightbox buttons. **Mobile ≤760px:** one-up loop swipe carousel inside the **16px** page gutters (not full-bleed), rounded media, **thin strip** indicators under media (row `min(52%, 168px)`, equal flex strips, height 2px — not dots) |
+| Gallery | Desktop sticky shell; 2×2; **12px** gaps; figure `margin: 0`; tiles **3/4** absolute cover; `--radius-media`; tiles are lightbox buttons. **Mobile ≤760px:** one-up loop swipe carousel inside the **16px** page gutters (not full-bleed), media radius **16px**, **thin strip** indicators under media (row `min(52%, 168px)`, equal flex strips, height 2px — not dots) |
 | Lightbox | FLIP morph open/close (~420ms ease-out); composite-only `transform`/`opacity`; click/tap image toggles one zoom level (~2.5×) toward pointer; fine-pointer cursor-follow pan when zoomed; touch drag/pinch still work; outside/scrim/Escape resets zoom then closes; reduced-motion snaps; **no on-screen usage hint copy** |
 | Page gutters | Same **24px** as nav / logo (desktop); **16px** mobile — keep breadcrumb, gallery, purchase, and related on the same left/right edges |
-| Layout gap | `column-gap: clamp(32px, 4vw, 64px)`; layout `padding-top: 32px` desktop / **0** mobile (tight under breadcrumbs); no purchase bottom pad; related supplies page bottom (`72px` / `56px` mobile) |
+| Layout gap | `column-gap: clamp(32px, 4vw, 64px)`; layout `padding-top: 32px` desktop / **0** mobile; no purchase bottom pad; related supplies page bottom (`72px` / `56px` mobile) |
 | Gallery stickiness | `.product-detail__gallery-shell`: `position: sticky; top: 112px`; static on ≤760px; mobile shell `overflow: hidden`, no negative margins |
-| Purchase column | `position: relative` (scrolls with page; not sticky); no bottom padding; mobile `padding-top: 20px`; share same 16px right edge as gallery |
+| Purchase column | `position: relative` (scrolls with page; not sticky); no bottom padding; mobile `padding-top: 0` (breadcrumb sits above title); share same 16px right edge as gallery |
 | Title | Karrik (`--font-body`) `clamp(26px, 3.1vw, 38px)` desktop; mobile `clamp(24px, 7vw, 30px)`; **full width** of title row (no `ch` cap / no `text-wrap: balance`); share **36px** circle; SKU directly under title; badges **6px** under SKU |
-| Breadcrumbs | Karrik **13px**; top pad `36px` desktop / `16px` mobile; bottom pad `20px` desktop / **4px** mobile |
+| Breadcrumbs | Karrik **13px**; desktop top of page (`36px` / `20px` pad). **Mobile ≤760px:** reorder below gallery / above title (`order` via `display: contents` on layout); pad `12px 0 8px` |
 | Badges | Occasion + material pills below SKU |
 | Description | Always visible; full width; Karrik 15px / weight 400; extra space below (~20px) before variants |
 | Variants | Two equal cards side-by-side (horizontal) on all breakpoints; left-aligned title/detail/surcharge; Regular +₹0 / RTW +₹70; surcharge **20px** |

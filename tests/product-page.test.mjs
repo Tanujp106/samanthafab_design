@@ -140,6 +140,9 @@ test("product page follows sketch-aligned purchase panel without delivery chrome
   assert.match(css, /\.product-detail__share[\s\S]*width:\s*36px/);
   assert.match(css, /\.product-detail__accordion-summary[\s\S]*font-size:\s*15px/);
   assert.match(css, /product-detail__sticky-bar/);
+  assert.match(css, /border-radius:\s*16px/);
+  assert.match(css, /product-detail__breadcrumbs[\s\S]{0,80}order:\s*2/);
+  assert.match(css, /product-detail__layout[\s\S]{0,80}display:\s*contents/);
   assert.match(productPage, /data-pdp-gallery-viewport|pdpGalleryViewport/);
   assert.match(productPage, /data-pdp-sticky-bar|pdpStickyBar/);
   assert.match(productPage, /data-pdp-add-anchor|pdpAddAnchor/);
