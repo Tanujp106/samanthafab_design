@@ -1,4 +1,5 @@
 import { catalogProducts } from "./catalog.js";
+import { policyPages } from "./policies.js";
 
 const HOME = { label: "Home", href: "/design" };
 
@@ -122,6 +123,10 @@ export const collectionsBySlug = {
 
 /** Editorial / utility pages from the navbar (not product grids). */
 export const contentPagesBySlug = {
+  ...Object.fromEntries(Object.entries(policyPages).map(([slug, policy]) => [
+    slug,
+    contentPage(slug, policy.title, policy.intro, policy),
+  ])),
   about: contentPage(
     "about",
     "About",
@@ -145,8 +150,9 @@ export const contentPagesBySlug = {
   ),
   contact: contentPage(
     "contact",
-    "Contact",
-    "WhatsApp, email, and studio visiting notes will sit here. For now, this is a playground destination so every navbar link resolves.",
+    policyPages["contact-information"].title,
+    policyPages["contact-information"].intro,
+    policyPages["contact-information"],
   ),
 };
 
@@ -215,6 +221,16 @@ export const ROUTE_COLLECTION_ALIASES = {
 };
 
 export const ROUTE_CONTENT_ALIASES = {
+  shipping: "shipping-policy",
+  returns: "refund-policy",
+  refund: "refund-policy",
+  privacy: "privacy-policy",
+  terms: "terms-of-service",
+  "refund-policy": "refund-policy",
+  "privacy-policy": "privacy-policy",
+  "shipping-policy": "shipping-policy",
+  "terms-of-service": "terms-of-service",
+  "contact-information": "contact-information",
   about: "about",
   contact: "contact",
   "style-guide": "style-guide",

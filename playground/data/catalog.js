@@ -6,6 +6,7 @@ function enrich(product) {
     ...product,
     priceValue: product.priceValue ?? parsePriceValue(product.price),
     availability: product.availability || "in_stock",
+    stock: Number.isInteger(product.stock) ? product.stock : null,
     sizes: product.sizes || ["Free size"],
     colors,
     swatches: product.swatches || colors,
@@ -18,6 +19,7 @@ function enrich(product) {
 export const catalogProducts = [
   enrich({
     id: "indigo-rtw",
+    stock: 2,
     name: "Indigo stripe ready-to-wear",
     material: "Soft linen blend",
     price: "₹2,499",

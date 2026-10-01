@@ -1,6 +1,7 @@
 import { parsePriceValue } from "../lib/collection-filters.mjs";
 import { productUrl, resolveProductSlug } from "../data/collections.js";
 import { renderMedia } from "./media.js";
+import { bagLineId, stockLimit } from "../lib/commerce-store.mjs";
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -324,9 +325,10 @@ function bagOfferStrip() {
   return strip;
 }
 
-function bagLine(item) {
+function bagLine(item, totalForProduct) {
   const row = element("article", "commerce-bag-line");
   row.dataset.productId = item.id;
+  const lineId = bagLineId(item);
 
   const mediaLink = element("a", "commerce-bag-line__media");
   mediaLink.href = productHref(item);
@@ -334,6 +336,7 @@ function bagLine(item) {
   mediaLink.append(renderMedia(item.media, { ratio: "portrait", notesEnabled: false }));
 
   const body = element("div", "commerce-bag-line__body");
+  const limit = stockLimit(item);
 
   const top = element("div", "commerce-bag-line__top");
   const identity = element("div", "commerce-bag-line__identity");
@@ -341,8 +344,11 @@ function bagLine(item) {
   title.href = productHref(item);
   identity.append(title);
   if (item.tag) identity.append(element("span", "commerce-bag-line__tag", item.tag));
+  if (item.variant === "ready-to-wear") identity.append(element("span", "commerce-bag-line__tag", "Ready-to-wear blouse"));
   top.append(identity, bagPricing(item));
   body.append(top);
+  if (limit === 0) body.append(element("p", "commerce-bag-line__stock", "Sold out — remove this item"));
+  else if (totalForProduct > limit) body.append(element("p", "commerce-bag-line__stock", `Only ${limit} available — reduce quantity`));
 
   const meta = element("div", "commerce-bag-line__meta");
   const qty = element("div", "commerce-bag-line__qty");
@@ -351,7 +357,7 @@ function bagLine(item) {
 
   const trash = element("button", "commerce-bag-line__qty-btn commerce-bag-line__qty-btn--trash");
   trash.type = "button";
-  trash.dataset.bagQty = item.id;
+  trash.dataset.bagQty = lineId;
   trash.dataset.bagQtyDelta = "-1";
   trash.setAttribute("aria-label", "Decrease quantity");
   trash.append(bagQtyTrashIcon());
@@ -359,16 +365,17 @@ function bagLine(item) {
   const value = element("span", "commerce-bag-line__qty-value", String(item.quantity || 1));
   const plus = element("button", "commerce-bag-line__qty-btn");
   plus.type = "button";
-  plus.dataset.bagQty = item.id;
+  plus.dataset.bagQty = lineId;
   plus.dataset.bagQtyDelta = "1";
   plus.setAttribute("aria-label", "Increase quantity");
+  plus.disabled = totalForProduct >= limit;
   plus.textContent = "+";
   qty.append(trash, value, plus);
   meta.append(qty);
 
   const move = element("button", "commerce-bag-line__move");
   move.type = "button";
-  move.dataset.bagMoveWishlist = item.id;
+  move.dataset.bagMoveWishlist = lineId;
   move.textContent = "Save for later";
   meta.append(move);
   body.append(meta);
@@ -400,7 +407,11 @@ function renderBagBody({
   body.classList.add("bag-drawer__body--filled");
 
   const list = element("div", "commerce-bag-list");
-  items.forEach((item) => list.append(bagLine(item)));
+  items.forEach((item) => {
+    const totalForProduct = items.filter((entry) => entry.id === item.id)
+      .reduce((sum, entry) => sum + (entry.quantity || 1), 0);
+    list.append(bagLine(item, totalForProduct));
+  });
   body.append(list);
   body.append(bagUspStrip());
 
@@ -421,6 +432,8 @@ function renderBagBody({
   const checkout = element("button", "button button--fill commerce-bag-summary__checkout");
   checkout.type = "button";
   checkout.dataset.bagCheckout = "true";
+  checkout.disabled = items.some((item) => stockLimit(item) === 0 ||
+    items.filter((entry) => entry.id === item.id).reduce((sum, entry) => sum + (entry.quantity || 1), 0) > stockLimit(item));
   checkout.append(
     element("span", "commerce-bag-summary__checkout-shimmer"),
     element("span", "commerce-bag-summary__checkout-label", "Checkout"),

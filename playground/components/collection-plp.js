@@ -387,8 +387,26 @@ export function renderContentPage({ page }) {
   });
 
   const inner = element("div", "content-page__inner");
+  if (page.eyebrow) inner.append(element("p", "content-page__eyebrow", page.eyebrow));
   inner.append(element("h1", "content-page__title", page.title));
   if (page.copy) inner.append(element("p", "content-page__copy", page.copy));
+  if (page.sections?.length) {
+    const sections = element("div", "content-page__sections");
+    page.sections.forEach((section) => {
+      const block = element("section", "content-page__section");
+      block.append(element("h2", "content-page__section-title", section.title));
+      (section.paragraphs || []).forEach((paragraph) => {
+        block.append(element("p", "content-page__paragraph", paragraph));
+      });
+      if (section.bullets?.length) {
+        const list = element("ul", "content-page__list");
+        section.bullets.forEach((bullet) => list.append(element("li", "", bullet)));
+        block.append(list);
+      }
+      sections.append(block);
+    });
+    inner.append(sections);
+  }
   if (page.cta) {
     const action = element("a", "button button--fill", page.cta.label);
     action.href = page.cta.href;
@@ -467,7 +485,21 @@ export function renderCollectionPlp({
   const grid = element("div", "collection-plp__grid");
   grid.dataset.collectionGrid = "true";
   if (!products.length) {
-    grid.append(element("p", "collection-plp__none", "No products match these filters."));
+    const empty = element("div", "collection-plp__empty-results");
+    const hasCollectionProducts = Boolean(allProducts?.length);
+    empty.append(element("h2", "collection-plp__empty-title", hasCollectionProducts ? "No pieces match these filters" : "Nothing here yet"));
+    empty.append(element("p", "collection-plp__none", hasCollectionProducts ? "Try a different colour, size or price to see more sarees." : "Explore the rest of the collection while we add more pieces."));
+    if (hasCollectionProducts) {
+      const reset = element("button", "button button--fill", "Clear filters");
+      reset.type = "button";
+      reset.dataset.collectionEmptyClear = "true";
+      empty.append(reset);
+    } else {
+      const browse = element("a", "button button--fill", "Shop bestsellers");
+      browse.href = "/design?route=collection&slug=bestsellers";
+      empty.append(browse);
+    }
+    grid.append(empty);
   } else {
     products.forEach((product) => {
       grid.append(

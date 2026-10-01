@@ -20,6 +20,8 @@ import { applyCollectionFilters, DEFAULT_SORT } from "./lib/collection-filters.m
 import {
   addToBag,
   bagCount,
+  bagLineId,
+  canAddToBag,
   isWishlisted,
   moveBagItemToWishlist,
   productIdFrom,
@@ -56,7 +58,7 @@ const productSlug =
     : null;
 const productView = productSlug
   ? {
-      product: getCatalogProduct(productSlug) || getCatalogProduct("sage-handblock"),
+      product: getCatalogProduct(productSlug),
       relatedProducts: catalogProducts.filter((product) => product.id !== productSlug).slice(0, 10),
     }
   : null;
@@ -114,7 +116,9 @@ if (collectionSlug) {
   document.title = "Wishlist — Samantha Fab";
 } else if (productView) {
   document.body.dataset.productSlug = productSlug;
-  document.title = `${productView.product.name} — Samantha Fab`;
+  document.title = productView.product
+    ? `${productView.product.name} — Samantha Fab`
+    : "Product unavailable — Samantha Fab";
 } else {
   document.title = page.title;
 }
@@ -128,6 +132,19 @@ app.replaceChildren(
     productView,
   }),
 );
+
+const connectionNotice = document.createElement("aside");
+connectionNotice.className = "connection-notice";
+connectionNotice.setAttribute("role", "status");
+connectionNotice.setAttribute("aria-live", "polite");
+connectionNotice.textContent = "You are offline. Saved items remain available on this device.";
+document.body.append(connectionNotice);
+const syncConnectionNotice = () => {
+  connectionNotice.hidden = navigator.onLine !== false;
+};
+window.addEventListener("online", syncConnectionNotice);
+window.addEventListener("offline", syncConnectionNotice);
+syncConnectionNotice();
 
 // Bind wishlist / bag early so later carousel setup errors can't leave hearts inert.
 bindCommerceInteractions(document);
@@ -274,7 +291,9 @@ function applySearchQuery(value = "") {
   });
 
   searchForm?.classList.toggle("is-query", Boolean(query));
-  if (searchTitle) searchTitle.textContent = query ? `Results for “${value.trim()}”` : "Top products";
+  if (searchTitle) searchTitle.textContent = query
+    ? visibleCount ? `Results for “${value.trim()}”` : `No results for “${value.trim()}”`
+    : "Top products";
   if (searchEmpty) searchEmpty.hidden = visibleCount > 0;
 }
 
@@ -943,6 +962,11 @@ function bindCommerceInteractions(root = document) {
       event.stopPropagation();
       const product = parseProductPayload(addBtn);
       if (!product) return;
+      const stockCheck = canAddToBag(product);
+      if (!stockCheck.allowed) {
+        showCommerceToast(stockCheck.reason === "sold_out" ? "This piece is sold out" : "No more available to add");
+        return;
+      }
       addToBag(product);
       showCommerceToast("Added to bag");
       refreshCommerceSurfaces();
@@ -956,6 +980,11 @@ function bindCommerceInteractions(root = document) {
       event.stopPropagation();
       const product = parseProductPayload(buyNow);
       if (!product) return;
+      const stockCheck = canAddToBag(product);
+      if (!stockCheck.allowed) {
+        showCommerceToast(stockCheck.reason === "sold_out" ? "This piece is sold out" : "No more available to add");
+        return;
+      }
       addToBag(product);
       showCommerceToast("Checkout is a playground prototype");
       refreshCommerceSurfaces();
@@ -1055,8 +1084,12 @@ function bindCommerceInteractions(root = document) {
       event.preventDefault();
       const id = bagQty.dataset.bagQty;
       const delta = Number(bagQty.dataset.bagQtyDelta || 0);
-      const item = readBag().find((entry) => entry.id === id);
+      const item = readBag().find((entry) => bagLineId(entry) === id || entry.id === id);
       if (!item) return;
+      if (delta > 0 && !canAddToBag(item).allowed) {
+        showCommerceToast("No more available to add");
+        return;
+      }
       setBagQuantity(id, (item.quantity || 1) + delta);
       refreshCommerceSurfaces();
       return;
@@ -1387,6 +1420,10 @@ function bindCollectionPlp(root = document) {
   });
 
   plp.querySelector("[data-collection-clear]")?.addEventListener("click", () => {
+    collectionState = emptyFilterState();
+    rerenderCollectionPlp();
+  });
+  plp.querySelector("[data-collection-empty-clear]")?.addEventListener("click", () => {
     collectionState = emptyFilterState();
     rerenderCollectionPlp();
   });

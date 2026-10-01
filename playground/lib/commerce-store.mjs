@@ -1,3 +1,5 @@
+import { getCatalogProduct } from "../data/catalog.js";
+
 const WISHLIST_KEY = "sf-design-wishlist";
 const BAG_KEY = "sf-design-bag";
 
@@ -56,7 +58,32 @@ export function snapshotProduct(product = {}) {
     media: product.media || {},
     hoverMedia: product.hoverMedia || null,
     swatches: product.swatches || product.colors || [],
+    availability: product.availability || "in_stock",
+    stock: Number.isInteger(product.stock) ? product.stock : null,
+    variant: product.variant || "regular",
   };
+}
+
+export function bagLineId(item = {}) {
+  return `${productIdFrom(item)}::${item.variant || "regular"}`;
+}
+
+export function stockLimit(product = {}) {
+  const canonical = getCatalogProduct(productIdFrom(product));
+  const inventory = canonical || product;
+  if (inventory.availability === "out_of_stock") return 0;
+  if (Number.isInteger(inventory.stock)) return Math.max(0, inventory.stock);
+  return 99;
+}
+
+export function canAddToBag(product = {}, items = readBag()) {
+  const limit = stockLimit(product);
+  const current = items
+    .filter((item) => item.id === productIdFrom(product))
+    .reduce((sum, item) => sum + (item.quantity || 1), 0);
+  if (limit === 0) return { allowed: false, reason: "sold_out", remaining: 0 };
+  if (current >= limit) return { allowed: false, reason: "quantity_limit", remaining: 0 };
+  return { allowed: true, reason: null, remaining: limit - current };
 }
 
 export function readWishlist() {
@@ -97,42 +124,53 @@ export function addToBag(product, quantity = 1) {
   const snap = snapshotProduct(product);
   const qty = Math.max(1, Number(quantity) || 1);
   const list = readBag();
-  const existing = list.find((item) => item.id === snap.id);
+  const limit = stockLimit(snap);
+  const remaining = canAddToBag(snap, list).remaining;
+  if (limit === 0 || remaining === 0) return list;
+  const existing = list.find((item) => bagLineId(item) === bagLineId(snap));
+  const adding = Math.min(remaining, qty);
   if (existing) {
-    existing.quantity = Math.min(9, (existing.quantity || 1) + qty);
+    existing.quantity = (existing.quantity || 1) + adding;
+    Object.assign(existing, snap);
   } else {
-    list.unshift({ ...snap, quantity: Math.min(9, qty) });
+    list.unshift({ ...snap, lineId: bagLineId(snap), quantity: adding });
   }
   writeJson(BAG_KEY, list);
   return list;
 }
 
 export function setBagQuantity(id, quantity) {
-  const qty = Math.max(0, Math.min(9, Number(quantity) || 0));
+  const qty = Math.max(0, Number(quantity) || 0);
   let list = readBag();
   if (qty <= 0) {
-    list = list.filter((item) => item.id !== id);
+    list = list.filter((item) => bagLineId(item) !== id && item.id !== id);
   } else {
-    list = list.map((item) => (item.id === id ? { ...item, quantity: qty } : item));
+    const target = list.find((item) => bagLineId(item) === id || item.id === id);
+    if (!target) return list;
+    const others = list.filter((item) => item !== target && item.id === target.id)
+      .reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const nextQty = Math.min(Math.max(0, stockLimit(target) - others), qty);
+    list = list.map((item) => item === target ? { ...item, quantity: nextQty } : item)
+      .filter((item) => item.quantity > 0);
   }
   writeJson(BAG_KEY, list);
   return list;
 }
 
 export function removeFromBag(id) {
-  const list = readBag().filter((item) => item.id !== id);
+  const list = readBag().filter((item) => bagLineId(item) !== id && item.id !== id);
   writeJson(BAG_KEY, list);
   return list;
 }
 
 export function moveBagItemToWishlist(id) {
   const bag = readBag();
-  const item = bag.find((entry) => entry.id === id);
+  const item = bag.find((entry) => bagLineId(entry) === id || entry.id === id);
   if (!item) return { bag, wishlist: readWishlist() };
-  const nextBag = bag.filter((entry) => entry.id !== id);
+  const nextBag = bag.filter((entry) => entry !== item);
   writeJson(BAG_KEY, nextBag);
   const wishlist = readWishlist();
-  if (!wishlist.some((entry) => entry.id === id)) {
+  if (!wishlist.some((entry) => entry.id === item.id)) {
     wishlist.unshift(snapshotProduct(item));
     writeJson(WISHLIST_KEY, wishlist);
   }

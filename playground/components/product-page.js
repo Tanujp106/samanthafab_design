@@ -238,6 +238,13 @@ function renderPurchasePanel(product) {
   const discount = discountLabel(product);
   if (discount) priceLine.append(element("span", "product-detail__discount", discount));
   const taxNote = element("p", "product-detail__tax-note", "Inclusive of all taxes");
+  const stock = Number.isInteger(product.stock) ? product.stock : null;
+  const soldOut = product.availability === "out_of_stock" || stock === 0;
+  const stockNote = soldOut
+    ? element("p", "product-detail__stock product-detail__stock--sold-out", "Sold out")
+    : stock !== null && stock <= 3
+      ? element("p", "product-detail__stock", `Only ${stock} left`)
+      : null;
 
   const giftOffer = element("aside", "product-detail__gift-offer");
   giftOffer.setAttribute("aria-label", "A complimentary gift included with your order");
@@ -269,10 +276,11 @@ function renderPurchasePanel(product) {
   addButton.dataset.commerceAction = "add-to-bag";
   addButton.dataset.pdpAddAnchor = "true";
   addButton.setAttribute("aria-label", `Add ${product.name} to bag`);
+  addButton.disabled = soldOut;
   addButton.append(
     element("span", "product-detail__add-shimmer"),
     icon('<path d="M6 7h12l-1 12H7L6 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/>', "product-detail__add-icon"),
-    element("span", "product-detail__add-label", "Add to cart"),
+    element("span", "product-detail__add-label", soldOut ? "Sold out" : "Add to cart"),
   );
 
   const wishlist = element("button", "product-detail__wishlist");
@@ -300,25 +308,25 @@ function renderPurchasePanel(product) {
   buyNow.type = "button";
   buyNow.dataset.commerceAction = "buy-now";
   buyNow.setAttribute("aria-label", `Buy ${product.name} now`);
+  buyNow.disabled = soldOut;
   actions.append(primaryActions, buyNow);
 
   const shippingAccordion = renderAccordion(
     "Shipping & Return policy",
-    "Free shipping over ₹2,500. Easy returns and exchanges across India. Dispatches in 2–3 working days.",
+    "Delivery options and charges are shown at checkout. Request an eligible return within 3 days of delivery; contact Samantha within 48 hours for a damaged or incorrect item.",
   );
+  const policyLinks = element("p", "product-detail__policy-links");
+  const shippingLink = element("a", "", "Shipping policy");
+  shippingLink.href = "/design?route=page&slug=shipping-policy";
+  const returnsLink = element("a", "", "Returns & refunds");
+  returnsLink.href = "/design?route=page&slug=refund-policy";
+  policyLinks.append(shippingLink, document.createTextNode(" · "), returnsLink);
+  shippingAccordion.append(policyLinks);
 
-  panel.append(
-    heading,
-    description,
-    renderVariantOptions(product),
-    priceLine,
-    taxNote,
-    actions,
-    giftOffer,
-    renderTrustRow(),
-    shippingAccordion,
-    renderStickyBar(product),
-  );
+  panel.append(heading, description, renderVariantOptions(product), priceLine, taxNote);
+  if (stockNote) panel.append(stockNote);
+  panel.append(actions, giftOffer, renderTrustRow(), shippingAccordion);
+  if (!soldOut) panel.append(renderStickyBar(product));
   return panel;
 }
 
@@ -358,6 +366,16 @@ function renderStickyBar(product) {
 export function renderProductPage({ product, relatedProducts = [], ctx = {}, renderProductCard }) {
   const root = element("div", "product-detail-page");
   root.dataset.productPage = "true";
+  if (!product) {
+    const message = element("div", "product-detail__unavailable");
+    message.append(element("h1", "product-detail__title", "This piece is unavailable"));
+    message.append(element("p", "product-detail__description", "The link may be old or the piece may have left the collection."));
+    const shop = element("a", "button button--fill", "Explore sarees");
+    shop.href = "/design?route=collection&slug=sarees";
+    message.append(shop);
+    root.append(message);
+    return root;
+  }
   root.dataset.productId = productIdFrom(product);
   root.append(renderBreadcrumbs(product));
 

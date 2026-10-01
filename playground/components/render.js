@@ -823,6 +823,7 @@ export function renderProductCard(product, ctx, options = {}) {
   card.dataset.productPayload = JSON.stringify(snapshotProduct({ ...product, id: productId }));
 
   const body = element("div", "product-card__body");
+  const soldOut = product.availability === "out_of_stock" || product.stock === 0;
   if (product.tag) body.append(element("span", "product-tag", product.tag));
   body.append(element("h3", "product-name", product.name));
   const meta = element("div", "product-meta");
@@ -846,6 +847,7 @@ export function renderProductCard(product, ctx, options = {}) {
   }
   meta.append(priceWrap);
   body.append(meta);
+  if (soldOut) body.append(element("span", "product-card__stock", "Sold out"));
 
   if (options.commerce) {
     const mediaStage = element("div", "product-card__media");
@@ -874,7 +876,9 @@ export function renderProductCard(product, ctx, options = {}) {
     }
 
     const mediaActions = element("div", "product-card__media-actions");
-    mediaActions.append(productActionButton("cart", "Add to cart"));
+    const cartAction = productActionButton("cart", soldOut ? "Sold out" : "Add to cart");
+    cartAction.disabled = soldOut;
+    mediaActions.append(cartAction);
 
     if (options.wishlistMode) {
       const remove = element("button", "product-card__wishlist product-card__wishlist--remove");
@@ -1829,7 +1833,7 @@ export function renderPage(page, options = {}) {
       }),
     );
     root.classList.add("site--commerce-page", "site--wishlist");
-  } else if (productView?.product) {
+  } else if (productView) {
     main.append(
       renderProductPage({
         product: productView.product,

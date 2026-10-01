@@ -1087,8 +1087,8 @@ export const blank = {
         {
           heading: "Help",
           links: [
-            { label: "Shipping", href: "/?route=shipping" },
-            { label: "Returns & exchanges", href: "/?route=returns" },
+            { label: "Shipping", href: contentUrl("shipping-policy") },
+            { label: "Returns & exchanges", href: contentUrl("refund-policy") },
             { label: "COD", href: "/?route=cod" },
             { label: "Track order", href: "/?route=track-order" },
             { label: "Size guide", href: "/?route=size-guide" },
@@ -1101,9 +1101,9 @@ export const blank = {
             { label: "Our story", href: "/?route=story" },
             { label: "Journal", href: "/?route=journal" },
             { label: "Stores", href: "/?route=stores" },
-            { label: "Contact", href: "/?route=contact" },
-            { label: "Privacy", href: "/?route=privacy" },
-            { label: "Terms", href: "/?route=terms" },
+            { label: "Contact", href: contentUrl("contact-information") },
+            { label: "Privacy", href: contentUrl("privacy-policy") },
+            { label: "Terms", href: contentUrl("terms-of-service") },
           ],
         },
       ],

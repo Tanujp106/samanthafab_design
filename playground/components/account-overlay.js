@@ -110,7 +110,7 @@ export function renderAccountOverlay({ brandSrc = "/assets/samantha-logo.png", b
     document.createTextNode("By continuing, you agree to our "),
     (() => {
       const link = element("a", "account-overlay__terms-link", "Terms & Conditions");
-      link.href = "/design";
+      link.href = "/design?route=page&slug=terms-of-service";
       return link;
     })(),
   );

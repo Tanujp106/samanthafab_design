@@ -411,7 +411,7 @@ test("design page places a ready-to-wear promo banner after new arrivals", async
   assert.equal(uspRow.items.length, 4);
   assert.deepEqual(
     uspRow.items.map((item) => item.icon),
-    ["banknote", "refresh-cw", "truck", "message-circle"],
+    ["banknote", "refresh-cw", "truck", "whatsapp"],
   );
   assert.equal(bestSellers.id, "design-best-sellers");
   assert.equal(bestSellers.type, "product-carousel");
