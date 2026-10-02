@@ -92,11 +92,11 @@ function bagEmptyState(empty = {}) {
 
   const actions = element("div", "commerce-empty__actions");
   const primary = element(
-    "button",
+    "a",
     "button button--fill commerce-empty__cta",
     empty.ctaLabel || "Continue shopping",
   );
-  primary.type = "button";
+  primary.href = empty.ctaHref || "/design";
   primary.dataset.bagClose = "true";
   actions.append(primary);
   root.append(actions);

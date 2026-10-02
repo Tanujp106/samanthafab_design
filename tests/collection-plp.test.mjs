@@ -256,6 +256,7 @@ test("bag drawer renders empty, filled and insufficient-stock states", async () 
   const { renderBagDrawer } = await import("../playground/components/commerce-pages.js");
   const empty = renderBagDrawer({ items: [], bestsellers: [] });
   assert.match(collectText(empty), /Your bag is empty/);
+  assert.equal(empty.querySelector(".commerce-empty__cta").href, "/design");
 
   const product = snapshotProduct(getCatalogProduct("indigo-rtw"));
   const filled = renderBagDrawer({ items: [{ ...product, quantity: 2 }], bestsellers: [] });
