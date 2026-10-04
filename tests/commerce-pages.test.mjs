@@ -111,8 +111,12 @@ test("design wires hover media, commerce pages, and nav routes", async () => {
   assert.match(app, /setBagDrawerOpen/);
   assert.match(app, /setMobileTabState/);
   assert.match(app, /bagReturnFocus/);
-  assert.match(app, /setMobileTabState\(wishlistView \? "wishlist" : "home"\)/);
+  assert.match(app, /syncWishlistRouteMobileTab/);
+  assert.match(app, /mobileShellMq/);
+  assert.match(app, /tabId === "wishlist" && !mobileShellMq\.matches/);
+  assert.doesNotMatch(app, /setMobileTabState\(wishlistView \? "wishlist" : "home"\)/);
   assert.doesNotMatch(app, /setMobileTabState\(open \? "bag" : "home"\)/);
+  assert.match(css, /site--wishlist > \.site-main\[hidden\]/);
   assert.match(app, /data-bag-open/);
   assert.match(blank, /commerceUrl\("wishlist"\)/);
   assert.match(css, /media--hover/);

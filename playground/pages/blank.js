@@ -116,6 +116,14 @@ export const blank = {
             ],
           },
         ],
+        featured: {
+          label: "Ready to wear",
+          href: MEGA_MENU_LINKS["ready-to-wear"],
+          media: {
+            src: "/assets/design-collection-ready-to-wear.jpg",
+            alt: "Woman in a ready-to-wear saree draped for evening",
+          },
+        },
       },
     },
     {
@@ -174,9 +182,9 @@ export const blank = {
     {
       id: "design-shop-by-collection",
       number: "02",
-      name: "Shop by Collection",
+      name: "Shop by Occasion",
       type: "collection-bento",
-      title: "Shop by collection",
+      title: "Shop by occasion",
       copy: "Start with the moment. The saree follows.",
       hideReviewNotes: true,
       annotation: "Edge-to-edge 2+3 occasion bento. Image fill, left scrim, left labels.",
@@ -226,12 +234,12 @@ export const blank = {
           },
         },
         {
-          title: "Ready-to-wear",
-          icon: "shirt",
-          href: "/design?route=collection&slug=ready-to-wear",
+          title: "Party/evening wear",
+          icon: "sparkles",
+          href: "/design?route=collection&slug=party-evening-wear",
           media: {
-            src: "/assets/design-collection-ready-to-wear.jpg",
-            alt: "Woman sweeping a pastel striped saree through a clean studio",
+            src: "/assets/design-collection-party-evening.jpg",
+            alt: "Woman in a glamorous evening saree in a soft studio light",
             tone: "paper",
             position: "center center",
           },

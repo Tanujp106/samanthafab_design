@@ -2,7 +2,7 @@ import { pages } from "./pages/index.js";
 import { renderPage, renderProductCard } from "./components/render.js";
 import { renderCollectionPlp } from "./components/collection-plp.js";
 import { renderBagDrawerBody, renderWishlistPage } from "./components/commerce-pages.js";
-import { filterSearchProducts, normalizeSearchQuery } from "./components/search-overlay.js";
+import { filterSearchProducts, normalizeSearchQuery, renderRecentSearch, updateSearchResults } from "./components/search-overlay.js";
 import { bindProductLightbox } from "./components/product-lightbox.js";
 import { bindProductGalleryCarousel } from "./components/product-gallery-carousel.js";
 import { bindProductStickyBar } from "./components/product-sticky-bar.js";
@@ -78,12 +78,38 @@ const emptyFilterState = () => ({
 });
 
 let collectionState = emptyFilterState();
-const searchProducts = page.sections.find((section) => section.id === "design-best-sellers")?.products || [];
+const bestSellerSearchProducts = page.sections.find((section) => section.id === "design-best-sellers")?.products || [];
+const readyToWearSearchProducts = page.sections.find((section) => section.id === "design-ready-to-wear-products")?.products || [];
+const searchProducts = [...bestSellerSearchProducts, ...readyToWearSearchProducts];
+const recentSearchesKey = "sf-design-recent-searches";
+let recentSearches = [];
+try {
+  const stored = JSON.parse(window.localStorage.getItem(recentSearchesKey) || "[]");
+  if (Array.isArray(stored)) recentSearches = stored.filter((term) => typeof term === "string" && term.trim()).slice(0, 4);
+} catch {
+  // Search remains available without persistent storage.
+}
+const recentlyViewedKey = "sf-design-recently-viewed";
+let recentlyViewedIds = [];
+try {
+  const stored = JSON.parse(window.localStorage.getItem(recentlyViewedKey) || "[]");
+  if (Array.isArray(stored)) recentlyViewedIds = stored.filter((id) => getCatalogProduct(id));
+  if (productView?.product) {
+    recentlyViewedIds = [productView.product.id, ...recentlyViewedIds.filter((id) => id !== productView.product.id)].slice(0, 4);
+    window.localStorage.setItem(recentlyViewedKey, JSON.stringify(recentlyViewedIds));
+  }
+} catch {
+  // Search stays usable when storage is unavailable.
+}
+const recentlyViewedProducts = recentlyViewedIds.map((id) => getCatalogProduct(id)).filter(Boolean);
 
 function buildCollectionView(slug, state) {
   if (!slug) return null;
   const collection = getCollection(slug);
   const allProducts = getCollectionProducts(slug);
+  const searchedProducts = slug === "sarees" && searchQueryParam
+    ? filterSearchProducts(allProducts, searchQueryParam)
+    : allProducts;
   if (!collection) {
     return {
       collection: null,
@@ -93,9 +119,11 @@ function buildCollectionView(slug, state) {
     };
   }
   return {
-    collection,
-    allProducts,
-    products: applyCollectionFilters(allProducts, state),
+    collection: slug === "sarees" && searchQueryParam
+      ? { ...collection, title: `Results for “${searchQueryParam}”` }
+      : collection,
+    allProducts: searchedProducts,
+    products: applyCollectionFilters(searchedProducts, state),
     state,
   };
 }
@@ -104,7 +132,9 @@ document.body.dataset.notes = String(notesEnabled);
 document.body.dataset.page = page.key;
 if (collectionSlug) {
   document.body.dataset.collectionSlug = collectionSlug;
-  document.title = getCollection(collectionSlug)?.title
+  document.title = collectionSlug === "sarees" && searchQueryParam
+    ? `Results for “${searchQueryParam}” — Samantha Fab`
+    : getCollection(collectionSlug)?.title
     ? `${getCollection(collectionSlug).title} — Samantha Fab`
     : page.title;
 } else if (contentSlug) {
@@ -127,6 +157,8 @@ if (collectionSlug) {
 app.replaceChildren(
   renderPage(page, {
     notesEnabled,
+    recentlyViewedProducts,
+    recentSearches,
     collectionView: collectionSlug ? buildCollectionView(collectionSlug, collectionState) : null,
     contentView: contentSlug ? { page: getContentPage(contentSlug) } : null,
     commerceView: wishlistView ? { kind: "wishlist" } : null,
@@ -173,6 +205,17 @@ if (mobileDrawer && menuToggle) {
       setMobileDrawerOpen(false);
     }
   });
+  mobileDrawer.addEventListener("click", (event) => {
+    const toggle = event.target.closest?.("[data-mobile-drawer-accordion]");
+    if (!toggle || !mobileDrawer.contains(toggle)) return;
+    event.preventDefault();
+    const panelId = toggle.getAttribute("aria-controls");
+    const panel = panelId ? mobileDrawer.querySelector(`#${CSS.escape(panelId)}`) : null;
+    const expanded = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!expanded));
+    toggle.classList.toggle("is-open", !expanded);
+    if (panel) panel.hidden = expanded;
+  });
 } else if (menuToggle && navLinks) {
   menuToggle.addEventListener("click", () => {
     const open = navLinks.classList.toggle("nav-links--open");
@@ -188,9 +231,8 @@ const searchOverlay = document.querySelector("[data-search-overlay]");
 const searchInput = searchOverlay?.querySelector("[data-search-input]");
 const searchForm = searchOverlay?.querySelector("[data-search-form]");
 const searchPlaceholder = searchOverlay?.querySelector("[data-search-animated-placeholder]");
-const searchGrid = searchOverlay?.querySelector("[data-search-product-grid]");
-const searchEmpty = searchOverlay?.querySelector("[data-search-empty]");
-const searchTitle = searchOverlay?.querySelector(".search-overlay__products-title");
+const searchRecentSection = searchOverlay?.querySelector("[data-search-recent-section]");
+const searchRecentList = searchOverlay?.querySelector("[data-search-recent-list]");
 const searchTerms = (() => {
   try {
     const parsed = JSON.parse(searchOverlay?.dataset.searchTerms || "[]");
@@ -268,23 +310,21 @@ function startSearchTyping() {
 }
 
 function applySearchQuery(value = "") {
-  if (!searchOverlay || !searchGrid) return;
-  const query = normalizeSearchQuery(value);
-  const matchingIds = new Set(filterSearchProducts(searchProducts, query).map((product) => productIdFrom(product)));
-  let visibleCount = 0;
+  updateSearchResults(searchOverlay, searchProducts, value);
+}
 
-  searchGrid.querySelectorAll("[data-search-product]").forEach((card) => {
-    const matches = !query || matchingIds.has(card.dataset.productId);
-    card.hidden = !matches;
-    card.classList.toggle("is-filtered-out", !matches);
-    if (matches) visibleCount += 1;
-  });
+function syncRecentSearches() {
+  if (!searchRecentList || !searchRecentSection) return;
+  searchRecentList.replaceChildren(...recentSearches.map((term) => renderRecentSearch(term)));
+  searchRecentSection.hidden = recentSearches.length === 0;
+  try { window.localStorage.setItem(recentSearchesKey, JSON.stringify(recentSearches)); } catch {}
+}
 
-  searchForm?.classList.toggle("is-query", Boolean(query));
-  if (searchTitle) searchTitle.textContent = query
-    ? visibleCount ? `Results for “${value.trim()}”` : `No results for “${value.trim()}”`
-    : "Top products";
-  if (searchEmpty) searchEmpty.hidden = visibleCount > 0;
+function rememberSearch(value) {
+  const term = value.trim();
+  if (!normalizeSearchQuery(term)) return;
+  recentSearches = [term, ...recentSearches.filter((saved) => normalizeSearchQuery(saved) !== normalizeSearchQuery(term))].slice(0, 4);
+  syncRecentSearches();
 }
 
 function setSearchOverlayOpen(open) {
@@ -321,6 +361,7 @@ if (searchOverlay && searchInput) {
   searchForm?.addEventListener("submit", (event) => {
     event.preventDefault();
     applySearchQuery(searchInput.value);
+    rememberSearch(searchInput.value);
   });
 
   document.addEventListener("click", (event) => {
@@ -345,6 +386,7 @@ if (searchOverlay && searchInput) {
       const query = suggestion.dataset.searchSuggestion || suggestion.textContent.trim();
       searchInput.value = query;
       applySearchQuery(query);
+      rememberSearch(query);
       stopSearchTyping();
       searchInput.focus();
       return;
@@ -353,14 +395,16 @@ if (searchOverlay && searchInput) {
     const recentClear = target.closest?.("[data-search-recent-clear]");
     if (recentClear) {
       event.preventDefault();
-      recentClear.closest(".search-overlay__recent-item")?.remove();
+      recentSearches = recentSearches.filter((term) => term !== recentClear.dataset.searchRecentClear);
+      syncRecentSearches();
       return;
     }
 
     const recentClearAll = target.closest?.("[data-search-recent-clear-all]");
     if (recentClearAll) {
       event.preventDefault();
-      searchOverlay.querySelector("[data-search-recent-list]")?.replaceChildren();
+      recentSearches = [];
+      syncRecentSearches();
     }
   });
 
@@ -822,21 +866,33 @@ function bindBagBestsellersRails(root = document) {
   });
 }
 
+const mobileShellMq = window.matchMedia("(max-width: 900px)");
+
 function setMobileTabState(tabId) {
   const panels = [...document.querySelectorAll("[data-mobile-panel]")];
   const tabButtons = [...document.querySelectorAll("[data-mobile-bottom-bar] [data-mobile-tab]")];
   if (!panels.length || !tabButtons.length) return false;
 
-  document.body.dataset.mobileTab = tabId;
+  // Wishlist/commerce content lives in `.site-main`. Only swap to the mobile
+  // wishlist panel inside the mobile shell — on desktop the `hidden` attribute
+  // would blank the page while `.mobile-panel` stays display:none.
+  const nextTab = tabId === "wishlist" && !mobileShellMq.matches ? "home" : tabId;
+
+  document.body.dataset.mobileTab = nextTab;
   tabButtons.forEach((button) => {
-    button.classList.toggle("is-active", button.dataset.mobileTab === tabId);
+    button.classList.toggle("is-active", button.dataset.mobileTab === nextTab);
   });
   panels.forEach((panel) => {
-    panel.hidden = panel.dataset.mobilePanel !== tabId;
+    panel.hidden = panel.dataset.mobilePanel !== nextTab;
   });
-  if (tabId !== "home") setMobileDrawerOpen(false);
+  if (nextTab !== "home") setMobileDrawerOpen(false);
   window.scrollTo({ top: 0, behavior: "auto" });
   return true;
+}
+
+function syncWishlistRouteMobileTab() {
+  if (!wishlistView) return;
+  setMobileTabState(mobileShellMq.matches ? "wishlist" : "home");
 }
 
 let bagReturnFocus = null;
@@ -1218,6 +1274,31 @@ document.querySelectorAll("[data-material-carousel]").forEach((carousel) => {
 
   previous.addEventListener("click", () => moveMaterials(-1));
   next.addEventListener("click", () => moveMaterials(1));
+  let swipeStart = null;
+  let suppressSwipeClick = false;
+  let suppressSwipeClickTimer = null;
+  viewport.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" || event.target.closest("[data-material-dir]")) return;
+    swipeStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
+  });
+  viewport.addEventListener("pointerup", (event) => {
+    if (!swipeStart || event.pointerId !== swipeStart.id) return;
+    const deltaX = event.clientX - swipeStart.x;
+    const deltaY = event.clientY - swipeStart.y;
+    swipeStart = null;
+    if (Math.abs(deltaX) < 40 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.2) return;
+    moveMaterials(deltaX < 0 ? 1 : -1);
+    suppressSwipeClick = true;
+    if (suppressSwipeClickTimer) window.clearTimeout(suppressSwipeClickTimer);
+    suppressSwipeClickTimer = window.setTimeout(() => { suppressSwipeClick = false; }, 400);
+  });
+  viewport.addEventListener("pointercancel", () => { swipeStart = null; });
+  viewport.addEventListener("click", (event) => {
+    if (!suppressSwipeClick) return;
+    event.preventDefault();
+    event.stopPropagation();
+    suppressSwipeClick = false;
+  }, true);
   viewport.addEventListener("keydown", (event) => {
     if (event.key === "ArrowLeft") {
       event.preventDefault();
@@ -1249,14 +1330,64 @@ document.querySelectorAll("[data-footer-newsletter]").forEach((form) => {
   });
 });
 
+document.querySelectorAll("[data-footer-accordion]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const expanded = button.getAttribute("aria-expanded") !== "true";
+    button.setAttribute("aria-expanded", String(expanded));
+    button.closest(".footer-column").dataset.open = String(expanded);
+  });
+});
+
 document.querySelectorAll("[data-testimonials-ticker]").forEach((section) => {
   const track = section.querySelector(".design-testimonials__track");
   const viewport = section.querySelector("[data-testimonials-viewport]");
   if (!track || !viewport) return;
+  const mobile = window.matchMedia("(max-width: 900px)");
+  const cards = [...track.querySelectorAll('.design-testimonials__card:not([aria-hidden="true"])')];
+  const dots = [...section.querySelectorAll("[data-testimonial-index]")];
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (cards.length && dots.length) {
+    let currentIndex = 0;
+    const setCurrent = (index) => {
+      currentIndex = index;
+      dots.forEach((dot, dotIndex) => {
+        if (dotIndex === index) dot.setAttribute("aria-current", "true");
+        else dot.removeAttribute("aria-current");
+      });
+    };
+    const goTo = (index) => {
+      const target = cards[index];
+      if (!target) return;
+      setCurrent(index);
+      viewport.scrollTo({
+        left: target.offsetLeft - cards[0].offsetLeft,
+        behavior: reduced ? "auto" : "smooth",
+      });
+    };
+
+    dots.forEach((dot, index) => dot.addEventListener("click", () => goTo(index)));
+    viewport.addEventListener("keydown", (event) => {
+      if (!mobile.matches || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      event.preventDefault();
+      goTo(Math.max(0, Math.min(cards.length - 1, currentIndex + (event.key === "ArrowRight" ? 1 : -1))));
+    });
+    viewport.addEventListener("scroll", () => {
+      if (!mobile.matches) return;
+      const viewportCenter = viewport.getBoundingClientRect().left + viewport.clientWidth / 2;
+      const nearest = cards.reduce((best, card, index) => {
+        const bounds = card.getBoundingClientRect();
+        const distance = Math.abs(bounds.left + bounds.width / 2 - viewportCenter);
+        return distance < best.distance ? { index, distance } : best;
+      }, { index: 0, distance: Infinity });
+      setCurrent(nearest.index);
+    }, { passive: true });
+  }
+
   if (reduced) return;
 
   const setRate = (rate) => {
+    if (mobile.matches) return;
     track.getAnimations().forEach((anim) => {
       anim.playbackRate = rate;
     });
@@ -1287,7 +1418,16 @@ if (mobileBottomBar) {
     });
   });
 
-  setMobileTabState(wishlistView ? "wishlist" : "home");
+  if (wishlistView) {
+    syncWishlistRouteMobileTab();
+    if (typeof mobileShellMq.addEventListener === "function") {
+      mobileShellMq.addEventListener("change", syncWishlistRouteMobileTab);
+    } else {
+      mobileShellMq.addListener(syncWishlistRouteMobileTab);
+    }
+  } else {
+    setMobileTabState("home");
+  }
 }
 
 const mobileSearchInput = document.querySelector("[data-mobile-search-input]");

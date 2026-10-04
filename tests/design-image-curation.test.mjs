@@ -29,13 +29,14 @@ test("design page uses the curated archive images by section role", async () => 
     "/assets/design-collection-work.jpg",
     "/assets/design-collection-festive.jpg",
     "/assets/design-collection-wedding.jpg",
-    "/assets/design-collection-ready-to-wear.jpg",
+    "/assets/design-collection-party-evening.jpg",
     "/assets/design-product-sage.jpg",
     "/assets/design-product-indigo.jpg",
     "/assets/design-product-marigold.jpg",
     "/assets/design-product-black.jpg",
     "/assets/design-ready-to-wear-detail.jpg",
     "/assets/design-campaign-hero-green.jpg",
+    "/assets/design-collection-ready-to-wear.jpg",
   ];
 
   assert.deepEqual(
@@ -53,7 +54,7 @@ test("design page uses the curated archive images by section role", async () => 
   assert.deepEqual(
     banner.media.map((media) => media.src),
     [
-      expected[7],
+      expected[14],
       expected[12],
       expected[13],
       expected[1],

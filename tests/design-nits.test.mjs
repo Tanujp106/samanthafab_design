@@ -208,11 +208,11 @@ test("design nits: collection tiles use occasion-specific Lucide icons", async (
     ["Work", "briefcase-business"],
     ["Festive", "party-popper"],
     ["Wedding", "gem"],
-    ["Ready-to-wear", "shirt"],
+    ["Party/evening wear", "sparkles"],
   ]) {
     assert.match(
       blank,
-      new RegExp(`title:\\s*"${title}"[\\s\\S]*?icon:\\s*"${icon}"`),
+      new RegExp(`title:\\s*"${title.replace("/", "\\/")}"[\\s\\S]*?icon:\\s*"${icon}"`),
     );
   }
 
@@ -615,7 +615,7 @@ test("design feedback: mobile collection rhythm and testimonial alignment stay i
 
   assert.match(
     css,
-    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] #design-shop-by-collection \.design-collection-bento__tile:nth-child\(5\) \.design-collection-bento__label\s*\{[^}]*font-size:\s*22px/s,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] #design-shop-by-collection \.design-collection-bento__tile:nth-child\(5\)\s*\{[^}]*display:\s*none/s,
   );
   assert.match(
     css,
@@ -631,7 +631,7 @@ test("design feedback: mobile collection rhythm and testimonial alignment stay i
   );
   assert.match(
     css,
-    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-shop-under\s*\{[^}]*padding:\s*16px 16px 64px/s,
+    /@media \(max-width: 640px\) \{[\s\S]*body\[data-page="blank"\] \.design-shop-under\s*\{[^}]*padding:\s*16px 16px 80px/s,
   );
   assert.match(
     css,
@@ -643,7 +643,7 @@ test("design feedback: mobile collection rhythm and testimonial alignment stay i
   );
 });
 
-test("design feedback: New Arrivals Shop All renders below the product rail", async () => {
+test("design feedback: New Arrivals Shop All renders below the desktop product rail", async () => {
   const render = await source("playground/components/render.js");
 
   assert.match(render, /const placeViewAllBelowRail = section\.id === "design-new-arrivals"/);

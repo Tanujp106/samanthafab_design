@@ -10,17 +10,18 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Bottom bar height | `--mobile-bottom-bar-height`: `62px + safe-area` (8 + 44 + 10 + inset); 5 equal tabs; icon 22px; label 10px Karrik |
 | Wishlist / Bag tab counts | Live numeric badge at the icon's upper-right; 17px minimum circle, primary fill and cream type; hidden at zero. Wishlist counts saved products, Bag counts total item quantity |
 | Drawer width | min(88vw, 360px); slides from left; overlay rgba(18,10,12,0.42) |
+| Drawer IA | Same top links as desktop nav (Shop / New Arrival / Best sellers / About / Sale). Shop + mega groups use nested accordion toggles (`data-mobile-drawer-accordion`); leaf links sit inside group panels — do not flatten every mega link onto the first level |
 | Explore search | 48px pill; 999px radius; whisper cream fill |
 | Explore trending | 5 chips: Bestsellers (all), Ready-to-wear, Everyday, Wedding, Festive — client filter by tag/name |
 | Explore grid | 2 columns; 16×12px gap; same commerce cards as Best sellers (no hover wishlist/cart on grid) |
 | Empty state | Keep the empty-results shell hidden until needed; no empty-state title or helper prompt copy |
-| Search overlay | Search form width 100%; Karrik body/UI typography; no Clear search controls or “Showing top products” helper copy; “Clear recent searches” is an un-underlined text control |
+| Search overlay | Preserve sidebar/product split and full-width form; Karrik UI. Best sellers then Ready to wear in the product column, with Lora uppercase headings `clamp(22px, 2.1vw, 28px)` and 48px between groups. Trending phrases use compact numbered 46px rows and 18px trend icons on the right; recent searches block hides when empty; recently viewed/fallback previews use 48×62px thumbnails (42×54 mobile). View all is a quiet 12px text link. No-result alternatives stay concise and actionable. No Clear search control or “Showing top products” helper copy; “Clear recent searches” stays un-underlined |
 
 ## Wishlist / Bag
 
 | Item | Value |
 | --- | --- |
-| Wishlist route | `/design?route=wishlist` — centered title + **4-col** grid (3 ≤1100 / 2 mobile) of shared commerce product cards at New Arrivals card scale; **× cancel** removes (not heart) |
+| Wishlist route | `/design?route=wishlist` — centered title + **4-col** grid (3 ≤1100 / 2 mobile) of shared commerce product cards at New Arrivals card scale; **× cancel** removes (not heart). Desktop keeps `.site-main` visible; mobile ≤900px may use the wishlist tab panel |
 | Bag UI | Right overlay drawer at all widths; desktop `min(100vw, 420px)`, mobile `min(420px, 100vw - 24px)` to leave a dimmed page strip; mobile Bag / Add to cart open it without changing the active tab; `?route=bag` opens it then strips the query. Close button, scrim, and Escape dismiss it; focus returns to the trigger |
 | Persistence | localStorage keys `sf-design-wishlist` / `sf-design-bag` (playground prototype) |
 | Bag contents | Line items (88px portrait; uppercase title; sale + strikethrough compare-at + % off; trash\|qty\|+; Save for later) → 4-col icon USP strip → sticky Total → soft offer strip (“Offers available at checkout”) → Checkout |
@@ -104,16 +105,19 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | --- | --- |
 | Home affordance | Omit Home from the centered primary links; the Samantha Fab wordmark links to `/design` |
 | Primary links | Shop (mega) · New Arrival · Best sellers · About · Sale |
-| Shop mega menu | 5 taxonomy columns (craft / design language / textiles / colours / occasions); no featured image panel |
+| Shop mega menu | 5 taxonomy columns (craft / design language / textiles / colours / occasions) + right featured panel |
+| Mega featured panel | 4:3 image, label **Ready to wear**, right of taxonomy columns; hidden ≤900px |
+| Mega-menu layout | Desktop `minmax(0, 1fr) minmax(240px, 320px)` (groups | featured); ≤1200px featured `minmax(200px, 260px)` |
 | Mega-menu groups grid | `repeat(5, minmax(0, 1fr))` desktop; 3-up ≤1200px; 2-up ≤900px; 1-up ≤640px |
 | Mega-menu link hover | `scale(1.06)` + primary color only; no underline / border-bottom (overrides homepage `.nav-links a` hairline) |
+| Primary nav link align | Center-aligned with wordmark/actions (`align-items` / `align-self: center`); link padding `6px 0` (underline sits in padding, not bottom-only) |
 
 ## Spacing
 
 | Item | Value |
 | --- | --- |
 | Page / section side gutters | 24px |
-| Reference nav top row | 88px min-height with 20px top / 12px bottom padding (mobile 64px / 10px) |
+| Reference nav top row | 88px min-height with symmetric `16px 24px` padding (mobile 64px / `10px 16px`) |
 | Eyebrow → title | ~6px |
 | Title → body / lede | ~6px |
 | Collection header → bento grid | ~48px |
@@ -135,6 +139,8 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | USP row icons | Lucide banknote / refresh-cw / truck / message-circle; stroke 2; cream; 18px |
 | RTW / Clearance rail-only top padding | `0` on desktop and mobile; explicit IDs `#design-ready-to-wear-products` and `#design-clearance-sale` |
 | Rail footer CTA top margin | 16px |
+| Mobile New Arrivals CTA | Above product rail; 24px gap below the button |
+| Mobile RTW rail CTA | Hidden at ≤640px |
 
 ## Type
 
@@ -161,7 +167,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 
 | Item | Value |
 | --- | --- |
-| Mobile grid | 2×2 grid; all four tiles use one column span with `min-height: min(52vw, 220px)` |
+| Mobile grid | 2×2 grid; first four tiles use one column span with `min-height: min(52vw, 220px)`; hide fifth Party/evening wear tile at ≤640px |
 | Tile min-height | ~168–240px (keep shorter, not tall posters) |
 | Tile radius | ~16px |
 | Scrim | ~2px blur + multi-stop **left** linear fade spanning ~72% of tile width; ink stops ~0.84 → 0.58 → 0.30 → 0.12 → transparent |
@@ -176,7 +182,6 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Hover scale | ~1.03 |
 | Gap title↔lede in header | ~12px |
 | Section header | Centered title + lede |
-| Mobile Ready-to-wear tile title | `22px` Lora |
 
 ## Shop under
 
@@ -184,9 +189,10 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | --- | --- |
 | Heading | Source `Best on budget`; displayed uppercase via CSS |
 | Title → cards gap | 40px desktop; 32px mobile |
-| Section padding | `48px 24px 88px` (mobile `16px 16px 64px`) |
+| Section padding | `48px 24px 88px` (mobile `16px 16px 80px`) |
 | Tile min-height | clamp(280px, 34vw, 420px) |
 | Mobile tile min-height | min(56vw, 260px) |
+| Mobile label inset / gap | 24px from tile bottom; 8px between “Shop under” and price |
 | Tile border | 1px cream 32% hairline OK |
 
 ## Shop by Material
@@ -210,7 +216,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Card copy placement | Horizontally + vertically centered in the tile (`justify-content: center`) |
 | Carousel layout | Repeated-track infinite center-mode 5-up on desktop / 3-up mobile; active center 100%, adjacent cards 80%, distance-2 cards 60%; hidden recenter point |
 | Carousel depth | Active card crisp; adjacent cards blur 1.5px; distance-2 cards blur 3px; deepest cards blur 4.5px |
-| Carousel controls | 40px mid-rail arrow controls; keyboard ArrowLeft/ArrowRight; wrapped off-screen cards reposition without a cross-track sweep; reduced-motion removes transitions |
+| Carousel controls | 40px mid-rail arrow controls; keyboard ArrowLeft/ArrowRight; touch/pen horizontal swipe advances one card, while vertical page scroll remains available; wrapped off-screen cards reposition without a cross-track sweep; reduced-motion removes transitions |
 
 ## Product chrome
 
@@ -220,8 +226,8 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Add to cart | Hover-only on desktop; always on touch; toast confirms “Added to bag” |
 | Carousel arrows | Mid-image via `cqw` (not mid-section); ~44px; primary chrome |
 | Carousel overflow | Fixed viewport height from card width × 3/4 media + `--product-rail-details` (7.75rem — fits title/price/badge/swatches); `overflow-x: auto` + `overflow-y: hidden`; cards `height: auto` / `align-items: start` so details fit content; title line-clamp 2. No wheel JS / touch-action / overscroll hacks |
-| View all | Filled primary “Shop All”; centered under header with title/lede except New Arrivals, where it sits below the product rail |
-| New Arrivals Shop All | Rail footer CTA below the stage; 16px top margin; filled primary 13px Karrik label |
+| View all | Filled primary “Shop All”; centered under header with title/lede except New Arrivals, where it sits below the product rail on desktop and above products on mobile |
+| New Arrivals Shop All | Rail footer CTA below the stage on desktop (16px top margin), moved above products on mobile (24px bottom gap); filled primary 13px Karrik label |
 | Price row | Full width; sale + compare-at + “24% off” badge on the first line; swatches below, left-aligned |
 | Discount badge | Primary fill + cream text; 11px Karrik; padding ~3×7; radius-control; text `24% off` on commerce product cards |
 | Product card bottom pad | 4px on `.design-new-arrivals__card` |
@@ -278,17 +284,17 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 
 | Item | Value |
 | --- | --- |
-| Section padding | `56px 0 80px` desktop; mobile `40px 0 72px` (top −24px); title/lede constrained with ~24px gutters; ticker full-bleed |
+| Section padding | `56px 0 80px` desktop; mobile `40px 0 72px` (top −24px); title/lede constrained with ~24px gutters; desktop ticker full-bleed |
 | Header | Centered title + lede on desktop and mobile |
 | Mobile surface/content alignment | Section surface and heading remain centered; testimonial cards and their copy are left-aligned |
-| Track | flex row; gap ~28px; `animation: design-testimonials-ticker 55s linear infinite`; `translateX(-50%)` loop |
+| Track | Desktop flex row; gap ~28px; `animation: design-testimonials-ticker 55s linear infinite`; `translateX(-50%)` loop. Mobile stops the animation and uses native horizontal scroll snap with one card at a time |
 | Hover speed | Web Animations `playbackRate` 0.2 on viewport pointerenter/focusin; restore 1 on leave/focusout — do not swap CSS duration (causes snap); do not pause |
 | Reduced motion | `.design-testimonials__track { animation: none; }` |
 | Card layout | grid `260px minmax(280px, 400px)`; soft primary-50 wash; quote column flex space-between |
 | Card media | square 260×260 (`aspect-ratio: 1 / 1`); radius 12px; object-fit cover; object-position center top |
 | Type | Quote Karrik `clamp(16px…19px)` weight 300 top; name Lora/primary-800 bottom; optional muted meta under name |
-| Mobile | 180px square; tighter gaps (~16px track / ~12px card) |
-| Controls | None (no arrows / controls) |
+| Mobile | One card at a time with a 112–140px square image beside the quote; 16px card gap, 12px internal gap, 16px viewport inset; duplicate ticker cards hidden |
+| Controls | Desktop none; mobile swipe, keyboard arrows, and one dot per testimonial below the rail |
 
 
 ## Footer
@@ -299,7 +305,7 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Avoid | Payment logos, app badges, SEO link clouds, light-gray theme |
 | Layout | Brand + brandLine + Connect with us socials (above newsletter) + newsletter (“Join our newsletter for new drops”, Subscribe CTA, margin-top 28px); **3** columns Shop/Help/About; trust strip under columns (same width as link columns); copyright |
 | Socials | Heading “Connect with us”; 4 circular icon buttons (Instagram / Facebook / Pinterest / YouTube) using **Phosphor** regular logos; each link has `aria-label`; icons `aria-hidden` inside containers; 40px hit targets |
-| Trust | 4 items (COD / Easy returns / Pan-India shipping / WhatsApp support); stacked icon→label; 32×32 line icons; label 16px cream ~0.78; 4-col desktop / 2-col mobile; gap matches columns (~28px); lives in footer-grid `grid-column: 2` (mobile `1`); sits above copyright rule |
+| Trust | 4 items (COD / Easy returns / Pan-India shipping / WhatsApp support); stacked icon→label; 24×24 line icons at 1.2 stroke, 8px icon→label gap; label 16px cream ~0.78; 4-col desktop / 2-col mobile; gap matches columns (~28px); lives in footer-grid `grid-column: 2` (mobile `1`); sits above copyright rule |
 | Section padding | clamp 64px/7vw/88px top, 36px bottom; mobile 56px 28px |
 | Grid gap | footer-grid clamp(48px, 5vw, 72px); columns 28px; mobile vertical ~36px |
 | Heading | Full cream; Lora uppercase; margin-bottom ~16px; tracking ~0.13em |

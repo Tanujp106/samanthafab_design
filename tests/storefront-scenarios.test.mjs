@@ -121,6 +121,8 @@ test("offline notice responds to connection loss and recovery", () => {
 
 test("search and collection recovery states remain wired", async () => {
   const source = await readFile(new URL("../playground/app.js", import.meta.url), "utf8");
+  const searchSource = await readFile(new URL("../playground/components/search-overlay.js", import.meta.url), "utf8");
   assert.match(source, /data-collection-empty-clear/);
-  assert.match(source, /No results for/);
+  assert.match(source, /updateSearchResults\(searchOverlay, searchProducts, value\)/);
+  assert.match(searchSource, /No results for/);
 });

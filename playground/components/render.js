@@ -404,6 +404,8 @@ const collectionIconPaths = {
     '<path d="M10.5 3 8 9l4 13 4-13-2.5-6"/><path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z"/><path d="M2 9h20"/>',
   shirt:
     '<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>',
+  sparkles:
+    '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>',
 };
 
 const uspLucideIconPaths = {
@@ -468,7 +470,7 @@ function renderCollectionBento(section, ctx) {
   root.setAttribute("aria-labelledby", "design-shop-by-collection-title");
 
   const header = element("header", "design-collection-bento__header");
-  const heading = element("h2", "design-collection-bento__heading", section.title || "Shop by collection");
+  const heading = element("h2", "design-collection-bento__heading", section.title || "Shop by occasion");
   heading.id = "design-shop-by-collection-title";
   header.append(heading);
   if (section.copy) {
@@ -1111,6 +1113,7 @@ function renderTestimonials(section, ctx) {
   const viewport = element("div", "design-testimonials__viewport");
   viewport.setAttribute("data-testimonials-viewport", "true");
   viewport.setAttribute("aria-label", "Customer voices");
+  viewport.tabIndex = 0;
 
   const track = element("div", "design-testimonials__track");
   items.forEach((item) => {
@@ -1122,7 +1125,17 @@ function renderTestimonials(section, ctx) {
     track.append(duplicate);
   });
   viewport.append(track);
-  stage.append(viewport);
+  const controls = element("div", "design-testimonials__controls");
+  controls.setAttribute("aria-label", "Choose a testimonial");
+  items.forEach((item, index) => {
+    const dot = element("button", "design-testimonials__dot");
+    dot.type = "button";
+    dot.dataset.testimonialIndex = String(index);
+    dot.setAttribute("aria-label", `Show testimonial ${index + 1} of ${items.length}: ${item.name}`);
+    if (index === 0) dot.setAttribute("aria-current", "true");
+    controls.append(dot);
+  });
+  stage.append(viewport, controls);
 
   root.append(inner, stage);
   return root;
@@ -1406,10 +1419,10 @@ function renderSale(section, ctx) {
 
 function footerTrustIcon(name) {
   const icons = {
-    cod: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><path d="M2.5 8.5h15"/><text x="10" y="14.2" text-anchor="middle" fill="currentColor" stroke="none" font-size="6.5" font-family="system-ui,sans-serif">₹</text></svg>`,
-    returns: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 7.5A6 6 0 1 0 16 12"/><path d="M15.5 4v3.5H12"/></svg>`,
-    shipping: `<svg viewBox="0 0 20 20" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5h9.5v9H3z"/><path d="M12.5 9h3.2l1.8 2.4v4.1h-5V9z"/><circle cx="6.2" cy="15.5" r="1.2"/><circle cx="14.8" cy="15.5" r="1.2"/></svg>`,
-    whatsapp: whatsappIconSvg({ size: 32 }),
+    cod: `<svg viewBox="0 0 20 20" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><path d="M2.5 8.5h15"/><text x="10" y="14.2" text-anchor="middle" fill="currentColor" stroke="none" font-size="6.5" font-family="system-ui,sans-serif">₹</text></svg>`,
+    returns: `<svg viewBox="0 0 20 20" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 7.5A6 6 0 1 0 16 12"/><path d="M15.5 4v3.5H12"/></svg>`,
+    shipping: `<svg viewBox="0 0 20 20" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5h9.5v9H3z"/><path d="M12.5 9h3.2l1.8 2.4v4.1h-5V9z"/><circle cx="6.2" cy="15.5" r="1.2"/><circle cx="14.8" cy="15.5" r="1.2"/></svg>`,
+    whatsapp: `<svg viewBox="0 0 20 20" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5a7.5 7.5 0 0 0-6.6 11.1L2.5 17.5l3.9-1A7.5 7.5 0 1 0 10 2.5Z"/><path d="M7.2 6.9c.5 2.5 2 4.1 4.6 5l1.2-1"/></svg>`,
   };
   return icons[name] || "";
 }
@@ -1495,10 +1508,25 @@ function renderFooter(section) {
 
   const columns = element("nav", "footer-columns");
   columns.setAttribute("aria-label", "Footer navigation");
-  section.columns.forEach((column) => {
+  section.columns.forEach((column, index) => {
     const col = element("div", "footer-column");
-    col.append(element("h3", "footer-heading", column.heading));
+    col.dataset.open = "false";
+    const heading = element("h3", "footer-heading");
+    heading.append(element("span", "footer-heading__text", column.heading));
+    const toggle = element("button", "footer-accordion-toggle");
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-controls", `footer-links-${index}`);
+    toggle.setAttribute("data-footer-accordion", "true");
+    toggle.append(element("span", "", column.heading));
+    const chevron = element("span", "footer-accordion-toggle__icon");
+    chevron.setAttribute("aria-hidden", "true");
+    chevron.innerHTML = '<svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 7 6 6 6-6"/></svg>';
+    toggle.append(chevron);
+    heading.append(toggle);
+    col.append(heading);
     const list = element("ul", "footer-links");
+    list.id = `footer-links-${index}`;
     column.links.forEach((link) => {
       const li = element("li");
       const a = element("a", "", link.label);
@@ -1582,6 +1610,46 @@ function renderSection(section, ctx) {
   }
 }
 
+function renderMobileDrawerLink(item, { featured = false } = {}) {
+  const row = element("li", "mobile-drawer__item");
+  const link = element(
+    "a",
+    ["mobile-drawer__link", featured ? "mobile-drawer__link--featured" : ""].filter(Boolean).join(" "),
+  );
+  link.href = item.href;
+  link.append(element("span", "mobile-drawer__link-label", item.label));
+  if (!featured) link.append(renderMobileIcon("chevron", "mobile-drawer__chevron"));
+  row.append(link);
+  return row;
+}
+
+function renderMobileDrawerAccordion({ label, panelId, children, nested = false }) {
+  const row = element(
+    "li",
+    ["mobile-drawer__item", "mobile-drawer__item--accordion", nested ? "mobile-drawer__item--nested" : ""]
+      .filter(Boolean)
+      .join(" "),
+  );
+
+  const toggle = element("button", "mobile-drawer__toggle");
+  toggle.type = "button";
+  toggle.dataset.mobileDrawerAccordion = "true";
+  toggle.setAttribute("aria-expanded", "false");
+  toggle.setAttribute("aria-controls", panelId);
+  toggle.append(
+    element("span", "mobile-drawer__toggle-label", label),
+    renderMobileIcon("chevron", "mobile-drawer__chevron"),
+  );
+
+  const panel = element("div", "mobile-drawer__panel");
+  panel.id = panelId;
+  panel.hidden = true;
+  panel.append(children);
+
+  row.append(toggle, panel);
+  return row;
+}
+
 function renderMobileDrawer(page, headerSection) {
   const overlay = element("button", "mobile-drawer__overlay");
   overlay.type = "button";
@@ -1592,7 +1660,7 @@ function renderMobileDrawer(page, headerSection) {
   drawer.id = "mobile-drawer";
   drawer.dataset.mobileDrawer = "true";
   drawer.setAttribute("aria-hidden", "true");
-  drawer.setAttribute("aria-label", "Shop categories");
+  drawer.setAttribute("aria-label", "Main menu");
 
   const head = element("div", "mobile-drawer__head");
   const close = element("button", "mobile-drawer__close");
@@ -1600,7 +1668,7 @@ function renderMobileDrawer(page, headerSection) {
   close.setAttribute("aria-label", "Close menu");
   close.dataset.mobileDrawerClose = "true";
   close.append(renderMobileIcon("close", "mobile-drawer__close-icon"));
-  head.append(element("span", "mobile-drawer__title", "Shop"), close);
+  head.append(element("span", "mobile-drawer__title", "Menu"), close);
   drawer.append(head);
 
   const promo = page.mobile?.drawerPromo;
@@ -1615,16 +1683,41 @@ function renderMobileDrawer(page, headerSection) {
   }
 
   const list = element("ul", "mobile-drawer__list");
+  const navItems = headerSection?.nav || [];
   const megaMenu = headerSection?.megaMenu;
-  const links = (megaMenu?.groups || []).flatMap((group) => group.links || []);
-  links.forEach((item) => {
-    const row = element("li", "mobile-drawer__item");
-    const link = element("a", "mobile-drawer__link", item.label);
-    link.href = item.href;
-    link.append(renderMobileIcon("chevron", "mobile-drawer__chevron"));
-    row.append(link);
-    list.append(row);
+
+  navItems.forEach((item, index) => {
+    if (item.menu === "shop" && megaMenu?.groups?.length) {
+      const groups = element("ul", "mobile-drawer__groups");
+      megaMenu.groups.forEach((group, groupIndex) => {
+        const sublist = element("ul", "mobile-drawer__sublist");
+        (group.links || []).forEach((link) => {
+          sublist.append(renderMobileDrawerLink(link));
+        });
+        groups.append(
+          renderMobileDrawerAccordion({
+            label: group.heading,
+            panelId: `mobile-drawer-group-${groupIndex}`,
+            children: sublist,
+            nested: true,
+          }),
+        );
+      });
+      list.append(
+        renderMobileDrawerAccordion({
+          label: item.label || megaMenu.label || "Shop",
+          panelId: `mobile-drawer-nav-${index}`,
+          children: groups,
+        }),
+      );
+      return;
+    }
+
+    if (item.href) {
+      list.append(renderMobileDrawerLink(item));
+    }
   });
+
   drawer.append(list);
 
   return { overlay, drawer };
@@ -1762,7 +1855,11 @@ function renderMobileBottomBar(page) {
 
 export function renderPage(page, options = {}) {
   const notesEnabled = Boolean(options.notesEnabled);
-  const ctx = { notesEnabled };
+  const ctx = {
+    notesEnabled,
+    recentlyViewedProducts: options.recentlyViewedProducts || [],
+    recentSearches: options.recentSearches || [],
+  };
   const collectionView = options.collectionView || null;
   const contentView = options.contentView || null;
   const commerceView = options.commerceView || null;
@@ -1854,6 +1951,7 @@ export function renderPage(page, options = {}) {
   if (page.key === "blank" && page.mobile) {
     const headerSection = page.sections.find((section) => section.type === "header");
     const bestSellers = page.sections.find((section) => section.id === "design-best-sellers");
+    const readyToWear = page.sections.find((section) => section.id === "design-ready-to-wear-products");
     root.append(
       renderMobileExplore(page, ctx),
       renderMobileEmptyPanel("wishlist", page.mobile.wishlist, "heart"),
@@ -1874,6 +1972,9 @@ export function renderPage(page, options = {}) {
       root.append(
         renderSearchOverlay({
           products: bestSellers?.products || [],
+          readyToWearProducts: readyToWear?.products || [],
+          recentlyViewed: ctx.recentlyViewedProducts || [],
+          recentSearches: ctx.recentSearches,
           terms: page.searchTerms,
           ctx,
           renderProductCard,

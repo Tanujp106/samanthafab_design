@@ -92,7 +92,9 @@ test("design page uses the live Samantha reference navbar structure", async () =
     header.megaMenu.groups.map((group) => group.heading),
     ["By craft", "By design language", "By textiles", "By colours", "By occasions"],
   );
-  assert.equal(header.megaMenu.featured, undefined);
+  assert.equal(header.megaMenu.featured?.label, "Ready to wear");
+  assert.match(header.megaMenu.featured?.href || "", /\/design\?/);
+  assert.match(header.megaMenu.featured?.media?.src || "", /design-collection-ready-to-wear\.jpg/);
   assert.ok(
     header.megaMenu.groups
       .flatMap((group) => group.links)
@@ -111,17 +113,21 @@ test("design page uses the live Samantha reference navbar structure", async () =
   assert.match(app, /Escape/);
   assert.match(app, /setAttribute\("aria-label", open \? "Close menu" : "Open menu"\)/);
   assert.match(designStyles, /design-reference-nav__top/);
-  assert.match(designStyles, /design-reference-nav__top[\s\S]*min-height: 88px[\s\S]*padding: 20px 24px 12px/);
+  assert.match(designStyles, /design-reference-nav__top[\s\S]*min-height: 88px[\s\S]*padding: 16px 24px/);
   assert.match(designStyles, /grid-template-columns: minmax\(180px, 1fr\) auto minmax\(180px, 1fr\)/);
   assert.match(designStyles, /design-reference-nav__links/);
-  assert.match(designStyles, /design-reference-nav__links[\s\S]*grid-column: 2[\s\S]*justify-content: center[\s\S]*justify-self: center[\s\S]*min-height: 28px[\s\S]*padding: 0;/);
+  assert.match(designStyles, /design-reference-nav__links[\s\S]*grid-column: 2[\s\S]*align-items: center[\s\S]*align-self: center[\s\S]*justify-content: center[\s\S]*justify-self: center[\s\S]*min-height: 28px[\s\S]*padding: 0;/);
+  assert.match(designStyles, /design-reference-nav__links \.nav-link[\s\S]*padding: 6px 0/);
   assert.match(designStyles, /design-mega-menu/);
+  assert.match(designStyles, /design-mega-menu[\s\S]*grid-template-columns: minmax\(0, 1fr\) minmax\(240px, 320px\)/);
+  assert.match(designStyles, /design-mega-menu__featured[\s\S]*aspect-ratio: 4 \/ 3/);
   assert.match(designStyles, /design-reference-nav__links\.nav-links--open/);
   assert.match(designStyles, /@media \(max-width: 900px\)[\s\S]*design-reference-nav__top[\s\S]*min-height: 64px[\s\S]*padding: 10px 16px/);
   assert.match(designStyles, /@media \(max-width: 900px\)[\s\S]*design-reference-nav__start[\s\S]*gap: 12px/);
   assert.match(designStyles, /design-reference-nav \.wordmark__image[\s\S]*width: clamp\(120px, 42vw, 164px\)/);
   assert.match(designStyles, /:has\(\[data-nav-menu-trigger\]:hover\)[\s\S]*design-mega-menu/);
   assert.match(designStyles, /design-mega-menu__groups[\s\S]*grid-template-columns: 1fr 1fr/);
+  assert.match(designStyles, /@media \(max-width: 900px\)[\s\S]*design-mega-menu__featured[\s\S]*display: none/);
   assert.match(designStyles, /design-mega-menu\.is-open[\s\S]*animation:\s*none/);
 });
 
@@ -180,7 +186,7 @@ test("collection bento uses editorial assets and softened card treatment", async
       "/assets/design-collection-work.jpg",
       "/assets/design-collection-festive.jpg",
       "/assets/design-collection-wedding.jpg",
-      "/assets/design-collection-ready-to-wear.jpg",
+      "/assets/design-collection-party-evening.jpg",
     ],
   );
   assert.match(designStyles, /-webkit-backdrop-filter:\s*blur\(2px\)/);
@@ -555,10 +561,8 @@ test("design page places a testimonials feature after shop under", async () => {
   assert.match(renderer, /design-testimonials__attribution/);
   assert.match(renderer, /ratio:\s*"square"/);
   assert.match(renderer, /aria-hidden/);
-  assert.doesNotMatch(renderer, /data-testimonials-carousel/);
-  assert.doesNotMatch(renderer, /testimonialsCarouselArrow/);
-  assert.doesNotMatch(app, /data-testimonials-carousel/);
-  assert.doesNotMatch(app, /data-testimonials-dir/);
+  assert.match(renderer, /dot\.dataset\.testimonialIndex/);
+  assert.match(app, /data-testimonial-index/);
   assert.match(app, /data-testimonials-ticker/);
   assert.match(app, /playbackRate/);
   assert.match(designStyles, /\.design-testimonials/);
@@ -583,8 +587,9 @@ test("design page places a testimonials feature after shop under", async () => {
   assert.match(designStyles, /clamp\(16px,\s*1\.35vw,\s*19px\)/);
   assert.match(designStyles, /grid-template-columns:\s*260px\s+minmax\(280px,\s*400px\)/);
   assert.doesNotMatch(designStyles, /calc\(\(100% - 32px\) \/ 2\.5\)/);
-  assert.doesNotMatch(designStyles, /design-testimonials__arrow/);
-  assert.doesNotMatch(designStyles, /design-testimonials__controls/);
+  assert.match(designStyles, /design-testimonials__controls/);
+  assert.match(designStyles, /scroll-snap-type:\s*x mandatory/);
+  assert.match(designStyles, /design-testimonials__card\[aria-hidden="true"\]\s*\{[^}]*display:\s*none/s);
   assert.doesNotMatch(designStyles, /design-testimonials__thumb/);
   assert.doesNotMatch(designStyles, /design-testimonials__rail/);
   assert.match(
@@ -654,6 +659,7 @@ test("footer brand uses the supplied Samantha logo asset", async () => {
   assert.match(footerRenderer, /footer-wordmark/);
   assert.match(footerRenderer, /renderBrandImage\(\)/);
   assert.match(footerRenderer, /footer-trust/);
+  assert.match(footerRenderer, /stroke-width="1\.2"/);
 });
 
 test("footer surface uses the defined Samantha plum palette", async () => {

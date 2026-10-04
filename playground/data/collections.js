@@ -344,6 +344,7 @@ export const MEGA_MENU_LINKS = {
   "casual-everyday-wear": collectionUrl("casual-everyday-wear"),
   "party-evening-wear": collectionUrl("party-evening-wear"),
   "office-wear": collectionUrl("office-wear"),
+  "ready-to-wear": collectionUrl("ready-to-wear"),
   "new-arrival": collectionUrl("new-arrival"),
   sale: collectionUrl("sale"),
   about: contentUrl("about"),

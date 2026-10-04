@@ -218,6 +218,31 @@ test("mobile shell: renderPage builds bottom bar, explore, wishlist, and bag dra
   assert.equal(drawer.id, "mobile-drawer");
   assert.ok(tree.querySelector("[data-mobile-drawer-overlay]"));
   assert.ok(tree.querySelector("[data-mobile-drawer-close]"));
+  assert.match(collectText(drawer.querySelector(".mobile-drawer__title")), /Menu/);
+  assert.ok(drawer.querySelector("[data-mobile-drawer-accordion]"));
+  assert.ok(drawer.querySelector(".mobile-drawer__panel"));
+  assert.ok(drawer.querySelector(".mobile-drawer__groups"));
+  assert.ok(drawer.querySelector(".mobile-drawer__sublist"));
+  const drawerText = collectText(drawer);
+  assert.match(drawerText, /Shop/);
+  assert.match(drawerText, /New Arrival/);
+  assert.match(drawerText, /Best sellers/);
+  assert.match(drawerText, /About/);
+  assert.match(drawerText, /Sale/);
+  assert.match(drawerText, /By craft/);
+  assert.match(drawerText, /Embroidery work/);
+  const navList = drawer.querySelector(".mobile-drawer__list");
+  const topItems = navList?.childNodes || [];
+  assert.equal(topItems.length, 5);
+  assert.equal(
+    topItems.filter((node) => node.classList?.contains("mobile-drawer__item--accordion")).length,
+    1,
+  );
+  assert.equal(
+    topItems.filter((node) => node.querySelector?.(".mobile-drawer__link") && !node.classList?.contains("mobile-drawer__item--accordion")).length,
+    4,
+  );
+  assert.equal(drawer.querySelectorAll(".mobile-drawer__sublist").length >= 5, true);
 
   const explore = tree.querySelector("[data-mobile-panel=explore]");
   assert.ok(explore);
@@ -253,12 +278,15 @@ test("mobile shell: CSS and app wire mobile interactions", async () => {
 
   assert.match(css, /\.mobile-bottom-bar\s*\{/);
   assert.match(css, /\.mobile-drawer\s*\{/);
+  assert.match(css, /mobile-drawer__toggle/);
+  assert.match(css, /mobile-drawer__panel/);
   assert.match(css, /\.mobile-explore__search\s*\{/);
   assert.match(css, /\.mobile-empty\s*\{/);
   assert.match(css, /design-reference-nav__action--desktop-only/);
   assert.match(css, /@media \(max-width: 900px\)[\s\S]*\.mobile-bottom-bar/);
 
   assert.match(app, /setMobileDrawerOpen/);
+  assert.match(app, /data-mobile-drawer-accordion/);
   assert.match(app, /setMobileTab/);
   assert.match(app, /filterExploreProducts/);
   assert.match(app, /trendingQuery/);
