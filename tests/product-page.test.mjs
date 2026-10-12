@@ -145,12 +145,12 @@ test("product page follows sketch-aligned purchase panel without delivery chrome
   assert.match(css, /product-detail__layout[\s\S]{0,80}display:\s*contents/);
   assert.match(productPage, /data-pdp-gallery-viewport|pdpGalleryViewport/);
   assert.match(productPage, /data-pdp-sticky-bar|pdpStickyBar/);
-  assert.match(productPage, /data-pdp-add-anchor|pdpAddAnchor/);
+  assert.match(productPage, /data-pdp-buy-anchor|pdpBuyAnchor/);
   assert.match(await source("playground/components/product-gallery-carousel.js"), /pdp-gallery-clone/);
   assert.match(await source("playground/components/product-gallery-carousel.js"), /max-width: 760px/);
   assert.match(await source("playground/components/product-gallery-carousel.js"), /--pdp-gallery-slide/);
   assert.match(await source("playground/components/product-sticky-bar.js"), /IntersectionObserver/);
-  assert.match(await source("playground/components/product-sticky-bar.js"), /boundingClientRect\.top < 0/);
+  assert.match(await source("playground/components/product-sticky-bar.js"), /boundingClientRect\.bottom <= 0/);
   assert.match(await source("playground/components/product-sticky-bar.js"), /site-footer/);
   assert.match(await source("playground/components/product-sticky-bar.js"), /footerInView/);
   assert.match(await source("playground/components/product-sticky-bar.js"), /product-lightbox-open/);

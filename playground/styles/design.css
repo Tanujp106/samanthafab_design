@@ -2188,7 +2188,7 @@ body[data-page="blank"] .product-detail__share:focus-visible {
 body[data-page="blank"] .product-detail__description {
   width: 100%;
   max-width: none;
-  margin: 12px 0 20px;
+  margin: 16px 0 24px;
   padding-bottom: 4px;
   color: var(--color-ink-soft);
   font-family: var(--font-body);
@@ -2202,7 +2202,7 @@ body[data-page="blank"] .product-detail__price-line {
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 body[data-page="blank"] .product-detail__price {
@@ -2231,7 +2231,7 @@ body[data-page="blank"] .product-detail__discount {
 }
 
 body[data-page="blank"] .product-detail__tax-note {
-  margin: 2px 0 0;
+  margin: 8px 0 0;
   padding-bottom: 4px;
   color: var(--color-muted);
   font-family: var(--font-body);
@@ -2248,19 +2248,24 @@ body[data-page="blank"] .product-detail__sku {
 }
 
 body[data-page="blank"] .product-detail__field {
-  padding: 18px 0;
+  padding: 24px 0 28px;
   border-top: 1px solid var(--color-rule);
 }
 
 body[data-page="blank"] .product-detail__field--variants {
   border-top: 1px solid var(--color-rule);
-  padding-top: 18px;
+}
+
+body[data-page="blank"] .product-detail__appearance + .product-detail__field--variants {
+  border-top: 0;
+  padding-top: 0;
 }
 
 body[data-page="blank"] .product-detail__appearance {
   display: grid;
-  gap: 14px;
-  padding: 4px 0 16px;
+  gap: 20px;
+  padding: 24px 0 30px;
+  border-top: 1px solid var(--color-rule);
 }
 
 body[data-page="blank"] .product-detail__appearance-group {
@@ -2276,8 +2281,8 @@ body[data-page="blank"] .product-detail__appearance-list {
 
 body[data-page="blank"] .product-detail__appearance-swatch {
   display: block;
-  width: 42px;
-  height: 42px;
+  width: 54px;
+  height: 54px;
   border: 2px solid var(--color-white);
   border-radius: 50%;
   overflow: hidden;
@@ -2306,10 +2311,10 @@ body[data-page="blank"] .product-detail__variants {
 
 body[data-page="blank"] .product-detail__variant {
   display: grid;
-  gap: 4px;
+  gap: 2px;
   justify-items: center;
-  min-height: 88px;
-  padding: 14px 14px 12px;
+  min-height: 82px;
+  padding: 10px 10px 8px;
   border: 1px solid var(--color-rule-dark);
   border-radius: var(--radius-control);
   background: var(--color-white);
@@ -2337,7 +2342,7 @@ body[data-page="blank"] .product-detail__variant-detail {
 }
 
 body[data-page="blank"] .product-detail__variant-price {
-  margin-top: 6px;
+  margin-top: 2px;
   color: var(--color-primary);
   font-family: var(--font-body);
   font-size: 20px;
@@ -2348,8 +2353,8 @@ body[data-page="blank"] .product-detail__actions {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 12px;
-  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-bottom: 28px;
 }
 
 body[data-page="blank"] .product-detail__primary-actions {
@@ -2902,14 +2907,13 @@ body[data-page="blank"] .product-lightbox__close:focus-visible {
     left: 0;
     z-index: 39;
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 14px 16px 12px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
     border-top: 1px solid color-mix(in srgb, var(--color-primary-200) 70%, transparent);
     border-bottom: 0;
-    background: color-mix(in srgb, var(--color-white) 96%, transparent);
-    backdrop-filter: blur(16px) saturate(1.1);
-    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+    background: var(--color-white);
     box-shadow: none;
     transform: translate3d(0, calc(100% + 12px), 0);
     opacity: 0;
@@ -2931,40 +2935,9 @@ body[data-page="blank"] .product-lightbox__close:focus-visible {
     pointer-events: none !important;
   }
 
-  body[data-page="blank"] .product-detail__sticky-bar-meta {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-  }
-
-  body[data-page="blank"] .product-detail__sticky-bar-title {
+  body[data-page="blank"] .product-detail__sticky-bar-pricing {
     flex: 1 1 auto;
     min-width: 0;
-    margin: 0;
-    color: var(--color-primary-800);
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    line-height: 1.25;
-    text-transform: uppercase;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-  }
-
-  body[data-page="blank"] .product-detail__sticky-bar-pricing {
-    flex: 0 0 auto;
-    text-align: right;
-  }
-
-  body[data-page="blank"] .product-detail__sticky-bar-price-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-end;
-    gap: 6px;
   }
 
   body[data-page="blank"] .product-detail__sticky-bar-price {
@@ -2976,31 +2949,12 @@ body[data-page="blank"] .product-lightbox__close:focus-visible {
     line-height: 1;
   }
 
-  body[data-page="blank"] .product-detail__sticky-bar-mrp {
-    color: var(--color-primary-800);
-    font-family: var(--font-body);
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  body[data-page="blank"] .product-detail__sticky-bar-tax {
-    margin: 4px 0 0;
-    color: var(--color-muted);
-    font-family: var(--font-body);
-    font-size: 10px;
-    letter-spacing: 0.02em;
-    line-height: 1.2;
-  }
-
   body[data-page="blank"] .product-detail__sticky-bar-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    flex: 0 0 min(46%, 220px);
   }
 
-  body[data-page="blank"] .product-detail__sticky-bar-add,
-  body[data-page="blank"] .product-detail__sticky-bar-buy {
+  body[data-page="blank"] .product-detail__sticky-bar-add {
+    width: 100%;
     min-height: 48px;
     padding: 0 12px;
     border-radius: var(--radius-control);
@@ -3011,16 +2965,9 @@ body[data-page="blank"] .product-lightbox__close:focus-visible {
     text-transform: uppercase;
   }
 
-  body[data-page="blank"] .product-detail__sticky-bar-add {
     border: 1px solid var(--color-primary-800);
     background: var(--color-white);
     color: var(--color-primary-800);
-  }
-
-  body[data-page="blank"] .product-detail__sticky-bar-buy {
-    border: 1px solid var(--color-primary);
-    background: var(--color-primary);
-    color: var(--color-cream);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -5654,6 +5601,7 @@ body[data-page="blank"] .commerce-bag-line__stock {
 }
 
 body[data-page="blank"] .product-detail__stock {
+  margin-top: 14px;
   font-size: 15px;
 }
 

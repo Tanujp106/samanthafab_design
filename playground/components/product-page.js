@@ -316,7 +316,6 @@ function renderPurchasePanel(product) {
   const addButton = element("button", "button button--fill product-detail__add");
   addButton.type = "button";
   addButton.dataset.commerceAction = "add-to-bag";
-  addButton.dataset.pdpAddAnchor = "true";
   addButton.setAttribute("aria-label", `Add ${product.name} to bag`);
   addButton.disabled = soldOut;
   addButton.append(
@@ -349,6 +348,7 @@ function renderPurchasePanel(product) {
   const buyNow = element("button", "button product-detail__buy-now", "Buy it now");
   buyNow.type = "button";
   buyNow.dataset.commerceAction = "buy-now";
+  buyNow.dataset.pdpBuyAnchor = "true";
   buyNow.setAttribute("aria-label", `Buy ${product.name} now`);
   buyNow.disabled = soldOut;
   actions.append(primaryActions, buyNow);
@@ -367,8 +367,8 @@ function renderPurchasePanel(product) {
 
   panel.append(heading, description);
   const appearance = renderAppearanceOptions(product);
-  panel.append(renderVariantOptions(product));
   if (appearance) panel.append(appearance);
+  panel.append(renderVariantOptions(product));
   panel.append(priceLine, taxNote);
   if (stockNote) panel.append(stockNote);
   panel.append(actions, renderTrustRow(), shippingAccordion);
@@ -381,17 +381,12 @@ function renderStickyBar(product) {
   sticky.dataset.pdpStickyBar = "true";
   sticky.setAttribute("aria-label", "Quick purchase");
   sticky.setAttribute("aria-hidden", "true");
-
-  const meta = element("div", "product-detail__sticky-bar-meta");
-  meta.append(element("p", "product-detail__sticky-bar-title", product.name));
+  sticky.inert = true;
 
   const pricing = element("div", "product-detail__sticky-bar-pricing");
-  const priceRow = element("div", "product-detail__sticky-bar-price-row");
   const price = element("span", "product-detail__sticky-bar-price", product.price);
   price.dataset.pdpStickyPrice = "true";
-  priceRow.append(price, element("span", "product-detail__sticky-bar-mrp", "MRP"));
-  pricing.append(priceRow, element("p", "product-detail__sticky-bar-tax", "inclusive of all taxes"));
-  meta.append(pricing);
+  pricing.append(price);
 
   const stickyActions = element("div", "product-detail__sticky-bar-actions");
   const stickyAdd = element("button", "product-detail__sticky-bar-add", "Add to cart");
@@ -399,13 +394,8 @@ function renderStickyBar(product) {
   stickyAdd.dataset.commerceAction = "add-to-bag";
   stickyAdd.setAttribute("aria-label", `Add ${product.name} to bag`);
 
-  const stickyBuy = element("button", "product-detail__sticky-bar-buy", "Buy now");
-  stickyBuy.type = "button";
-  stickyBuy.dataset.commerceAction = "buy-now";
-  stickyBuy.setAttribute("aria-label", `Buy ${product.name} now`);
-
-  stickyActions.append(stickyAdd, stickyBuy);
-  sticky.append(meta, stickyActions);
+  stickyActions.append(stickyAdd);
+  sticky.append(pricing, stickyActions);
   return sticky;
 }
 
