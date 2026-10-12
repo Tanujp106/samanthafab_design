@@ -2312,9 +2312,10 @@ body[data-page="blank"] .product-detail__variants {
 body[data-page="blank"] .product-detail__variant {
   display: grid;
   gap: 2px;
+  align-content: center;
   justify-items: center;
-  min-height: 82px;
-  padding: 10px 10px 8px;
+  min-height: 78px;
+  padding: 6px 8px;
   border: 1px solid var(--color-rule-dark);
   border-radius: var(--radius-control);
   background: var(--color-white);
@@ -2332,6 +2333,7 @@ body[data-page="blank"] .product-detail__variant-title {
   font-family: var(--font-body);
   font-size: 17px;
   letter-spacing: 0.02em;
+  line-height: 1.1;
 }
 
 body[data-page="blank"] .product-detail__variant-detail {
@@ -2347,6 +2349,7 @@ body[data-page="blank"] .product-detail__variant-price {
   font-family: var(--font-body);
   font-size: 20px;
   letter-spacing: 0.02em;
+  line-height: 1.1;
 }
 
 body[data-page="blank"] .product-detail__actions {

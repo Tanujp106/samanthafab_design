@@ -316,6 +316,7 @@ function renderPurchasePanel(product) {
   const addButton = element("button", "button button--fill product-detail__add");
   addButton.type = "button";
   addButton.dataset.commerceAction = "add-to-bag";
+  addButton.dataset.pdpAddAnchor = "true";
   addButton.setAttribute("aria-label", `Add ${product.name} to bag`);
   addButton.disabled = soldOut;
   addButton.append(
@@ -348,7 +349,6 @@ function renderPurchasePanel(product) {
   const buyNow = element("button", "button product-detail__buy-now", "Buy it now");
   buyNow.type = "button";
   buyNow.dataset.commerceAction = "buy-now";
-  buyNow.dataset.pdpBuyAnchor = "true";
   buyNow.setAttribute("aria-label", `Buy ${product.name} now`);
   buyNow.disabled = soldOut;
   actions.append(primaryActions, buyNow);

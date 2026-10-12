@@ -84,14 +84,14 @@ Numbers distilled from page feedback. Update when lasting corrections land.
 | Badges | Occasion + material pills below SKU |
 | Description | Always visible; full width; Karrik 15px / weight 400; `16px` top and `24px` bottom margin before appearance |
 | Appearance | Above blouse options and pricing, show the visible “Available colours” title above **54px** circular image thumbnails; use a colour-specific image when present and the product image otherwise. Retain the list and item accessible labels. Show an optional design-circle row only when design data exists; display availability without implying an unavailable purchase choice. Hairline top rule and `24px`/`30px` vertical padding |
-| Variants | Two equal cards side-by-side (horizontal) on all breakpoints; centered title/detail/surcharge; compact `82px` minimum height with `10px 10px 8px` padding and `2px` internal gaps; Regular title 17px, Regular +₹0 / RTW +₹70; surcharge **20px**. Leave `28px` below cards before price |
+| Variants | Two equal cards side-by-side (horizontal) on all breakpoints; centered title/detail/surcharge; `78px` minimum height with `6px 8px` padding, `2px` internal gaps, and `1.1` title/price line height so content does not force tall cards; Regular title 17px, Regular +₹0 / RTW +₹70; surcharge **20px**. Leave `28px` below cards before price |
 | Low stock | PDP “Only n left” text 15px |
 | Price | Sale `28px` Karrik; compare-at `15px` strikethrough; price row `align-items: center` so compare sits mid-aligned to sale; tax note `13px`, `margin-top: 8px`, `padding-bottom: 4px`; low-stock text has `14px` top margin; actions `margin-top: 20px` |
 | CTA row | Shimmer Add to cart + wishlist 52px + WhatsApp 52px (Phosphor WhatsApp logo from `playground/lib/icons.mjs`, 24px); Buy it now full width |
 | Trust | **2×2** grid below Buy it now / above Shipping; flex row vertically centered; icon **24px** + **15px** label |
 | Related | “Recommended for you” and “Recently viewed” use `h3` headings at `clamp(22px, 2.2vw, 30px)`; homepage-height product carousels (4-up desktop / 3 / 2 mobile) with prev/next arrows; up to **10** recommended and **4** recently viewed products; reuse New Arrivals rail chrome |
 | Shipping accordion | Summary label **15px** Karrik |
-| Mobile sticky bar | ≤760px only; slides in after inline Buy it now is fully above the viewport (so both purchase buttons have passed); **hides when `.site-footer` enters the viewport** and while the gallery lightbox is open; flush above tab bar (`bottom: var(--mobile-bottom-bar-height)` = `62px + safe-area`); one white row with current price left and a `48px` outlined Add to cart button right |
+| Mobile sticky bar | ≤760px only; slides in as soon as the main inline Add to cart is fully above the viewport; **hides when `.site-footer` enters the viewport** and while the gallery lightbox is open; flush above tab bar (`bottom: var(--mobile-bottom-bar-height)` = `62px + safe-area`); one white row with current price left and a `48px` outlined Add to cart button right |
 | Dropped | Complimentary gift aside, Options available, Product Description accordion, coupons row/summary, size, pincode, offer cards |
 
 ## Surface
