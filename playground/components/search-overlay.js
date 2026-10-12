@@ -8,6 +8,13 @@ const trendingSearches = [
   ["Marigold prints", "marigold print"],
   ["Everyday cotton", "everyday cotton"],
 ];
+const browseCategories = [
+  { label: "Ready to wear", slug: "ready-to-wear", image: "/assets/design-collection-ready-to-wear.jpg" },
+  { label: "Work", slug: "office-wear", image: "/assets/design-collection-work.jpg" },
+  { label: "Everyday", slug: "everyday", image: "/assets/design-collection-everyday.jpg" },
+  { label: "Festive", slug: "festive", image: "/assets/design-collection-festive.jpg" },
+  { label: "Wedding", slug: "wedding", image: "/assets/design-collection-wedding.jpg" },
+];
 const searchAliases = { saris: "saree", sari: "saree", sarees: "saree", rtw: "ready", handblocked: "handblock" };
 
 function element(tag, className, text) {
@@ -263,6 +270,21 @@ export function renderSearchOverlay({
   close.append(closeIcon());
   header.append(form, close);
 
+  const categories = element("nav", "search-overlay__categories");
+  categories.setAttribute("aria-label", "Browse categories");
+  const categoryList = element("div", "search-overlay__category-list");
+  browseCategories.forEach(({ label, slug, image }) => {
+    const link = element("a", "search-overlay__category");
+    link.href = `/design?route=collection&slug=${slug}`;
+    const photo = element("img", "search-overlay__category-image");
+    photo.src = image;
+    photo.alt = "";
+    photo.loading = "lazy";
+    link.append(photo, element("span", "search-overlay__category-label", label));
+    categoryList.append(link);
+  });
+  categories.append(categoryList);
+
   const body = element("div", "search-overlay__body");
   const sidebar = element("aside", "search-overlay__sidebar");
 
@@ -354,7 +376,7 @@ export function renderSearchOverlay({
 
   productsSection.append(bestSellersSection, readyToWearSection, empty);
   body.append(sidebar, productsSection);
-  panel.append(header, body);
+  panel.append(header, categories, body);
   root.append(backdrop, panel);
   return root;
 }

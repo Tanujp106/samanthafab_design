@@ -36,9 +36,9 @@ export const catalogProducts = [
     ],
     sizes: ["S", "M", "L"],
     swatches: [
-      { color: "#1f3a5f", label: "Indigo" },
-      { color: "#c4a574", label: "Sand" },
-      { color: "#5c2a3a", label: "Plum" },
+      { color: "#1f3a5f", label: "Indigo", image: "/assets/design-product-indigo.jpg" },
+      { color: "#c4a574", label: "Sand", image: "/assets/design-story-cream.jpg" },
+      { color: "#5c2a3a", label: "Plum", image: "/assets/design-campaign-hero-maroon.jpg" },
     ],
     createdAt: "2026-09-10",
     media: {
@@ -134,8 +134,8 @@ export const catalogProducts = [
       "budget-buys",
     ],
     colors: [
-      { color: "#1a1a1a", label: "Black" },
-      { color: "#f5f0e8", label: "Cream" },
+      { color: "#1a1a1a", label: "Black", image: "/assets/design-product-black.jpg" },
+      { color: "#f5f0e8", label: "Cream", image: "/assets/design-story-cream.jpg" },
     ],
     createdAt: "2026-09-03",
     media: {
@@ -163,8 +163,8 @@ export const catalogProducts = [
       "mysore-silk",
     ],
     colors: [
-      { color: "#b84a2e", label: "Rust" },
-      { color: "#d4a017", label: "Marigold" },
+      { color: "#b84a2e", label: "Rust", image: "/assets/design-collection-festive.jpg" },
+      { color: "#d4a017", label: "Marigold", image: "/assets/design-product-marigold.jpg" },
     ],
     createdAt: "2026-08-28",
     media: {
@@ -230,8 +230,8 @@ export const catalogProducts = [
       "mysore-silk",
     ],
     colors: [
-      { color: "#0f4c5c", label: "Teal" },
-      { color: "#c9a227", label: "Gold" },
+      { color: "#0f4c5c", label: "Teal", image: "/assets/design-collection-wedding.jpg" },
+      { color: "#c9a227", label: "Gold", image: "/assets/design-product-marigold.jpg" },
     ],
     createdAt: "2026-08-15",
     media: {

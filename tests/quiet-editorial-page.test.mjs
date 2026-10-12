@@ -554,34 +554,32 @@ test("design page places a testimonials feature after shop under", async () => {
   assert.match(renderer, /renderTestimonials/);
   assert.match(renderer, /renderTestimonialCard/);
   assert.match(renderer, /data-testimonials/);
-  assert.match(renderer, /data-testimonials-ticker/);
+  assert.match(renderer, /data-testimonials-slider/);
   assert.match(renderer, /data-testimonials-viewport/);
   assert.match(renderer, /design-testimonials__track/);
   assert.match(renderer, /design-testimonials__card/);
   assert.match(renderer, /design-testimonials__attribution/);
   assert.match(renderer, /ratio:\s*"square"/);
   assert.match(renderer, /aria-hidden/);
+  assert.match(renderer, /dataset\.testimonialClone/);
+  assert.match(renderer, /card\.inert = true/);
+  assert.match(renderer, /testimonialArrow\("previous"\)/);
+  assert.match(renderer, /testimonialArrow\("next"\)/);
   assert.match(renderer, /dot\.dataset\.testimonialIndex/);
   assert.match(app, /data-testimonial-index/);
-  assert.match(app, /data-testimonials-ticker/);
-  assert.match(app, /playbackRate/);
+  assert.match(app, /data-testimonials-slider/);
+  assert.match(app, /viewport\.addEventListener\("pointerup"/);
   assert.match(designStyles, /\.design-testimonials/);
   assert.match(designStyles, /design-testimonials__stage/);
   assert.match(designStyles, /design-testimonials__viewport/);
   assert.match(designStyles, /design-testimonials__track/);
   assert.match(designStyles, /design-testimonials__card/);
-  assert.match(designStyles, /@keyframes\s+design-testimonials-ticker/);
+  assert.doesNotMatch(designStyles, /design-testimonials-ticker/);
   assert.match(
     designStyles,
     /design-testimonials\s*\{[\s\S]*padding:\s*56px 0 80px/,
   );
-  assert.match(
-    designStyles,
-    /animation:\s*design-testimonials-ticker\s+55s\s+linear\s+infinite/,
-  );
-  assert.doesNotMatch(designStyles, /275s/);
-  assert.doesNotMatch(designStyles, /animation-play-state:\s*paused/);
-  assert.match(designStyles, /translateX\(-50%\)/);
+  assert.match(designStyles, /scroll-snap-type:\s*x mandatory/);
   assert.match(designStyles, /aspect-ratio:\s*1\s*\/\s*1/);
   assert.match(designStyles, /design-testimonials__attribution/);
   assert.match(designStyles, /clamp\(16px,\s*1\.35vw,\s*19px\)/);
@@ -589,7 +587,7 @@ test("design page places a testimonials feature after shop under", async () => {
   assert.doesNotMatch(designStyles, /calc\(\(100% - 32px\) \/ 2\.5\)/);
   assert.match(designStyles, /design-testimonials__controls/);
   assert.match(designStyles, /scroll-snap-type:\s*x mandatory/);
-  assert.match(designStyles, /design-testimonials__card\[aria-hidden="true"\]\s*\{[^}]*display:\s*none/s);
+  assert.match(designStyles, /design-testimonials__controls\s*\{[^}]*display:\s*grid[^}]*width:\s*var\(--testimonial-card-width\)/s);
   assert.doesNotMatch(designStyles, /design-testimonials__thumb/);
   assert.doesNotMatch(designStyles, /design-testimonials__rail/);
   assert.match(
@@ -644,7 +642,7 @@ test("footer brand includes a newsletter email capture", async () => {
   assert.match(renderer, /footerSocialIcon/);
   assert.match(renderer, /Phosphor Icons/);
   assert.match(renderer, /viewBox="0 0 256 256"/);
-  assert.match(styles, /\.footer-newsletter\s*\{[^}]*margin-top:\s*28px/s);
+  assert.match(styles, /\.footer-newsletter\s*\{[^}]*margin-top:\s*16px/s);
   assert.match(styles, /\.footer-socials__link\s*\{[^}]*width:\s*40px/s);
   assert.match(styles, /\.footer-columns\s*\{[^}]*grid-template-columns:\s*repeat\(3,/s);
 });

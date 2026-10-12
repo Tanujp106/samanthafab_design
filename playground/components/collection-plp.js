@@ -1,4 +1,5 @@
 import { buildFacetCounts, DEFAULT_SORT, parsePriceValue } from "../lib/collection-filters.mjs";
+import { swatchImageSrc } from "../lib/product-swatch-media.mjs";
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -249,7 +250,7 @@ function renderColorFacet(counts, state, products) {
   const colorMeta = new Map();
   products.forEach((product) => {
     (product.colors || product.swatches || []).forEach((swatch) => {
-      if (swatch?.label && !colorMeta.has(swatch.label)) colorMeta.set(swatch.label, swatch.color);
+      if (swatch?.label && !colorMeta.has(swatch.label)) colorMeta.set(swatch.label, swatchImageSrc(product, swatch));
     });
   });
 
@@ -263,7 +264,14 @@ function renderColorFacet(counts, state, products) {
     input.checked = Boolean(state.colors?.includes(label));
     input.dataset.filterKey = "colors";
     const dot = element("span", "collection-color__swatch");
-    dot.style.setProperty("--swatch", colorMeta.get(label) || "#ccc");
+    const imageSrc = colorMeta.get(label);
+    if (imageSrc) {
+      const image = element("img", "collection-color__swatch-image");
+      image.src = imageSrc;
+      image.alt = "";
+      image.loading = "lazy";
+      dot.append(image);
+    }
     dot.setAttribute("aria-hidden", "true");
     item.append(input, dot, element("span", "sr-only", `${label} (${count})`));
     swatches.append(item);

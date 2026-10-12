@@ -58,8 +58,8 @@ test("product page follows sketch-aligned purchase panel without delivery chrome
   assert.match(productPage, /product-detail__tax-note/);
   assert.match(productPage, /product-detail__buy-now/);
   assert.match(productPage, /product-detail__variants/);
-  assert.match(productPage, /product-detail__gift-offer/);
-  assert.match(productPage, /complimentary Gift/);
+  assert.doesNotMatch(productPage, /product-detail__gift-offer/);
+  assert.doesNotMatch(productPage, /complimentary Gift/);
   assert.doesNotMatch(productPage, /product-detail__coupons/);
   assert.doesNotMatch(productPage, /SAVE10/);
   assert.match(productPage, /product-detail__tag/);
@@ -101,14 +101,14 @@ test("product page follows sketch-aligned purchase panel without delivery chrome
   assert.match(css, /\.product-detail__variants[\s\S]{0,100}repeat\(2,\s*minmax\(0,\s*1fr\)\)/);
   assert.doesNotMatch(css, /\.product-detail__variants[\s\S]{0,80}grid-template-columns:\s*1fr\s*;/);
   assert.match(css, /product-detail-add-shimmer/);
-  assert.match(css, /\.product-detail__gift-offer/);
+  assert.doesNotMatch(css, /\.product-detail__gift-offer/);
   assert.match(css, /--color-primary-50/);
   assert.doesNotMatch(css, /design-pdp-gift-bokeh\.png/);
   assert.match(css, /\.product-detail__title[\s\S]*font-family:\s*var\(--font-body\)/);
   assert.match(css, /\.product-detail__title[\s\S]{0,120}max-width:\s*none/);
   assert.doesNotMatch(css, /\.product-detail__title[\s\S]{0,160}max-width:\s*\d+ch/);
   assert.doesNotMatch(css, /\.product-detail__title[\s\S]{0,200}text-wrap:\s*balance/);
-  assert.match(css, /\.product-detail__trust-icon[\s\S]*width:\s*34px/);
+  assert.match(css, /\.product-detail__trust-icon[\s\S]*width:\s*24px/);
   assert.match(css, /\.product-detail__trust-item[\s\S]*font-size:\s*15px/);
   assert.match(css, /product-detail__related-track[\s\S]*repeat\(10/);
   assert.match(productPage, /newArrivalsCarousel/);

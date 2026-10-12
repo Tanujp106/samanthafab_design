@@ -1228,6 +1228,15 @@ document.querySelectorAll("[data-material-carousel]").forEach((carousel) => {
     carousel.dataset.materialActive = String(activeSlot);
     const cardWidth = tiles[0]?.offsetWidth || Number.parseFloat(window.getComputedStyle(tiles[0]).width) || 0;
     const gap = Number.parseFloat(window.getComputedStyle(viewport).getPropertyValue("--material-gap")) || 16;
+    // Space the visible, scaled edges evenly rather than the unscaled tile centers.
+    const shiftForDistance = (distance) => {
+      if (!distance) return 0;
+      const first = cardWidth * 0.9 + gap;
+      if (distance === 1) return first;
+      const second = first + cardWidth * 0.7 + gap;
+      if (distance === 2) return second;
+      return second + cardWidth * 0.55 + gap + (distance - 3) * (cardWidth * 0.5 + gap);
+    };
     const teleportingTiles = [];
 
     tiles.forEach((tile) => {
@@ -1241,7 +1250,7 @@ document.querySelectorAll("[data-material-carousel]").forEach((carousel) => {
       tile.classList.toggle("is-teleporting", isTeleporting);
       tile.style.setProperty("--material-offset", String(relative));
       tile.style.setProperty("--material-distance", String(distance));
-      tile.style.setProperty("--material-shift", String(relative * (cardWidth + gap)) + "px");
+      tile.style.setProperty("--material-shift", String(Math.sign(relative) * shiftForDistance(distance)) + "px");
       tile.dataset.distance = String(Math.min(distance, 3));
       tile.classList.toggle("is-active", virtualIndex === activeIndex);
       tile.inert = distance > 1;
@@ -1338,67 +1347,152 @@ document.querySelectorAll("[data-footer-accordion]").forEach((button) => {
   });
 });
 
-document.querySelectorAll("[data-testimonials-ticker]").forEach((section) => {
-  const track = section.querySelector(".design-testimonials__track");
+document.querySelectorAll("[data-testimonials-slider]").forEach((section) => {
   const viewport = section.querySelector("[data-testimonials-viewport]");
-  if (!track || !viewport) return;
-  const mobile = window.matchMedia("(max-width: 900px)");
-  const cards = [...track.querySelectorAll('.design-testimonials__card:not([aria-hidden="true"])')];
+  const slides = [...section.querySelectorAll(".design-testimonials__card")];
+  const cards = slides.filter((slide) => !slide.dataset.testimonialClone);
   const dots = [...section.querySelectorAll("[data-testimonial-index]")];
+  const arrows = [...section.querySelectorAll("[data-testimonial-dir]")];
+  if (!viewport || !cards.length) return;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const looping = slides.length === cards.length + 2;
+  const firstRealSlide = looping ? 1 : 0;
+  const normalize = (index) => (index % cards.length + cards.length) % cards.length;
+  const slideOffset = (index) => slides[index].offsetLeft - slides[0].offsetLeft;
 
-  if (cards.length && dots.length) {
-    let currentIndex = 0;
-    const setCurrent = (index) => {
-      currentIndex = index;
-      dots.forEach((dot, dotIndex) => {
-        if (dotIndex === index) dot.setAttribute("aria-current", "true");
-        else dot.removeAttribute("aria-current");
-      });
-    };
-    const goTo = (index) => {
-      const target = cards[index];
-      if (!target) return;
-      setCurrent(index);
-      viewport.scrollTo({
-        left: target.offsetLeft - cards[0].offsetLeft,
-        behavior: reduced ? "auto" : "smooth",
-      });
-    };
-
-    dots.forEach((dot, index) => dot.addEventListener("click", () => goTo(index)));
-    viewport.addEventListener("keydown", (event) => {
-      if (!mobile.matches || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
-      event.preventDefault();
-      goTo(Math.max(0, Math.min(cards.length - 1, currentIndex + (event.key === "ArrowRight" ? 1 : -1))));
-    });
-    viewport.addEventListener("scroll", () => {
-      if (!mobile.matches) return;
-      const viewportCenter = viewport.getBoundingClientRect().left + viewport.clientWidth / 2;
-      const nearest = cards.reduce((best, card, index) => {
-        const bounds = card.getBoundingClientRect();
-        const distance = Math.abs(bounds.left + bounds.width / 2 - viewportCenter);
-        return distance < best.distance ? { index, distance } : best;
-      }, { index: 0, distance: Infinity });
-      setCurrent(nearest.index);
-    }, { passive: true });
-  }
-
-  if (reduced) return;
-
-  const setRate = (rate) => {
-    if (mobile.matches) return;
-    track.getAnimations().forEach((anim) => {
-      anim.playbackRate = rate;
+  let currentIndex = 0;
+  let scrollTimer = null;
+  let jumping = false;
+  let touchActive = false;
+  const setCurrent = (index) => {
+    currentIndex = normalize(index);
+    dots.forEach((dot, dotIndex) => {
+      if (dotIndex === currentIndex) dot.setAttribute("aria-current", "true");
+      else dot.removeAttribute("aria-current");
     });
   };
+  const nearestSlide = () => {
+    const viewportCenter = viewport.getBoundingClientRect().left + viewport.clientWidth / 2;
+    return slides.reduce((best, slide, index) => {
+      const bounds = slide.getBoundingClientRect();
+      const distance = Math.abs(bounds.left + bounds.width / 2 - viewportCenter);
+      return distance < best.distance ? { index, distance } : best;
+    }, { index: 0, distance: Infinity }).index;
+  };
+  const jumpTo = (index) => {
+    jumping = true;
+    viewport.classList.add("is-jumping");
+    viewport.scrollLeft = slideOffset(index);
+    window.requestAnimationFrame(() => {
+      viewport.classList.remove("is-jumping");
+      jumping = false;
+    });
+  };
+  const settle = () => {
+    window.clearTimeout(scrollTimer);
+    if (jumping || swipeStart || touchActive) return;
+    const physicalIndex = nearestSlide();
+    if (looping && physicalIndex === 0) {
+      setCurrent(cards.length - 1);
+      jumpTo(cards.length);
+    } else if (looping && physicalIndex === cards.length + 1) {
+      setCurrent(0);
+      jumpTo(1);
+    } else {
+      setCurrent(physicalIndex - firstRealSlide);
+    }
+  };
+  const goToPhysical = (physicalIndex, logicalIndex) => {
+    setCurrent(logicalIndex);
+    viewport.scrollTo({
+      left: slideOffset(physicalIndex),
+      behavior: reduced ? "auto" : "smooth",
+    });
+  };
+  const goTo = (index) => {
+    const nextIndex = normalize(index);
+    let physicalIndex = nextIndex + firstRealSlide;
+    if (looping && currentIndex === cards.length - 1 && nextIndex === 0) physicalIndex = cards.length + 1;
+    if (looping && currentIndex === 0 && nextIndex === cards.length - 1) physicalIndex = 0;
+    goToPhysical(physicalIndex, nextIndex);
+  };
+  const moveBy = (direction) => {
+    if (cards.length < 2) return;
+    goToPhysical(currentIndex + firstRealSlide + direction, currentIndex + direction);
+  };
 
-  viewport.addEventListener("pointerenter", () => setRate(0.2));
-  viewport.addEventListener("pointerleave", () => setRate(1));
-  viewport.addEventListener("focusin", () => setRate(0.2));
-  viewport.addEventListener("focusout", (event) => {
-    if (!viewport.contains(event.relatedTarget)) setRate(1);
+  dots.forEach((dot, index) => dot.addEventListener("click", () => goTo(index)));
+  arrows.forEach((arrow) => arrow.addEventListener("click", () => moveBy(Number(arrow.dataset.testimonialDir))));
+  viewport.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    moveBy(event.key === "ArrowRight" ? 1 : -1);
   });
+  viewport.addEventListener("scroll", () => {
+    if (jumping) return;
+    setCurrent(nearestSlide() - firstRealSlide);
+    window.clearTimeout(scrollTimer);
+    scrollTimer = window.setTimeout(settle, 120);
+  }, { passive: true });
+  viewport.addEventListener("scrollend", settle);
+  window.addEventListener("resize", () => jumpTo(currentIndex + firstRealSlide), { passive: true });
+
+  let swipeStart = null;
+  viewport.addEventListener("dragstart", (event) => event.preventDefault());
+  viewport.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "touch") {
+      touchActive = true;
+      return;
+    }
+    if (event.button !== 0) return;
+    event.preventDefault();
+    swipeStart = {
+      id: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      scrollLeft: viewport.scrollLeft,
+      index: currentIndex,
+    };
+    viewport.classList.add("is-dragging");
+    viewport.setPointerCapture(event.pointerId);
+  });
+  viewport.addEventListener("pointermove", (event) => {
+    if (!swipeStart || event.pointerId !== swipeStart.id) return;
+    event.preventDefault();
+    viewport.scrollLeft = swipeStart.scrollLeft + swipeStart.x - event.clientX;
+  });
+  viewport.addEventListener("pointerup", (event) => {
+    if (event.pointerType === "touch") {
+      touchActive = false;
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(settle, 120);
+      return;
+    }
+    if (!swipeStart || event.pointerId !== swipeStart.id) return;
+    const deltaX = event.clientX - swipeStart.x;
+    const deltaY = event.clientY - swipeStart.y;
+    viewport.classList.remove("is-dragging");
+    if (Math.abs(deltaX) >= 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+      goToPhysical(swipeStart.index + firstRealSlide + (deltaX < 0 ? 1 : -1), swipeStart.index + (deltaX < 0 ? 1 : -1));
+    } else {
+      goToPhysical(swipeStart.index + firstRealSlide, swipeStart.index);
+    }
+    viewport.releasePointerCapture(event.pointerId);
+    swipeStart = null;
+  });
+  viewport.addEventListener("pointercancel", (event) => {
+    if (event.pointerType === "touch") {
+      touchActive = false;
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(settle, 120);
+      return;
+    }
+    if (!swipeStart || event.pointerId !== swipeStart.id) return;
+    viewport.classList.remove("is-dragging");
+    goToPhysical(swipeStart.index + firstRealSlide, swipeStart.index);
+    swipeStart = null;
+  });
+  if (looping) jumpTo(firstRealSlide);
 });
 
 const mobileBottomBar = document.querySelector("[data-mobile-bottom-bar]");

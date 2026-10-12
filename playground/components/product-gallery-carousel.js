@@ -5,6 +5,8 @@
  */
 
 const MOBILE_MQ = "(max-width: 760px)";
+const MOBILE_PEEK = 22;
+const MOBILE_GAP = 8;
 
 function realSlides(gallery) {
   return [...gallery.querySelectorAll(".product-detail__thumb:not([data-pdp-gallery-clone])")];
@@ -22,7 +24,11 @@ function syncDots(shell, activeIndex) {
 }
 
 function slideWidth(viewport) {
-  return Math.round(viewport.clientWidth) || 1;
+  return Math.max(1, Math.round(viewport.clientWidth) - MOBILE_PEEK * 2);
+}
+
+function slideStep(viewport) {
+  return slideWidth(viewport) + MOBILE_GAP;
 }
 
 function syncSlideSize(viewport, gallery, mobile) {
@@ -49,8 +55,7 @@ export function bindProductGalleryCarousel(root = document) {
 
   function goToLogical(index, { instant = false } = {}) {
     if (!slides.length) return;
-    const width = slideWidth(viewport);
-    const offset = mq.matches ? (index + 1) * width : 0;
+    const offset = mq.matches ? (index + 1) * slideStep(viewport) : 0;
     viewport.scrollTo({
       left: offset,
       behavior: instant || window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
@@ -85,7 +90,7 @@ export function bindProductGalleryCarousel(root = document) {
 
     syncSlideSize(viewport, gallery, true);
     jumping = true;
-    viewport.scrollLeft = slideWidth(viewport);
+    viewport.scrollLeft = slideStep(viewport);
     requestAnimationFrame(() => {
       jumping = false;
     });
@@ -95,13 +100,13 @@ export function bindProductGalleryCarousel(root = document) {
 
   function onScroll() {
     if (!mq.matches || jumping || slides.length < 2) return;
-    const width = slideWidth(viewport);
-    const index = Math.round(viewport.scrollLeft / width);
+    const step = slideStep(viewport);
+    const index = Math.round(viewport.scrollLeft / step);
     const lastCloneIndex = slides.length + 1;
 
     if (index <= 0) {
       jumping = true;
-      viewport.scrollLeft = slides.length * width;
+      viewport.scrollLeft = slides.length * step;
       active = slides.length - 1;
       syncDots(shell, active);
       requestAnimationFrame(() => {
@@ -112,7 +117,7 @@ export function bindProductGalleryCarousel(root = document) {
 
     if (index >= lastCloneIndex) {
       jumping = true;
-      viewport.scrollLeft = width;
+      viewport.scrollLeft = step;
       active = 0;
       syncDots(shell, active);
       requestAnimationFrame(() => {

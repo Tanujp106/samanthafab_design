@@ -140,7 +140,7 @@ export const blank = {
           title: "The art of becoming.",
           highlight: "art",
           copy: "Statement sarees for evenings that deserve to be remembered.",
-          primaryAction: { label: "Shop Now", href: "/?route=new-edit" },
+          primaryAction: { label: "Shop Now", href: "/design?route=collection&slug=new-arrivals" },
           media: {
             src: "/assets/design-campaign-hero-maroon.jpg",
             alt: "Indian woman in a maroon Banarasi saree with gold zari, seated amid rose petals in a warm peach haveli arch",
@@ -154,7 +154,7 @@ export const blank = {
           title: "Made for your moment.",
           highlight: "moment",
           copy: "Drapes with colour, ease, and a little more occasion.",
-          primaryAction: { label: "Shop Now", href: "/?route=festive" },
+          primaryAction: { label: "Shop Now", href: "/design?route=collection&slug=festive" },
           media: {
             src: "/assets/design-story-cream.jpg",
             alt: "Indian woman in a cream floral saree holding flowers in a warm lived-in interior",
@@ -168,7 +168,7 @@ export const blank = {
           title: "Wear the feeling.",
           highlight: "feeling",
           copy: "Soft movement and expressive prints for all your in-between hours.",
-          primaryAction: { label: "Shop Now", href: "/?route=everyday" },
+          primaryAction: { label: "Shop Now", href: "/design?route=collection&slug=everyday" },
           media: {
             src: "/assets/design-campaign-hero-red.jpg",
             alt: "Indian woman in a red and marigold saree standing in a clean studio setting",
@@ -278,9 +278,9 @@ export const blank = {
           href: "/?route=product-indigo-rtw",
           tag: "Ready-to-wear",
           swatches: [
-            { color: "#1f3a5f", label: "Indigo" },
-            { color: "#c4a574", label: "Sand" },
-            { color: "#5c2a3a", label: "Plum" },
+            { color: "#1f3a5f", label: "Indigo", image: "/assets/design-product-indigo.jpg" },
+            { color: "#c4a574", label: "Sand", image: "/assets/design-story-cream.jpg" },
+            { color: "#5c2a3a", label: "Plum", image: "/assets/design-campaign-hero-maroon.jpg" },
           ],
           media: {
             src: "/assets/design-product-indigo.jpg",
@@ -407,9 +407,9 @@ export const blank = {
           href: "/?route=product-indigo-rtw",
           tag: "Ready-to-wear",
           swatches: [
-            { color: "#1f3a5f", label: "Indigo" },
-            { color: "#c4a574", label: "Sand" },
-            { color: "#5c2a3a", label: "Plum" },
+            { color: "#1f3a5f", label: "Indigo", image: "/assets/design-product-indigo.jpg" },
+            { color: "#c4a574", label: "Sand", image: "/assets/design-story-cream.jpg" },
+            { color: "#5c2a3a", label: "Plum", image: "/assets/design-campaign-hero-maroon.jpg" },
           ],
           media: {
             src: "/assets/design-product-indigo.jpg",
@@ -577,9 +577,9 @@ export const blank = {
           href: "/?route=product-indigo-rtw",
           tag: "Ready-to-wear",
           swatches: [
-            { color: "#1f3a5f", label: "Indigo" },
-            { color: "#c4a574", label: "Sand" },
-            { color: "#5c2a3a", label: "Plum" },
+            { color: "#1f3a5f", label: "Indigo", image: "/assets/design-product-indigo.jpg" },
+            { color: "#c4a574", label: "Sand", image: "/assets/design-story-cream.jpg" },
+            { color: "#5c2a3a", label: "Plum", image: "/assets/design-campaign-hero-maroon.jpg" },
           ],
           media: {
             src: "/assets/design-product-indigo.jpg",
@@ -863,9 +863,9 @@ export const blank = {
           href: "/?route=clearance-indigo-stripe",
           tag: "Ready-to-wear",
           swatches: [
-            { color: "#1f3a5f", label: "Indigo" },
-            { color: "#c4a574", label: "Sand" },
-            { color: "#5c2a3a", label: "Plum" },
+            { color: "#1f3a5f", label: "Indigo", image: "/assets/design-product-indigo.jpg" },
+            { color: "#c4a574", label: "Sand", image: "/assets/design-story-cream.jpg" },
+            { color: "#5c2a3a", label: "Plum", image: "/assets/design-campaign-hero-maroon.jpg" },
           ],
           media: {
             src: "/assets/design-product-indigo.jpg",

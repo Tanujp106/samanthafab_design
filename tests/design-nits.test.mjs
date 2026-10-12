@@ -474,7 +474,7 @@ test("design nits: material cards use blur+dark scrim without Explore CTA", asyn
   assert.match(app, /Math\.abs\(relative - previousOffset\) > 2/);
   assert.match(app, /is-teleporting/);
   assert.match(css, /design-materials__viewport/);
-  assert.match(css, /--material-card-width: min\(calc\(\(100cqi - 64px\) \/ 5\),/);
+  assert.match(css, /--material-card-width: min\(calc\(\(100cqi - 64px\) \/ 3\.8\),/);
   assert.match(css, /--material-visible-count: 5/);
   assert.match(css, /data-distance="0"/);
   assert.match(css, /data-distance="1"/);

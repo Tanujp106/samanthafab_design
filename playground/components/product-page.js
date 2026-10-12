@@ -2,6 +2,7 @@ import { renderMedia } from "./media.js";
 import { resolveProductGallery } from "../data/product-gallery.js";
 import { isWishlisted, productIdFrom, snapshotProduct } from "../lib/commerce-store.mjs";
 import { whatsappIconSvg } from "../lib/icons.mjs";
+import { swatchImageSrc } from "../lib/product-swatch-media.mjs";
 
 const RTW_SURCHARGE = 70;
 
@@ -64,6 +65,22 @@ function renderBreadcrumbs(product) {
   return nav;
 }
 
+function renderEditorialBanner() {
+  const banner = element("aside", "product-detail__editorial-banner");
+  banner.setAttribute("aria-label", "Samantha Fab editorial note");
+  const image = element("img", "product-detail__editorial-image");
+  image.src = "/assets/design-story-cream.jpg";
+  image.alt = "";
+  image.loading = "eager";
+  const copy = element("div", "product-detail__editorial-copy");
+  copy.append(
+    element("span", "product-detail__editorial-eyebrow", "The Samantha Fab edit"),
+    element("p", "product-detail__editorial-title", "A little more room for beautiful everyday dressing."),
+  );
+  banner.append(image, copy);
+  return banner;
+}
+
 function renderAccordion(title, copy, open = false) {
   const details = element("details", "product-detail__accordion");
   details.open = open;
@@ -89,7 +106,7 @@ function renderTrustRow() {
 
   const whatsappItem = element("li", "product-detail__trust-item");
   const whatsappIcon = element("span", "product-detail__trust-icon product-detail__trust-icon--whatsapp");
-  whatsappIcon.innerHTML = whatsappIconSvg({ size: 34 });
+  whatsappIcon.innerHTML = whatsappIconSvg({ size: 24 });
   whatsappItem.append(whatsappIcon, element("span", "product-detail__trust-label", "WhatsApp help"));
   list.append(whatsappItem);
   return list;
@@ -191,6 +208,55 @@ function renderVariantOptions(product) {
   return field;
 }
 
+function renderAppearanceOptions(product) {
+  const colors = Array.isArray(product.swatches) ? product.swatches : [];
+  const designs = Array.isArray(product.designs) ? product.designs : [];
+  if (!colors.length && !designs.length) return null;
+  const field = element("div", "product-detail__appearance");
+  if (colors.length) {
+    const group = element("div", "product-detail__appearance-group");
+    group.append(element("span", "product-detail__label", "Available colours"));
+    const list = element("div", "product-detail__appearance-list");
+    list.setAttribute("role", "list");
+    list.setAttribute("aria-label", "Available colours");
+    colors.forEach((swatch) => {
+      const chip = element("span", "product-detail__appearance-swatch");
+      chip.setAttribute("role", "listitem");
+      chip.setAttribute("aria-label", swatch.label || "Colour option");
+      chip.title = swatch.label || "Colour option";
+      const imageSrc = swatchImageSrc(product, swatch);
+      if (imageSrc) {
+        const image = element("img", "product-detail__appearance-image");
+        image.src = imageSrc;
+        image.alt = "";
+        image.loading = "lazy";
+        chip.append(image);
+      }
+      list.append(chip);
+    });
+    group.append(list);
+    field.append(group);
+  }
+  if (designs.length) {
+    const group = element("div", "product-detail__appearance-group");
+    group.append(element("span", "product-detail__label", "Available designs"));
+    const list = element("div", "product-detail__appearance-list");
+    list.setAttribute("role", "list");
+    list.setAttribute("aria-label", "Available designs");
+    designs.forEach((design) => {
+      const chip = element("span", "product-detail__appearance-swatch product-detail__appearance-swatch--design");
+      chip.setAttribute("role", "listitem");
+      chip.setAttribute("aria-label", design.label || "Design option");
+      chip.title = design.label || "Design option";
+      if (design.image) chip.style.backgroundImage = `url("${encodeURI(design.image)}")`;
+      list.append(chip);
+    });
+    group.append(list);
+    field.append(group);
+  }
+  return field;
+}
+
 function renderPurchasePanel(product) {
   const panel = element("aside", "product-detail__purchase");
   const basePrice = parseMoney(product.price);
@@ -246,30 +312,6 @@ function renderPurchasePanel(product) {
       ? element("p", "product-detail__stock", `Only ${stock} left`)
       : null;
 
-  const giftOffer = element("aside", "product-detail__gift-offer");
-  giftOffer.setAttribute("aria-label", "A complimentary gift included with your order");
-  giftOffer.innerHTML = `
-    <span class="product-detail__gift-offer-bg" aria-hidden="true"></span>
-    <span class="product-detail__gift-offer-content">
-      <svg class="product-detail__gift-offer-icon" viewBox="0 0 48 48" width="44" height="44" fill="none" aria-hidden="true">
-        <rect x="10" y="20" width="28" height="20" rx="1.5" fill="var(--color-white)" stroke="var(--color-primary-800)" stroke-width="1.4"/>
-        <path d="M10 28.5h28" stroke="var(--color-primary-800)" stroke-width="1.4"/>
-        <path d="M24 20v20" stroke="var(--color-primary-400)" stroke-width="3.2"/>
-        <path d="M10 20h28" stroke="var(--color-primary-800)" stroke-width="1.4"/>
-        <path d="M24 20c-3.2-6.5-9.5-7.2-11.2-3.8-1.4 2.8 1.6 5.6 5.4 6.4 2 .4 4 .6 5.8 1.2Z" fill="var(--color-primary-300)" stroke="var(--color-primary-800)" stroke-width="1.1" stroke-linejoin="round"/>
-        <path d="M24 20c3.2-6.5 9.5-7.2 11.2-3.8 1.4 2.8-1.6 5.6-5.4 6.4-2 .4-4 .6-5.8 1.2Z" fill="var(--color-primary-200)" stroke="var(--color-primary-800)" stroke-width="1.1" stroke-linejoin="round"/>
-        <circle cx="14" cy="14" r="1.1" fill="var(--color-primary-400)"/>
-        <circle cx="34" cy="12" r="0.9" fill="var(--color-primary-300)"/>
-        <circle cx="38" cy="18" r="0.8" fill="var(--color-primary-400)"/>
-        <circle cx="11" cy="19" r="0.7" fill="var(--color-primary-200)"/>
-      </svg>
-      <span class="product-detail__gift-offer-copy">
-        <span class="product-detail__gift-offer-line">A complimentary Gift</span>
-        <span class="product-detail__gift-offer-line">included with your order</span>
-      </span>
-    </span>
-  `;
-
   const actions = element("div", "product-detail__actions");
   const addButton = element("button", "button button--fill product-detail__add");
   addButton.type = "button";
@@ -323,9 +365,13 @@ function renderPurchasePanel(product) {
   policyLinks.append(shippingLink, document.createTextNode(" · "), returnsLink);
   shippingAccordion.append(policyLinks);
 
-  panel.append(heading, description, renderVariantOptions(product), priceLine, taxNote);
+  panel.append(heading, description);
+  const appearance = renderAppearanceOptions(product);
+  panel.append(renderVariantOptions(product));
+  if (appearance) panel.append(appearance);
+  panel.append(priceLine, taxNote);
   if (stockNote) panel.append(stockNote);
-  panel.append(actions, giftOffer, renderTrustRow(), shippingAccordion);
+  panel.append(actions, renderTrustRow(), shippingAccordion);
   if (!soldOut) panel.append(renderStickyBar(product));
   return panel;
 }
@@ -363,7 +409,7 @@ function renderStickyBar(product) {
   return sticky;
 }
 
-export function renderProductPage({ product, relatedProducts = [], ctx = {}, renderProductCard }) {
+export function renderProductPage({ product, relatedProducts = [], recentlyViewedProducts = [], ctx = {}, renderProductCard }) {
   const root = element("div", "product-detail-page");
   root.dataset.productPage = "true";
   if (!product) {
@@ -381,27 +427,28 @@ export function renderProductPage({ product, relatedProducts = [], ctx = {}, ren
 
   const layout = element("div", "product-detail__layout");
   layout.append(renderGallery(product), renderPurchasePanel(product));
-  root.append(layout);
+  root.append(layout, renderEditorialBanner());
 
-  const relatedItems = relatedProducts.slice(0, 10);
-  if (relatedItems.length && renderProductCard) {
+  function appendProductRail(items, titleText, id, className) {
+    if (!items.length || !renderProductCard) return;
     const related = element("section", "product-detail__related design-new-arrivals");
+    if (className) related.classList.add(className);
     related.dataset.newArrivalsCarousel = "true";
-    related.setAttribute("aria-labelledby", "product-detail-related-title");
+    related.setAttribute("aria-labelledby", id);
 
     const header = element("header", "product-detail__related-header");
-    const title = element("h2", "product-detail__related-title", "Recommended for you");
-    title.id = "product-detail-related-title";
+    const title = element("h3", "product-detail__related-title", titleText);
+    title.id = id;
     header.append(title);
 
     const stage = element("div", "design-new-arrivals__stage product-detail__related-stage");
     const viewport = element("div", "design-new-arrivals__viewport product-detail__related-viewport");
     viewport.dataset.newArrivalsViewport = "true";
     viewport.tabIndex = 0;
-    viewport.setAttribute("aria-label", "Recommended products");
+    viewport.setAttribute("aria-label", titleText);
 
     const track = element("div", "design-new-arrivals__track product-detail__related-track");
-    relatedItems.forEach((item) =>
+    items.forEach((item) =>
       track.append(
         renderProductCard(item, ctx, {
           commerce: true,
@@ -412,7 +459,7 @@ export function renderProductPage({ product, relatedProducts = [], ctx = {}, ren
     viewport.append(track);
 
     const controls = element("div", "design-new-arrivals__controls");
-    controls.setAttribute("aria-label", "Browse recommended products");
+    controls.setAttribute("aria-label", `Browse ${titleText.toLowerCase()}`);
     controls.append(
       relatedRailArrow("previous"),
       relatedRailArrow("next"),
@@ -421,6 +468,9 @@ export function renderProductPage({ product, relatedProducts = [], ctx = {}, ren
     related.append(header, stage);
     root.append(related);
   }
+
+  appendProductRail(relatedProducts.slice(0, 10), "Recommended for you", "product-detail-related-title");
+  appendProductRail(recentlyViewedProducts.slice(0, 4), "Recently viewed", "product-detail-recent-title", "product-detail__recent");
 
   return root;
 }

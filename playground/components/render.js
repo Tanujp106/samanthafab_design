@@ -8,6 +8,7 @@ import { resolveHoverMedia } from "../data/hover-media.js";
 import { productUrl } from "../data/collections.js";
 import { isWishlisted, productIdFrom, readBag, readWishlist, snapshotProduct } from "../lib/commerce-store.mjs";
 import { whatsappIconSvg, WHATSAPP_PATH } from "../lib/icons.mjs";
+import { swatchImageSrc } from "../lib/product-swatch-media.mjs";
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -681,14 +682,18 @@ function renderCampaignHero(section, ctx) {
     const veil = element("div", "campaign-slide__veil");
     const copy = element("div", "campaign-slide__content");
     const title = renderCampaignTitle(index === 0 ? "h1" : "h2", slide);
+    const slideLink = element("a", "campaign-slide__link");
+    slideLink.href = slide.primaryAction.href;
+    slideLink.setAttribute("aria-label", `${slide.primaryAction.label}: ${slide.title}`);
     copy.append(
       element("span", "campaign-slide__eyebrow", slide.eyebrow),
       title,
       element("p", "campaign-slide__copy", slide.copy),
-      button(slide.primaryAction.label, slide.primaryAction.href, "button button--fill campaign-slide__cta"),
+      element("span", "button button--fill campaign-slide__cta", slide.primaryAction.label),
     );
 
-    slideNode.append(media, veil, copy);
+    slideLink.append(media, veil, copy);
+    slideNode.append(slideLink);
     slides.append(slideNode);
   });
 
@@ -811,7 +816,14 @@ function productColorSwatches(product) {
     chip.setAttribute("aria-label", swatch.label || `Color ${index + 1}`);
     if (index === 0) chip.setAttribute("aria-pressed", "true");
     else chip.setAttribute("aria-pressed", "false");
-    chip.style.setProperty("--swatch-color", swatch.color || swatch);
+    const imageSrc = swatchImageSrc(product, swatch);
+    if (imageSrc) {
+      const image = element("img", "product-card__swatch-image");
+      image.src = imageSrc;
+      image.alt = "";
+      image.loading = "lazy";
+      chip.append(image);
+    }
     swatches.append(chip);
   });
   return swatches;
@@ -1090,12 +1102,35 @@ function renderTestimonialCard(item, ctx) {
   return card;
 }
 
+function testimonialArrow(direction) {
+  const isPrevious = direction === "previous";
+  const arrow = element("button", `design-testimonials__arrow design-testimonials__arrow--${direction}`);
+  arrow.type = "button";
+  arrow.dataset.testimonialDir = isPrevious ? "-1" : "1";
+  arrow.setAttribute("aria-label", isPrevious ? "Previous testimonial" : "Next testimonial");
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.6");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.innerHTML = isPrevious
+    ? '<path d="M15 6l-6 6 6 6"/>'
+    : '<path d="M9 6l6 6-6 6"/>';
+  arrow.append(icon);
+  return arrow;
+}
+
 function renderTestimonials(section, ctx) {
   const root = element("section", "section section--testimonials design-testimonials");
   root.id = section.id;
   root.dataset.section = section.number;
   root.setAttribute("data-testimonials", "true");
-  root.setAttribute("data-testimonials-ticker", "true");
+  root.setAttribute("data-testimonials-slider", "true");
   root.setAttribute("aria-labelledby", "design-testimonials-title");
 
   const inner = element("div", "design-testimonials__inner");
@@ -1112,29 +1147,48 @@ function renderTestimonials(section, ctx) {
   const stage = element("div", "design-testimonials__stage");
   const viewport = element("div", "design-testimonials__viewport");
   viewport.setAttribute("data-testimonials-viewport", "true");
+  viewport.setAttribute("role", "region");
+  viewport.setAttribute("aria-roledescription", "carousel");
   viewport.setAttribute("aria-label", "Customer voices");
   viewport.tabIndex = 0;
 
   const track = element("div", "design-testimonials__track");
-  items.forEach((item) => {
-    track.append(renderTestimonialCard(item, ctx));
+  const appendBoundaryCard = (item) => {
+    const card = renderTestimonialCard(item, ctx);
+    card.dataset.testimonialClone = "true";
+    card.setAttribute("aria-hidden", "true");
+    card.inert = true;
+    track.append(card);
+  };
+  if (items.length > 1) appendBoundaryCard(items.at(-1));
+  items.forEach((item, index) => {
+    const card = renderTestimonialCard(item, ctx);
+    card.setAttribute("role", "group");
+    card.setAttribute("aria-roledescription", "slide");
+    card.setAttribute("aria-label", `${index + 1} of ${items.length}: ${item.name}`);
+    track.append(card);
   });
-  items.forEach((item) => {
-    const duplicate = renderTestimonialCard(item, ctx);
-    duplicate.setAttribute("aria-hidden", "true");
-    track.append(duplicate);
-  });
+  if (items.length > 1) appendBoundaryCard(items[0]);
   viewport.append(track);
   const controls = element("div", "design-testimonials__controls");
-  controls.setAttribute("aria-label", "Choose a testimonial");
+  controls.setAttribute("role", "group");
+  controls.setAttribute("aria-label", "Testimonial navigation");
+  const dots = element("div", "design-testimonials__dots");
+  dots.setAttribute("role", "group");
+  dots.setAttribute("aria-label", "Choose a testimonial");
   items.forEach((item, index) => {
     const dot = element("button", "design-testimonials__dot");
     dot.type = "button";
     dot.dataset.testimonialIndex = String(index);
     dot.setAttribute("aria-label", `Show testimonial ${index + 1} of ${items.length}: ${item.name}`);
     if (index === 0) dot.setAttribute("aria-current", "true");
-    controls.append(dot);
+    dots.append(dot);
   });
+  const previous = testimonialArrow("previous");
+  const next = testimonialArrow("next");
+  previous.disabled = items.length < 2;
+  next.disabled = items.length < 2;
+  controls.append(previous, dots, next);
   stage.append(viewport, controls);
 
   root.append(inner, stage);
@@ -1151,7 +1205,11 @@ function renderFeatureBanner(section, ctx) {
   root.dataset.section = section.number;
   root.setAttribute("aria-labelledby", titleId);
 
-  const inner = element("div", "design-feature-banner__inner");
+  const inner = element(section.action ? "a" : "div", "design-feature-banner__inner");
+  if (section.action) {
+    inner.href = section.action.href;
+    inner.setAttribute("aria-labelledby", titleId);
+  }
   const copy = element("div", "design-feature-banner__copy");
   if (section.badge) {
     copy.append(element("p", "design-feature-banner__badge", section.badge));
@@ -1172,7 +1230,7 @@ function renderFeatureBanner(section, ctx) {
   }
   if (section.action) {
     copy.append(
-      button(section.action.label, section.action.href, "button button--fill design-feature-banner__cta"),
+      element("span", "button button--fill design-feature-banner__cta", section.action.label),
     );
   }
   if (section.usps?.length) {
@@ -1935,6 +1993,7 @@ export function renderPage(page, options = {}) {
       renderProductPage({
         product: productView.product,
         relatedProducts: productView.relatedProducts || [],
+        recentlyViewedProducts: ctx.recentlyViewedProducts || [],
         ctx,
         renderProductCard,
       }),
